@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell:*)",
+      "Bash(dir C:\\\\Users\\\\lh_js\\\\agent101toolkit\\\\claude-code\\\\tools\\\\windows:*)",
+      "Bash(rm:*)",
+      "Bash(git:*)",
+      "Bash(bash:*)",
+      "Bash(ls:*)",
+      "Bash(node:*)"
+    ]
+  }
+}
