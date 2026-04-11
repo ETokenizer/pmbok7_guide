@@ -500,6 +500,99 @@
         }
         .payment-qr img { max-width: 200px; }
 
+        /* License Key Styles */
+        .license-container { text-align: center; }
+        .license-info-box {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border: 1px solid #ffe082;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .license-input-group { margin-bottom: 20px; }
+        .license-key-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+        .license-key-input:focus {
+            outline: none;
+            border-color: var(--pmi-blue);
+            box-shadow: 0 0 0 3px rgba(0,90,157,0.1);
+        }
+        .license-activate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .license-activate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212,175,55,0.4);
+        }
+        .license-help {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        .license-success {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .success-icon { font-size: 48px; margin-bottom: 10px; }
+        .license-details {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        .license-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .license-detail-row:last-child { border-bottom: none; }
+        .detail-label { font-size: 13px; color: #888; }
+        .detail-value { font-size: 13px; color: #333; font-weight: 500; }
+        .license-manage-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--pmi-blue), var(--pmi-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .license-manage-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,90,157,0.3);
+        }
+
         /* Ad Banner */
         .ad-banner {
             background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
@@ -619,6 +712,9 @@
         <div style="display:flex;align-items:center;gap:10px">
             <button id="premiumBtn" onclick="showPremiumModal()" style="padding:8px 16px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s">
                 👑 升级专业版
+            </button>
+            <button id="licenseBtn" onclick="showLicenseModal()" style="display:none;padding:8px 12px;background:rgba(212,175,55,0.15);color:#D4AF37;border:1px solid #D4AF37;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s">
+                🔑 我的授权
             </button>
             <span id="premiumStatus" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.2);border:1px solid #D4AF37;border-radius:6px;color:#FFD700;font-size:12px;font-weight:600">👑 专业版用户</span>
         </div>
@@ -867,6 +963,77 @@
         </div>
     </div>
 
+    <!-- License Key Activation Modal -->
+    <div class="modal-overlay" id="licenseModalOverlay" style="display:none">
+        <div class="modal-content" style="max-width:450px">
+            <div class="modal-header" style="background:linear-gradient(135deg, #D4AF37, #FFD700)">
+                <h3>🔑 激活专业版 | Activate License</h3>
+                <button class="modal-close" onclick="closeLicenseModal()">×</button>
+            </div>
+            <div class="modal-body" id="licenseModalBody">
+                <div class="license-container">
+                    <div class="license-info-box">
+                        <p style="font-size:13px;color:#666;margin-bottom:15px">
+                            💡 付费后您会收到一封邮件，包含 16 位激活码。<br>
+                            输入激活码即可解锁专业版功能。
+                        </p>
+                    </div>
+
+                    <!-- 未激活状态 -->
+                    <div id="licenseNotActivated">
+                        <div class="license-input-group">
+                            <input
+                                type="text"
+                                id="licenseKeyInput"
+                                class="license-key-input"
+                                placeholder="请输入 16 位激活码 (XXXX-XXXX-XXXX-XXXX)"
+                                maxlength="19"
+                            />
+                        </div>
+                        <button class="license-activate-btn" onclick="activateLicense()">
+                            <span class="activate-icon">🔓</span>
+                            <span class="activate-text">立即激活</span>
+                        </button>
+                        <div class="license-help">
+                            <p style="font-size:12px;color:#888;margin:5px 0">
+                                已有激活码？<a href="#" onclick="showActivateForm();return false;" style="color:var(--pmi-blue)">点击输入</a>
+                            </p>
+                            <p style="font-size:12px;color:#888;margin:5px 0">
+                                还没有？<button onclick="showPremiumModal();return false;" style="background:none;border:none;color:var(--pmi-blue);cursor:pointer;font-size:12px">立即购买</button>
+                            </p>
+                        </div>
+                        <div id="licenseError" style="display:none;padding:10px;background:#fee;border:1px solid #fcc;border-radius:6px;margin-top:15px;font-size:13px;color:#c00"></div>
+                    </div>
+
+                    <!-- 已激活状态 -->
+                    <div id="licenseActivated" style="display:none">
+                        <div class="license-success">
+                            <div class="success-icon">✅</div>
+                            <h4 style="color:var(--pmi-green);margin-bottom:10px">已激活 - PMBOK7 专业版</h4>
+                            <div class="license-details">
+                                <div class="license-detail-row">
+                                    <span class="detail-label">激活码:</span>
+                                    <span class="detail-value" id="activatedLicenseKey">****</span>
+                                </div>
+                                <div class="license-detail-row">
+                                    <span class="detail-label">设备:</span>
+                                    <span class="detail-value" id="activatedDevice">当前设备</span>
+                                </div>
+                                <div class="license-detail-row">
+                                    <span class="detail-label">有效期:</span>
+                                    <span class="detail-value" style="color:var(--pmi-green)">永久有效</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="license-manage-btn" onclick="closeLicenseModal()">
+                            完成
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // 当前视图状态
         let currentView = 'principles';
@@ -891,6 +1058,150 @@
         let selectedPremiumType = 'lifetime';
         let paymentTimer = null;
         let paymentTimeLeft = 900; // 15 分钟
+
+        // License Key 相关
+        let licenseKey = localStorage.getItem('pmbok7_license_key') || null;
+        let licenseDeviceId = localStorage.getItem('pmbok7_device_id') || null;
+        let licenseActivatedAt = localStorage.getItem('pmbok7_license_activated_at') || null;
+
+        // 生成设备指纹（简单实现）
+        function getDeviceId() {
+            if (licenseDeviceId) return licenseDeviceId;
+            // 使用 navigator 信息生成简单指纹
+            const fingerprint = btoa(
+                navigator.userAgent +
+                navigator.language +
+                screen.colorDepth +
+                screen.width +
+                screen.height +
+                new Date().getTimezoneOffset()
+            ).substring(0, 32);
+            licenseDeviceId = fingerprint;
+            localStorage.setItem('pmbok7_device_id', fingerprint);
+            return fingerprint;
+        }
+
+        // 生成 License Key（模拟，实际应由后端生成）
+        function generateLicenseKey() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let key = '';
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (i < 3) key += '-';
+            }
+            return key;
+        }
+
+        // 验证 License Key 格式
+        function validateLicenseKeyFormat(key) {
+            const pattern = /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+            return pattern.test(key.toUpperCase());
+        }
+
+        // 激活 License
+        function activateLicense() {
+            const input = document.getElementById('licenseKeyInput');
+            const errorDiv = document.getElementById('licenseError');
+            const key = input.value.trim().toUpperCase();
+
+            // 验证格式
+            if (!validateLicenseKeyFormat(key)) {
+                errorDiv.textContent = '❌ 激活码格式不正确，请检查后重试';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 模拟云端验证（实际应调用后端 API）
+            // 这里演示：允许使用任何符合格式的 Key 激活
+            // 实际使用时应该：
+            // 1. 调用后端 API 验证 Key 是否存在且未过期
+            // 2. 检查 Key 是否已被其他设备使用
+            // 3. 绑定设备指纹
+
+            const deviceId = getDeviceId();
+
+            // 模拟 API 调用延迟
+            const btn = document.querySelector('.license-activate-btn');
+            btn.innerHTML = '<span class="activate-icon">⏳</span><span class="activate-text">验证中...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                // 模拟验证成功
+                // 实际应检查后端返回
+                licenseKey = key;
+                licenseActivatedAt = new Date().toISOString();
+
+                localStorage.setItem('pmbok7_license_key', key);
+                localStorage.setItem('pmbok7_license_device_id', deviceId);
+                localStorage.setItem('pmbok7_license_activated_at', licenseActivatedAt);
+                localStorage.setItem('pmbok7_premium', 'true');
+
+                // 更新 UI
+                isPremiumUser = true;
+                updateLicenseUI();
+                updatePremiumUI();
+                renderSidebarAd();
+
+                btn.innerHTML = '<span class="activate-icon">🔓</span><span class="activate-text">立即激活</span>';
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        // 显示激活弹窗
+        function showLicenseModal() {
+            const modal = document.getElementById('licenseModalOverlay');
+            modal.style.display = 'block';
+            setTimeout(() => modal.classList.add('active'), 10);
+            updateLicenseUI();
+        }
+
+        // 关闭激活弹窗
+        function closeLicenseModal() {
+            const modal = document.getElementById('licenseModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 更新 License UI 状态
+        function updateLicenseUI() {
+            const notActivated = document.getElementById('licenseNotActivated');
+            const activated = document.getElementById('licenseActivated');
+            const input = document.getElementById('licenseKeyInput');
+
+            if (licenseKey) {
+                // 已激活
+                if (notActivated) notActivated.style.display = 'none';
+                if (activated) activated.style.display = 'block';
+                document.getElementById('activatedLicenseKey').textContent =
+                    licenseKey.substring(0, 4) + '****' + licenseKey.substring(12);
+                document.getElementById('activatedDevice').textContent =
+                    licenseDeviceId ? '已绑定设备' : '当前设备';
+            } else {
+                // 未激活
+                if (notActivated) notActivated.style.display = 'block';
+                if (activated) activated.style.display = 'none';
+                if (input) input.value = '';
+            }
+        }
+
+        // 显示激活表单
+        function showActivateForm() {
+            updateLicenseUI();
+            showLicenseModal();
+        }
+
+        // 格式化 License Key 输入（自动添加短横线）
+        function formatLicenseKey(input) {
+            let value = input.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            let formatted = '';
+            for (let i = 0; i < value.length && i < 16; i++) {
+                if (i > 0 && i % 4 === 0) formatted += '-';
+                formatted += value[i];
+            }
+            input.value = formatted;
+        }
 
         // 检查 Premium 状态是否过期
         function checkPremiumStatus() {
@@ -3615,6 +3926,13 @@
             paymentTimeLeft = 900;
         }
 
+        // 关闭 License 弹窗
+        function closeLicenseModal() {
+            const modal = document.getElementById('licenseModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
         // 模态框拖动功能
         function makeDraggable(overlayId, headerSelector) {
             const overlay = document.getElementById(overlayId);
@@ -3667,6 +3985,7 @@
             makeDraggable('quizModalOverlay', '.modal-header');
             makeDraggable('premiumModalOverlay', '.modal-header');
             makeDraggable('paymentModalOverlay', '.modal-header');
+            makeDraggable('licenseModalOverlay', '.modal-header');
         }, 100);
 
         // 初始化
@@ -3677,20 +3996,38 @@
         setTimeout(() => {
             checkPremiumStatus();
             updatePremiumUI();
+            updateLicenseUI();
             renderSidebarAd();
         }, 200);
+
+        // License Key 输入格式化
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.id === 'licenseKeyInput') {
+                formatLicenseKey(e.target);
+            }
+        });
+
+        // License Key 输入框回车激活
+        document.addEventListener('keydown', function(e) {
+            if (e.target && e.target.id === 'licenseKeyInput' && e.key === 'Enter') {
+                activateLicense();
+            }
+        });
 
         // 更新 Premium UI 状态
         function updatePremiumUI() {
             const premiumBtn = document.getElementById('premiumBtn');
             const premiumStatus = document.getElementById('premiumStatus');
+            const licenseBtn = document.getElementById('licenseBtn');
 
             if (isPremiumUser) {
                 if (premiumBtn) premiumBtn.style.display = 'none';
                 if (premiumStatus) premiumStatus.style.display = 'inline-block';
+                if (licenseBtn) licenseBtn.style.display = 'inline-block';
             } else {
                 if (premiumBtn) premiumBtn.style.display = 'flex';
                 if (premiumStatus) premiumStatus.style.display = 'none';
+                if (licenseBtn) licenseBtn.style.display = 'none';
             }
         }
     </script>
