@@ -1035,6 +1035,34 @@
     </div>
 
     <script>
+        // =====================================================
+        // LeanCloud 配置
+        // =====================================================
+        // 请替换为你自己的 LeanCloud 应用信息
+        const LEANCLOUD_CONFIG = {
+            appId: '你的 App ID',      // 例如：9F8xK2mL3pQ4
+            appKey: '你的 App Key',   // 例如：abc123xyz456
+            serverURL: 'https://你的 App ID.lc-cn-n1-shared.com'
+        };
+
+        // 动态加载 LeanCloud SDK
+        function loadLeanCloud() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/leancloud-storage@4.15.0/dist/av-min.js';
+            script.onload = () => {
+                AV.init({
+                    appId: LEANCLOUD_CONFIG.appId,
+                    appKey: LEANCLOUD_CONFIG.appKey,
+                    serverURL: LEANCLOUD_CONFIG.serverURL
+                });
+                console.log('✅ LeanCloud 初始化成功');
+            };
+            document.head.appendChild(script);
+        }
+
+        // 页面加载时初始化 LeanCloud
+        loadLeanCloud();
+
         // 当前视图状态
         let currentView = 'principles';
         let selectedPrinciple = null;
@@ -1113,40 +1141,93 @@
                 return;
             }
 
-            // 模拟云端验证（实际应调用后端 API）
-            // 这里演示：允许使用任何符合格式的 Key 激活
-            // 实际使用时应该：
-            // 1. 调用后端 API 验证 Key 是否存在且未过期
-            // 2. 检查 Key 是否已被其他设备使用
-            // 3. 绑定设备指纹
-
             const deviceId = getDeviceId();
-
-            // 模拟 API 调用延迟
             const btn = document.querySelector('.license-activate-btn');
             btn.innerHTML = '<span class="activate-icon">⏳</span><span class="activate-text">验证中...</span>';
             btn.disabled = true;
 
-            setTimeout(() => {
-                // 模拟验证成功
-                // 实际应检查后端返回
-                licenseKey = key;
-                licenseActivatedAt = new Date().toISOString();
+            // 检查 LeanCloud 是否已初始化
+            if (typeof AV !== 'undefined' && AV.applicationId) {
+                // 使用 LeanCloud 验证
+                verifyLicenseWithLeanCloud(key, deviceId, btn, errorDiv);
+            } else {
+                // LeanCloud 未配置，使用本地验证（演示模式）
+                verifyLicenseLocal(key, deviceId, btn, errorDiv);
+            }
+        }
 
-                localStorage.setItem('pmbok7_license_key', key);
-                localStorage.setItem('pmbok7_license_device_id', deviceId);
-                localStorage.setItem('pmbok7_license_activated_at', licenseActivatedAt);
-                localStorage.setItem('pmbok7_premium', 'true');
+        // LeanCloud 云端验证
+        async function verifyLicenseWithLeanCloud(key, deviceId, btn, errorDiv) {
+            try {
+                // 查询 License
+                const License = AV.Object.extend('License');
+                const query = new AV.Query(License);
+                query.equalTo('key', key);
 
-                // 更新 UI
-                isPremiumUser = true;
-                updateLicenseUI();
-                updatePremiumUI();
-                renderSidebarAd();
+                const results = await query.find();
 
+                if (results.length === 0) {
+                    // Key 不存在
+                    throw new Error('激活码不存在，请检查或联系管理员');
+                }
+
+                const license = results[0];
+
+                // 检查是否已激活
+                if (license.get('isActive')) {
+                    const boundDevice = license.get('deviceId');
+                    if (boundDevice !== deviceId) {
+                        throw new Error('该激活码已被其他设备使用\n如需更换设备，请联系管理员');
+                    }
+                }
+
+                // 激活成功
+                license.set('isActive', true);
+                license.set('deviceId', deviceId);
+                license.set('activatedAt', new Date().toISOString());
+                await license.save();
+
+                // 更新本地状态
+                finalizeActivation(key, deviceId, btn, errorDiv);
+
+            } catch (error) {
+                console.error('License 验证失败:', error);
+                errorDiv.textContent = '❌ ' + error.message;
+                errorDiv.style.display = 'block';
                 btn.innerHTML = '<span class="activate-icon">🔓</span><span class="activate-text">立即激活</span>';
                 btn.disabled = false;
-            }, 1500);
+            }
+        }
+
+        // 本地验证（演示模式，无 LeanCloud 时）
+        function verifyLicenseLocal(key, deviceId, btn, errorDiv) {
+            console.log('⚠️ 演示模式：使用本地验证（无云端验证）');
+
+            // 模拟 API 延迟
+            setTimeout(() => {
+                // 演示模式：任何有效格式的 Key 都可以激活
+                finalizeActivation(key, deviceId, btn, errorDiv);
+            }, 1000);
+        }
+
+        // 完成激活
+        function finalizeActivation(key, deviceId, btn, errorDiv) {
+            licenseKey = key;
+            licenseDeviceId = deviceId;
+            licenseActivatedAt = new Date().toISOString();
+
+            localStorage.setItem('pmbok7_license_key', key);
+            localStorage.setItem('pmbok7_license_device_id', deviceId);
+            localStorage.setItem('pmbok7_license_activated_at', licenseActivatedAt);
+            localStorage.setItem('pmbok7_premium', 'true');
+
+            isPremiumUser = true;
+            updateLicenseUI();
+            updatePremiumUI();
+            renderSidebarAd();
+
+            btn.innerHTML = '<span class="activate-icon">🔓</span><span class="activate-text">立即激活</span>';
+            btn.disabled = false;
         }
 
         // 显示激活弹窗
