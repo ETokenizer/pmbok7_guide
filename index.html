@@ -592,6 +592,26 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0,90,157,0.3);
         }
+        .license-reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .license-reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(243,156,18,0.4);
+        }
+        .license-reset-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
 
         /* Ad Banner */
         .ad-banner {
@@ -1020,12 +1040,28 @@
                                     <span class="detail-value" id="activatedDevice">当前设备</span>
                                 </div>
                                 <div class="license-detail-row">
+                                    <span class="detail-label">激活时间:</span>
+                                    <span class="detail-value" id="activatedTime">-</span>
+                                </div>
+                                <div class="license-detail-row">
                                     <span class="detail-label">有效期:</span>
                                     <span class="detail-value" style="color:var(--pmi-green)">永久有效</span>
                                 </div>
                             </div>
                         </div>
-                        <button class="license-manage-btn" onclick="closeLicenseModal()">
+
+                        <!-- 重置设备按钮 -->
+                        <div class="license-reset-section" style="margin-top:20px;padding:15px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px">
+                            <p style="font-size:13px;color:#856404;margin-bottom:10px">
+                                💡 更换设备了？需要重置设备绑定才能在新设备激活。
+                            </p>
+                            <button class="license-reset-btn" onclick="requestResetDevice()" style="padding:10px 20px;background:linear-gradient(135deg, #f39c12, #e67e22);color:white;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.3s">
+                                🔄 申请重置设备
+                            </button>
+                            <div id="resetMessage" style="display:none;margin-top:10px;padding:10px;background:#d4edda;border:1px solid #c3e6cb;border-radius:6px;font-size:12px;color:#155724"></div>
+                        </div>
+
+                        <button class="license-manage-btn" onclick="closeLicenseModal()" style="margin-top:15px">
                             完成
                         </button>
                     </div>
@@ -1265,11 +1301,94 @@
                     licenseKey.substring(0, 4) + '****' + licenseKey.substring(12);
                 document.getElementById('activatedDevice').textContent =
                     licenseDeviceId ? '已绑定设备' : '当前设备';
+
+                // 显示激活时间
+                const activatedTimeEl = document.getElementById('activatedTime');
+                if (activatedTimeEl && licenseActivatedAt) {
+                    const date = new Date(licenseActivatedAt);
+                    activatedTimeEl.textContent = date.toLocaleDateString('zh-CN');
+                }
             } else {
                 // 未激活
                 if (notActivated) notActivated.style.display = 'block';
                 if (activated) activated.style.display = 'none';
                 if (input) input.value = '';
+            }
+        }
+
+        // 申请重置设备
+        async function requestResetDevice() {
+            const btn = document.querySelector('.license-reset-btn');
+            const msgDiv = document.getElementById('resetMessage');
+
+            if (!licenseKey) {
+                msgDiv.textContent = '❌ 请先激活 License';
+                msgDiv.style.display = 'block';
+                msgDiv.style.background = '#f8d7da';
+                msgDiv.style.borderColor = '#f5c6cb';
+                msgDiv.style.color = '#721c24';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ 处理中...';
+            msgDiv.style.display = 'block';
+            msgDiv.style.background = '#fff3cd';
+            msgDiv.style.borderColor = '#ffeaa7';
+            msgDiv.style.color = '#856404';
+            msgDiv.textContent = '正在联系服务器重置设备绑定...';
+
+            try {
+                // 检查 Supabase 是否可用
+                if (typeof supabase === 'undefined' || !supabaseClient) {
+                    throw new Error('Supabase 未配置');
+                }
+
+                // 重置设备绑定
+                const { error } = await supabaseClient
+                    .from('licenses')
+                    .update({
+                        device_id: null,
+                        is_active: false,
+                        reset_at: new Date().toISOString()
+                    })
+                    .eq('key', licenseKey);
+
+                if (error) throw error;
+
+                // 本地也清除
+                licenseDeviceId = null;
+                localStorage.removeItem('pmbok7_license_device_id');
+
+                msgDiv.style.background = '#d4edda';
+                msgDiv.style.borderColor = '#c3e6cb';
+                msgDiv.style.color = '#155724';
+                msgDiv.textContent = '✅ 重置成功！您现在可以重新激活 License。';
+
+                btn.innerHTML = '✅ 重置成功';
+
+                // 3 秒后刷新 UI
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '🔄 申请重置设备';
+                    // 清除激活状态，让用户重新激活
+                    isPremiumUser = false;
+                    licenseKey = null;
+                    localStorage.removeItem('pmbok7_license_key');
+                    localStorage.removeItem('pmbok7_premium');
+                    updateLicenseUI();
+                    updatePremiumUI();
+                    renderSidebarAd();
+                }, 3000);
+
+            } catch (error) {
+                console.error('重置失败:', error);
+                msgDiv.style.background = '#f8d7da';
+                msgDiv.style.borderColor = '#f5c6cb';
+                msgDiv.style.color = '#721c24';
+                msgDiv.textContent = '❌ 重置失败：' + error.message;
+                btn.disabled = false;
+                btn.innerHTML = '🔄 申请重置设备';
             }
         }
 

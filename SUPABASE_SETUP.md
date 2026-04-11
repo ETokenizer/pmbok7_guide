@@ -51,6 +51,9 @@ anon/public key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 | `activated_at` | text | null | 激活时间 |
 | `expires_at` | text | null | 过期时间（可选） |
 | `note` | text | null | 备注（用户信息等） |
+| `email` | text | null | 用户邮箱（用于发送激活码） |
+| `sent_at` | text | null | 邮件发送时间 |
+| `reset_at` | text | null | 重置设备时间 |
 | `created_at` | timestamptz | `now()` | 创建时间 |
 
 ## 第四步：设置行级安全（RLS）
