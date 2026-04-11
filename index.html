@@ -954,6 +954,22 @@
                 <button class="modal-close" onclick="closePaymentModal()">×</button>
             </div>
             <div class="modal-body" id="paymentModalBody">
+                <!-- 邮箱输入 -->
+                <div style="margin-bottom:20px">
+                    <label style="display:block;font-size:13px;font-weight:600;color:#333;margin-bottom:8px">
+                        📧 接收激活码的邮箱
+                    </label>
+                    <input
+                        type="email"
+                        id="userEmailInput"
+                        placeholder="请输入您的邮箱地址"
+                        style="width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px"
+                    />
+                    <p style="font-size:11px;color:#888;margin-top:5px">
+                        ⚡ 支付成功后，激活码将立即发送到此邮箱
+                    </p>
+                </div>
+
                 <div class="payment-methods">
                     <div class="payment-method" onclick="selectPayment('wechat')">
                         <div class="payment-icon" style="background:#07C160">💚</div>
@@ -1422,26 +1438,6 @@
             return isPremiumUser;
         }
 
-        // 升级 Premium 用户
-        function upgradePremium(type) {
-            const now = new Date();
-            let expiryDate;
-            if (type === 'monthly') {
-                expiryDate = new Date(now.setMonth(now.getMonth() + 1));
-            } else {
-                // lifetime - 设为 10 年后
-                expiryDate = new Date(now.setFullYear(now.getFullYear() + 10));
-            }
-            isPremiumUser = true;
-            premiumExpiry = expiryDate.getTime().toString();
-            localStorage.setItem('pmbok7_premium', 'true');
-            localStorage.setItem('pmbok7_premium_expiry', premiumExpiry);
-            alert('🎉 升级成功！您已成为 PMBOK7 专业版用户！');
-            closePremiumModal();
-            closePaymentModal();
-            renderAds(); // 重新渲染广告（Premium 用户不显示）
-        }
-
         // 显示 Premium 升级弹窗
         function showPremiumModal() {
             const modal = document.getElementById('premiumModalOverlay');
@@ -1523,9 +1519,126 @@
             qrContainer.innerHTML = qrContent;
         }
 
+        // 生成 License Key
+        function generateLicenseKey() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let key = '';
+            for (let j = 0; j < 4; j++) {
+                for (let k = 0; k < 4; k++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (j < 3) key += '-';
+            }
+            return key;
+        }
+
+        // 验证邮箱格式
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
         // 模拟支付成功（实际使用时删除）
-        function simulatePaymentSuccess() {
-            upgradePremium(selectedPremiumType);
+        async function simulatePaymentSuccess() {
+            const email = document.getElementById('userEmailInput')?.value;
+
+            // 验证邮箱
+            if (!email || !isValidEmail(email)) {
+                alert('❌ 请输入有效的邮箱地址，用于接收激活码');
+                return;
+            }
+
+            // 显示处理中状态
+            const btn = event?.target;
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '⏳ 处理中...';
+            }
+
+            try {
+                // 生成 License Key
+                const licenseKey = generateLicenseKey();
+                const note = `付费购买 - ${selectedPremiumType === 'lifetime' ? '终身版' : '月付版'} - ${new Date().toLocaleDateString('zh-CN')}`;
+
+                // 保存到 Supabase
+                if (typeof supabase !== 'undefined' && supabaseClient) {
+                    const { error: dbError } = await supabaseClient
+                        .from('licenses')
+                        .insert({
+                            key: licenseKey,
+                            is_active: false,
+                            email: email,
+                            note: note,
+                            created_at: new Date().toISOString()
+                        });
+
+                    if (dbError) throw dbError;
+
+                    // 调用 Edge Function 发送邮件
+                    const { data: emailData, error: emailError } = await supabaseClient.functions.invoke('send-license-email', {
+                        body: {
+                            email: email,
+                            licenseKey: licenseKey,
+                            note: note
+                        }
+                    });
+
+                    if (emailError) {
+                        console.error('邮件发送失败:', emailError);
+                        // 邮件发送失败不阻断流程，继续升级
+                    }
+
+                    // 升级 Premium 用户
+                    upgradePremium(selectedPremiumType, licenseKey);
+
+                    // 显示成功提示
+                    alert(`🎉 支付成功！\n\n激活码已发送到：${email}\n激活码：${licenseKey}\n\n请妥善保存激活码！`);
+
+                } else {
+                    // Supabase 不可用时，本地处理
+                    console.warn('Supabase 不可用，使用本地模式');
+                    upgradePremium(selectedPremiumType, licenseKey);
+                    alert(`🎉 支付成功！（本地模式）\n\n您的激活码：${licenseKey}\n\n请妥善保存！`);
+                }
+
+                closePaymentModal();
+
+            } catch (error) {
+                console.error('支付处理失败:', error);
+                alert('❌ 支付处理失败：' + error.message);
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '✅ 模拟支付成功（测试用）';
+                }
+            }
+        }
+
+        // 升级 Premium 用户
+        function upgradePremium(type, licenseKey) {
+            const now = new Date();
+            let expiryDate;
+            if (type === 'monthly') {
+                expiryDate = new Date(now.setMonth(now.getMonth() + 1));
+            } else {
+                // lifetime - 设为 10 年后
+                expiryDate = new Date(now.setFullYear(now.getFullYear() + 10));
+            }
+            isPremiumUser = true;
+            premiumExpiry = expiryDate.getTime().toString();
+
+            // 如果传入了 licenseKey，保存到本地
+            if (licenseKey) {
+                localStorage.setItem('pmbok7_license_key', licenseKey);
+            }
+
+            localStorage.setItem('pmbok7_premium', 'true');
+            localStorage.setItem('pmbok7_premium_expiry', premiumExpiry);
+
+            closePremiumModal();
+            renderAds(); // 重新渲染广告（Premium 用户不显示）
+            updateLicenseUI(); // 更新 License UI
+            updatePremiumUI(); // 更新 Premium 状态 UI
         }
 
         // 支付倒计时

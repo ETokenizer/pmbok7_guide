@@ -300,7 +300,7 @@ curl -X POST 'https://你的项目 ID.supabase.co/functions/v1/send-license-emai
 
 ## 集成到前端
 
-在 `index.html` 的支付成功后调用：
+在 `index.html` 中，支付成功后自动调用：
 
 ```javascript
 async function sendLicenseEmail(email, licenseKey) {
@@ -311,6 +311,74 @@ async function sendLicenseEmail(email, licenseKey) {
   if (error) throw error;
   return data;
 }
+```
+
+## 完整支付流程集成
+
+`index.html` 中已实现的完整流程：
+
+```javascript
+async function simulatePaymentSuccess() {
+  const email = document.getElementById('userEmailInput')?.value;
+
+  // 1. 验证邮箱
+  if (!email || !isValidEmail(email)) {
+    alert('❌ 请输入有效的邮箱地址，用于接收激活码');
+    return;
+  }
+
+  // 2. 生成 License Key
+  const licenseKey = generateLicenseKey();
+
+  // 3. 保存到 Supabase
+  const { error: dbError } = await supabaseClient
+    .from('licenses')
+    .insert({
+      key: licenseKey,
+      is_active: false,
+      email: email,
+      note: '付费购买',
+      created_at: new Date().toISOString()
+    });
+
+  if (dbError) throw dbError;
+
+  // 4. 调用 Edge Function 发送邮件
+  const { data: emailData, error: emailError } = await supabaseClient.functions.invoke('send-license-email', {
+    body: { email: email, licenseKey: licenseKey, note: '付费购买' }
+  });
+
+  if (emailError) {
+    console.error('邮件发送失败:', emailError);
+  }
+
+  // 5. 升级 Premium 用户
+  upgradePremium(selectedPremiumType, licenseKey);
+
+  // 6. 显示成功提示
+  alert(`🎉 支付成功！激活码已发送到：${email}`);
+}
+```
+
+## 环境变量配置
+
+Edge Function 需要以下环境变量：
+
+```bash
+# 在 Supabase 控制台设置
+supabase secrets set RESEND_API_KEY=re_xxxxxxxxxxxxx
+supabase secrets set SUPABASE_URL=https://你的项目 ID.supabase.co
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY=你的 service_role key
+```
+
+## 数据库更新
+
+确保 licenses 表包含以下字段：
+
+```sql
+ALTER TABLE licenses
+ADD COLUMN email TEXT,
+ADD COLUMN sent_at TIMESTAMPTZ;
 ```
 
 ## 费用
