@@ -7,7 +7,12 @@
       "Bash(git:*)",
       "Bash(bash:*)",
       "Bash(ls:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(mkdir -p C:/Users/lh_js/agent101toolkit/speech-trainer-app)",
+      "Read(//c/Users/lh_js/agent101toolkit/**)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

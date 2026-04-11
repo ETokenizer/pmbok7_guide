@@ -1036,32 +1036,31 @@
 
     <script>
         // =====================================================
-        // LeanCloud 配置
+        // Supabase 配置
         // =====================================================
-        // 请替换为你自己的 LeanCloud 应用信息
-        const LEANCLOUD_CONFIG = {
-            appId: '你的 App ID',      // 例如：9F8xK2mL3pQ4
-            appKey: '你的 App Key',   // 例如：abc123xyz456
-            serverURL: 'https://你的 App ID.lc-cn-n1-shared.com'
+        // 请替换为你自己的 Supabase 项目信息
+        // 注册地址：https://supabase.com/
+        const SUPABASE_CONFIG = {
+            url: 'https://你的项目 ID.supabase.co',
+            key: '你的 anon/public key'
         };
 
-        // 动态加载 LeanCloud SDK
-        function loadLeanCloud() {
+        // 动态加载 Supabase SDK
+        function loadSupabase() {
             const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/leancloud-storage@4.15.0/dist/av-min.js';
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
             script.onload = () => {
-                AV.init({
-                    appId: LEANCLOUD_CONFIG.appId,
-                    appKey: LEANCLOUD_CONFIG.appKey,
-                    serverURL: LEANCLOUD_CONFIG.serverURL
-                });
-                console.log('✅ LeanCloud 初始化成功');
+                window.supabaseClient = supabase.createClient(
+                    SUPABASE_CONFIG.url,
+                    SUPABASE_CONFIG.key
+                );
+                console.log('✅ Supabase 初始化成功');
             };
             document.head.appendChild(script);
         }
 
-        // 页面加载时初始化 LeanCloud
-        loadLeanCloud();
+        // 页面加载时初始化 Supabase
+        loadSupabase();
 
         // 当前视图状态
         let currentView = 'principles';
@@ -1146,53 +1145,60 @@
             btn.innerHTML = '<span class="activate-icon">⏳</span><span class="activate-text">验证中...</span>';
             btn.disabled = true;
 
-            // 检查 LeanCloud 是否已初始化
-            if (typeof AV !== 'undefined' && AV.applicationId) {
-                // 使用 LeanCloud 验证
-                verifyLicenseWithLeanCloud(key, deviceId, btn, errorDiv);
+            // 检查 Supabase 是否已初始化
+            if (typeof supabase !== 'undefined' && supabaseClient) {
+                // 使用 Supabase 验证
+                verifyLicenseWithSupabase(key, deviceId, btn, errorDiv);
             } else {
-                // LeanCloud 未配置，使用本地验证（演示模式）
+                // Supabase 未配置，使用本地验证（演示模式）
+                console.warn('⚠️ Supabase 未配置，使用演示模式（本地验证）');
                 verifyLicenseLocal(key, deviceId, btn, errorDiv);
             }
         }
 
-        // LeanCloud 云端验证
-        async function verifyLicenseWithLeanCloud(key, deviceId, btn, errorDiv) {
+        // Supabase 云端验证
+        async function verifyLicenseWithSupabase(key, deviceId, btn, errorDiv) {
             try {
                 // 查询 License
-                const License = AV.Object.extend('License');
-                const query = new AV.Query(License);
-                query.equalTo('key', key);
+                const { data, error } = await supabaseClient
+                    .from('licenses')
+                    .select('*')
+                    .eq('key', key)
+                    .single();
 
-                const results = await query.find();
-
-                if (results.length === 0) {
-                    // Key 不存在
+                if (error || !data) {
                     throw new Error('激活码不存在，请检查或联系管理员');
                 }
 
-                const license = results[0];
+                const license = data;
 
                 // 检查是否已激活
-                if (license.get('isActive')) {
-                    const boundDevice = license.get('deviceId');
-                    if (boundDevice !== deviceId) {
+                if (license.is_active) {
+                    if (license.device_id && license.device_id !== deviceId) {
                         throw new Error('该激活码已被其他设备使用\n如需更换设备，请联系管理员');
                     }
                 }
 
-                // 激活成功
-                license.set('isActive', true);
-                license.set('deviceId', deviceId);
-                license.set('activatedAt', new Date().toISOString());
-                await license.save();
+                // 激活成功 - 更新记录
+                const { error: updateError } = await supabaseClient
+                    .from('licenses')
+                    .update({
+                        is_active: true,
+                        device_id: deviceId,
+                        activated_at: new Date().toISOString()
+                    })
+                    .eq('key', key);
+
+                if (updateError) {
+                    throw updateError;
+                }
 
                 // 更新本地状态
                 finalizeActivation(key, deviceId, btn, errorDiv);
 
             } catch (error) {
                 console.error('License 验证失败:', error);
-                errorDiv.textContent = '❌ ' + error.message;
+                errorDiv.textContent = '❌ ' + (error.message || '验证失败，请稍后重试');
                 errorDiv.style.display = 'block';
                 btn.innerHTML = '<span class="activate-icon">🔓</span><span class="activate-text">立即激活</span>';
                 btn.disabled = false;
