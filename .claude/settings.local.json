@@ -12,7 +12,9 @@
       "Read(//c/Users/lh_js/agent101toolkit/**)",
       "Bash(npm create:*)",
       "Bash(npm install:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(pwsh -Command ':*)",
+      "WebSearch"
     ]
   }
 }

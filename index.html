@@ -2793,10 +2793,89 @@
         ];
 
         // =====================================================
-        // 扩展题库 - 400+ 题目
+        // 题库数据 - 优先从 Supabase 加载，本地数据作为 fallback
+        // =====================================================
+
+        // 全局题库变量（兼容原有代码）
+        let questionBank = [];
+
+        // 从 Supabase 加载题库的函数
+        async function loadQuestionBankFromSupabase(category = 'all') {
+            try {
+                console.log('正在从 Supabase 加载题目...');
+
+                let query = supabaseClient
+                    .from('questions')
+                    .select('*')
+                    .eq('is_active', true);
+
+                if (category !== 'all') {
+                    query = query.eq('category', category);
+                }
+
+                const { data, error } = await query;
+
+                if (error) throw error;
+
+                // 转换数据格式以兼容现有代码
+                const questions = data.map(q => ({
+                    id: q.code,
+                    category: q.category,
+                    categoryId: q.category_id,
+                    question: q.question,
+                    options: q.options,
+                    correct: q.correct,
+                    explanation: q.explanation,
+                    difficulty: q.difficulty
+                }));
+
+                console.log(`✅ Supabase 加载成功：${questions.length} 道题目 [${category || 'all'}]`);
+
+                // 如果加载的是全部题目，更新全局 questionBank
+                if (category === 'all' || category === undefined) {
+                    questionBank = questions;
+                }
+
+                return questions;
+            } catch (error) {
+                console.warn('Supabase 加载失败，使用本地题库:', error.message);
+                // Fallback: 使用本地题目数据
+                return window.localQuestionBank || questionBank;
+            }
+        }
+
+        // 新的抽题函数（支持 Supabase）
+        async function getQuestionsFromBank(category, count) {
+            // 尝试从 Supabase 加载
+            if (window.supabaseClient) {
+                try {
+                    const questions = await loadQuestionBankFromSupabase(category);
+                    const shuffled = [...questions].sort(() => Math.random() - 0.5);
+                    return shuffled.slice(0, count);
+                } catch (e) {
+                    console.warn('Supabase 抽题失败，使用本地数据');
+                }
+            }
+
+            // Fallback: 使用本地数据
+            let filtered = questionBank;
+            if (category && category !== 'all') {
+                filtered = questionBank.filter(q => q.category === category);
+            }
+            const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
+
+        // 本地备用题库（Supabase 不可用时使用）
+        // 注意：为了减小文件大小，这里仅存储部分核心题目作为演示
+        // 完整题库应该存储在 Supabase 数据库中
+        window.localQuestionBank = null; // 设置为 null 表示不使用本地缓存
+
+        // =====================================================
+        // 扩展题库 - 1000+ 题目（完整数据，Supabase 不可用时使用）
         // 结构：category (类别) | categoryId (类别 ID) | question | options | correct | explanation | difficulty
         // =====================================================
-        const questionBank = [
+        const questionBankData = [
             // ========== 12 项原则题库 (每项 10 题，共 120 题) ==========
             // 原则 1: 管家式管理
             { id: 'P1_Q1', category: 'principle', categoryId: 1, question: '管家式管理原则要求项目经理如何对待项目资源？', options: ['A. 尽可能节省使用，即使影响质量', 'B. 像管家一样负责任地管理和使用', 'C. 全部用完以确保项目成功', 'D. 只关注预算内的资源'], correct: 1, explanation: '管家式管理要求项目经理像管家一样，负责任地管理项目资源，平衡效率和质量。', difficulty: 'easy' },
@@ -4047,16 +4126,10 @@
             { id: 'FIN_Q20', category: 'final', categoryId: 0, question: '项目管理的终极目标是？', options: ['A. 完成项目', 'B. 创造价值', 'C. 满足客户', 'D. 成就事业'], correct: 1, explanation: '项目管理的终极目标是为组织创造价值。', difficulty: 'medium' }
         ];
 
-        // 从题库随机抽题
-        function getQuestionsFromBank(category, count) {
-            let filtered = questionBank;
-            if (category && category !== 'all') {
-                filtered = questionBank.filter(q => q.category === category);
-            }
-            // 随机打乱并取指定数量
-            const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-            return shuffled.slice(0, count);
-        }
+        // 初始化题库数据
+        // 优先使用 Supabase 加载，如果不可用则使用本地 questionBankData
+        questionBank = questionBankData;
+        console.log(`本地题库已加载，共 ${questionBank.length} 道题目`);
 
         // =====================================================
         // PMBOK 第 7 版 - 8 个绩效域
