@@ -718,6 +718,434 @@
         }
         .quiz-feedback.correct { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
         .quiz-feedback.incorrect { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+
+        /* 错题本样式 */
+        .wrong-book-container { padding: 10px; }
+        .wrong-book-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .wrong-book-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .filter-btn:hover { background: #e0e0e0; }
+        .filter-btn.active {
+            background: var(--pmi-blue);
+            color: white;
+            border-color: var(--pmi-blue);
+        }
+        .wrong-item {
+            background: var(--white);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        .wrong-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .wrong-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .wrong-item-source {
+            font-size: 12px;
+            color: #888;
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .wrong-item-question {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--pmi-dark);
+            margin-bottom: 10px;
+        }
+        .wrong-item-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .wrong-item-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .wrong-item-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .wrong-item-btn.retry {
+            background: var(--pmi-blue);
+            color: white;
+        }
+        .wrong-item-btn.retry:hover { background: var(--pmi-dark); }
+        .wrong-item-btn.mastered {
+            background: #28a745;
+            color: white;
+        }
+        .wrong-item-btn.delete {
+            background: #dc3545;
+            color: white;
+        }
+        .wrong-count-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .mastered-badge {
+            background: #28a745;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* 学习进度样式 */
+        .progress-container { padding: 20px; }
+        .progress-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .progress-stat-card {
+            background: linear-gradient(135deg, var(--pmi-blue), var(--pmi-light));
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .progress-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .progress-stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .progress-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .progress-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--pmi-dark);
+            margin-bottom: 15px;
+        }
+        .progress-bar-container {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pmi-blue), var(--pmi-light));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        .progress-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .streak-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-top: 15px;
+        }
+        .streak-day {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            background: #f0f0f0;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .streak-day.active { background: #d4edda; }
+        .streak-day.today { background: #28a745; color: white; }
+
+        /* 模拟考试样式 */
+        .exam-question-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .exam-question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .exam-question-nav-btn {
+            padding: 8px 16px;
+            background: var(--pmi-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .exam-question-nav-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .exam-question-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--pmi-dark);
+            margin-bottom: 20px;
+        }
+        .exam-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .exam-option {
+            padding: 15px 20px;
+            background: var(--white);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .exam-option:hover {
+            border-color: var(--pmi-blue);
+            background: #f0f8ff;
+        }
+        .exam-option.selected {
+            border-color: var(--pmi-blue);
+            background: #e0f2fe;
+        }
+        .exam-option-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .exam-option.selected .exam-option-radio {
+            border-color: var(--pmi-blue);
+            background: var(--pmi-blue);
+        }
+        .exam-option.selected .exam-option-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        .exam-question-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .exam-mark-btn {
+            padding: 8px 16px;
+            background: #fbbf24;
+            color: #333;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .exam-mark-btn.marked {
+            background: #f59e0b;
+        }
+        .exam-result-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+        .exam-result-score {
+            font-size: 72px;
+            font-weight: 700;
+            color: var(--pmi-blue);
+            margin: 20px 0;
+        }
+        .exam-result-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .exam-stat-card {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .exam-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--pmi-dark);
+        }
+        .exam-stat-label {
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* 薄弱点分析样式 */
+        .analysis-overview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .analysis-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .analysis-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--pmi-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .analysis-progress-bar {
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .analysis-progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        .analysis-level {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .analysis-level.weak { background: #fee2e2; color: #dc2626; }
+        .analysis-level.intermediate { background: #fef3c7; color: #d97706; }
+        .analysis-level.strong { background: #d1fae5; color: #059669; }
+        .weakness-item {
+            padding: 15px;
+            background: #fef2f2;
+            border-left: 4px solid #dc2626;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .weakness-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+        .weakness-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .recommendation-item {
+            padding: 15px;
+            background: #f0fdf4;
+            border-left: 4px solid #16a34a;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .recommendation-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #059669;
+            margin-bottom: 8px;
+        }
+        .recommendation-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            padding: 20px 10px;
+        }
+        .chart-bar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .chart-bar-fill {
+            width: 40px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.3s;
+        }
+        .chart-bar-label {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -849,6 +1277,165 @@
                 <button class="modal-close" onclick="closeCaseModal()">×</button>
             </div>
             <div class="modal-body" id="caseModalBody"></div>
+        </div>
+    </div>
+
+    <!-- 错题本 Modal -->
+    <div class="modal-overlay" id="wrongBookModalOverlay" style="display:none">
+        <div class="modal-content" style="max-width:900px">
+            <div class="modal-header" style="background:linear-gradient(135deg, #f59e0b, #d97706)">
+                <h3>📝 错题本 | Wrong Answers Book</h3>
+                <button class="modal-close" onclick="closeWrongBookModal()">×</button>
+            </div>
+            <div class="modal-body" id="wrongBookModalBody">
+                <div class="wrong-book-container">
+                    <div class="wrong-book-header">
+                        <div>
+                            <span style="font-size:18px;font-weight:600;color:var(--pmi-dark)">错题统计</span>
+                            <p style="font-size:12px;color:#888;margin-top:5px">智能记录错题，针对性复习提分</p>
+                        </div>
+                        <button onclick="retryAllWrong()" class="btn btn-primary" style="padding:10px 20px;background:var(--pmi-blue);color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px">
+                            🔄 全部重做
+                        </button>
+                    </div>
+                    <div class="wrong-book-filters" id="wrongBookFilters">
+                        <button class="filter-btn active" data-filter="all">全部错题</button>
+                        <button class="filter-btn" data-filter="unmastered">未掌握</button>
+                        <button class="filter-btn" data-filter="mastered">已掌握</button>
+                    </div>
+                    <div id="wrongBookContent">
+                        <div style="text-align:center;padding:40px;color:#888">
+                            <p style="font-size:16px;margin-bottom:10px">🎉 暂无错题</p>
+                            <p style="font-size:13px">开始答题后，做错的题目会自动记录在这里</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学习进度中心 Modal -->
+    <div class="modal-overlay" id="progressCenterModalOverlay" style="display:none">
+        <div class="modal-content" style="max-width:900px">
+            <div class="modal-header" style="background:linear-gradient(135deg, #10b981, #059669)">
+                <h3>📊 学习进度 | Learning Progress</h3>
+                <button class="modal-close" onclick="closeProgressCenterModal()">×</button>
+            </div>
+            <div class="modal-body" id="progressCenterModalBody">
+                <div class="progress-container">
+                    <div class="progress-stats-grid">
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="totalStudyTime">0h</div>
+                            <div class="progress-stat-label">总学习时长</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="totalQuizzes">0</div>
+                            <div class="progress-stat-label">完成答题</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="accuracyRate">0%</div>
+                            <div class="progress-stat-label">正确率</div>
+                        </div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-section-title">📌 12 项原则学习进度</div>
+                        <div id="principlesProgressBar"></div>
+                    </div>
+                    <div class="progress-section">
+                        <div class="progress-section-title">🔥 连续学习天数</div>
+                        <div style="display:flex;align-items:center;gap:15px">
+                            <span style="font-size:24px;font-weight:600;color:var(--pmi-dark)" id="streakDays">0</span>
+                            <span style="color:#888">天</span>
+                        </div>
+                        <div class="streak-calendar" id="streakCalendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 薄弱点分析 Modal -->
+    <div class="modal-overlay" id="analysisModalOverlay" style="display:none">
+        <div class="modal-content" style="max-width:900px;">
+            <div class="modal-header" style="background:linear-gradient(135deg, #7c3aed, #6d28d9); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3>📊 薄弱点分析 | Weakness Analysis</h3>
+                    <p style="font-size: 12px; opacity: 0.9; margin-top: 4px;">AI 驱动的学习诊断与建议</p>
+                </div>
+                <button class="modal-close" onclick="closeAnalysisModal()" style="position: static; width: 30px; height: 30px;">×</button>
+            </div>
+            <div class="modal-body" id="analysisModalBody" style="padding: 20px;">
+                <!-- 由 JS 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 模拟考试 Modal -->
+    <div class="modal-overlay" id="examModalOverlay" style="display:none">
+        <div class="modal-content" style="max-width:1200px; height: 90vh;">
+            <div class="modal-header" style="background:linear-gradient(135deg, #dc2626, #b91c1c); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3>📝 模拟考试 | Mock Exam</h3>
+                    <p style="font-size: 12px; opacity: 0.9; margin-top: 4px;">180 题 · 230 分钟 · PMP 全真模拟</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; font-weight: 700; color: #fff;" id="examTimer">230:00</div>
+                        <div style="font-size: 11px; opacity: 0.8;">剩余时间</div>
+                    </div>
+                    <button class="modal-close" onclick="closeExamModal()" style="position: static; width: 30px; height: 30px;">×</button>
+                </div>
+            </div>
+            <div class="modal-body" id="examModalBody" style="padding: 0; display: flex; height: calc(90vh - 80px);">
+                <!-- 左侧：题号导航 -->
+                <div style="width: 280px; background: #f5f5f5; border-right: 1px solid #e0e0e0; overflow-y: auto; padding: 15px;">
+                    <div style="margin-bottom: 15px;">
+                        <button onclick="startExam()" id="startExamBtn" style="width: 100%; padding: 12px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">🚀 开始考试</button>
+                        <button onclick="submitExam()" id="submitExamBtn" style="width: 100%; padding: 12px; background: #dc2626; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; display: none;">📤 交卷</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;" id="examQuestionNav">
+                        <!-- 题号按钮由 JS 生成 -->
+                    </div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px;">
+                            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></span>当前</span>
+                            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #e5e7eb; border: 1px solid #d1d5db; border-radius: 2px;"></span>未答</span>
+                            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></span>已答</span>
+                            <span style="display: flex; align-items: center; gap: 4px;"><span style="width: 12px; height: 12px; background: #fbbf24; border-radius: 2px;"></span>标记</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 中间：题目区域 -->
+                <div style="flex: 1; overflow-y: auto; padding: 20px;">
+                    <div id="examQuestionArea">
+                        <div style="text-align: center; padding: 60px 20px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
+                            <h3 style="color: var(--pmi-dark); margin-bottom: 10px;">PMP 全真模拟考试</h3>
+                            <p style="color: #666; margin-bottom: 20px;">共 180 题，考试时间 230 分钟</p>
+                            <ul style="text-align: left; max-width: 500px; margin: 0 auto; color: #555; line-height: 2;">
+                                <li>✅ 涵盖项目管理所有知识领域</li>
+                                <li>✅ 包含情境题、计算题、概念题</li>
+                                <li>✅ 答题后可查看详细解析</li>
+                                <li>✅ 自动计算分数和能力分析</li>
+                            </ul>
+                            <button onclick="startExam()" style="margin-top: 30px; padding: 15px 40px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);">
+                                🚀 开始考试
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 右侧：标记/笔记 -->
+                <div style="width: 250px; background: #fafafa; border-left: 1px solid #e0e0e0; padding: 15px; overflow-y: auto;">
+                    <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--pmi-dark);">📌 标记题目</h4>
+                    <div id="examMarkedList" style="font-size: 13px; color: #666;">
+                        <p>暂无标记题目</p>
+                    </div>
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #e0e0e0;">
+                        <h4 style="font-size: 14px; margin-bottom: 10px; color: var(--pmi-dark);">📝 笔记</h4>
+                        <textarea id="examNote" style="width: 100%; height: 150px; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; resize: none;" placeholder="在此记录重要信息..."></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1678,22 +2265,33 @@
             if (!container) return;
 
             if (checkPremiumStatus()) {
-                container.innerHTML = '';
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="ad-banner">
-                    <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
-                    <div class="ad-banner-title">广告 · Ad</div>
-                    <div class="ad-banner-content">
-                        🎯 想要去除广告？<br>
-                        <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
-                            👑 升级专业版
+                // Premium 用户显示高级功能入口
+                container.innerHTML = `
+                    <div style="padding:10px;background:linear-gradient(135deg, #f5f5f5, #e8e8e8);border-radius:8px;margin-bottom:10px">
+                        <div style="font-size:13px;font-weight:600;color:var(--pmi-dark);margin-bottom:10px">📚 高级功能</div>
+                        <button onclick="openWrongBookModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📝</span> 错题本
+                        </button>
+                        <button onclick="openProgressCenterModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📊</span> 学习进度
                         </button>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // 非 Premium 用户显示广告
+                container.innerHTML = `
+                    <div class="ad-banner">
+                        <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
+                        <div class="ad-banner-title">广告 · Ad</div>
+                        <div class="ad-banner-content">
+                            🎯 想要去除广告？<br>
+                            <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
+                                👑 升级专业版
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         // =====================================================
@@ -2193,6 +2791,196 @@
                 performanceDomains: ['干系人', '交付', '测量']
             }
         ];
+
+        // =====================================================
+        // 扩展题库 - 400+ 题目
+        // 结构：category (类别) | categoryId (类别 ID) | question | options | correct | explanation | difficulty
+        // =====================================================
+        const questionBank = [
+            // ========== 12 项原则题库 (每项 10 题，共 120 题) ==========
+            // 原则 1: 管家式管理
+            { id: 'P1_Q1', category: 'principle', categoryId: 1, question: '管家式管理原则要求项目经理如何对待项目资源？', options: ['A. 尽可能节省使用，即使影响质量', 'B. 像管家一样负责任地管理和使用', 'C. 全部用完以确保项目成功', 'D. 只关注预算内的资源'], correct: 1, explanation: '管家式管理要求项目经理像管家一样，负责任地管理项目资源，平衡效率和质量。', difficulty: 'easy' },
+            { id: 'P1_Q2', category: 'principle', categoryId: 1, question: '以下哪项不是管家式管理的核心要素？', options: ['A. 诚信行事', 'B. 关怀团队', 'C. 追求个人利益', 'D. 建立信任'], correct: 2, explanation: '管家式管理强调诚信、关怀和信任，追求个人利益与此原则相悖。', difficulty: 'easy' },
+            { id: 'P1_Q3', category: 'principle', categoryId: 1, question: '当项目出现问题时，管家式管理者应该？', options: ['A. 隐瞒问题直到找到解决方案', 'B. 立即推卸责任给团队', 'C. 如实汇报并带领团队解决', 'D. 等待上级发现再处理'], correct: 2, explanation: '管家式管理者要诚信面对问题，主动承担责任并带领团队解决。', difficulty: 'medium' },
+            { id: 'P1_Q4', category: 'principle', categoryId: 1, question: '管家式管理中的"管家"一词强调的是？', options: ['A. 权力', 'B. 责任', 'C. 利益', 'D. 地位'], correct: 1, explanation: '"管家"强调的是对项目资源和结果的责任感，而非权力或地位。', difficulty: 'easy' },
+            { id: 'P1_Q5', category: 'principle', categoryId: 1, question: '以下哪种行为体现了管家式管理？', options: ['A. 只完成分内工作', 'B. 主动为项目长远利益考虑', 'C. 等待指令才行动', 'D. 只关注短期目标'], correct: 1, explanation: '管家式管理者要超越分内工作，为项目的长远利益主动思考和行动。', difficulty: 'medium' },
+            { id: 'P1_Q6', category: 'principle', categoryId: 1, question: '管家式管理要求项目经理在决策时考虑？', options: ['A. 仅项目目标', 'B. 仅个人发展', 'C. 所有干系人的利益', 'D. 仅上级要求'], correct: 2, explanation: '管家式管理要求全面考虑所有干系人的利益，做出平衡的决策。', difficulty: 'medium' },
+            { id: 'P1_Q7', category: 'principle', categoryId: 1, question: '关于管家式管理中的信任，以下说法正确的是？', options: ['A. 信任是天然存在的', 'B. 信任需要通过言行一致来建立', 'C. 信任与项目管理无关', 'D. 信任只存在于团队内部'], correct: 1, explanation: '信任需要通过持续的诚信行为和一致表现来建立，是管家式管理的基础。', difficulty: 'easy' },
+            { id: 'P1_Q8', category: 'principle', categoryId: 1, question: '管家式管理者在面对道德困境时应该？', options: ['A. 选择对公司最有利的', 'B. 选择最容易的', 'C. 坚持道德和诚信原则', 'D. 等待他人决定'], correct: 2, explanation: '管家式管理者要坚持道德和诚信原则，即使这可能会带来短期困难。', difficulty: 'medium' },
+            { id: 'P1_Q9', category: 'principle', categoryId: 1, question: '以下哪项是管家式管理对团队的态度？', options: ['A. 严格管控', 'B. 放任自流', 'C. 关怀和支持', 'D. 只关注绩效'], correct: 2, explanation: '管家式管理强调关怀团队成员，支持他们的成长和发展。', difficulty: 'easy' },
+            { id: 'P1_Q10', category: 'principle', categoryId: 1, question: '管家式管理的最终目标是？', options: ['A. 完成项目任务', 'B. 实现项目价值并维护干系人利益', 'C. 获得个人晋升', 'D. 最小化成本'], correct: 1, explanation: '管家式管理的最终目标是通过负责任的管理实现项目价值，同时维护所有干系人的利益。', difficulty: 'hard' },
+
+            // 原则 2: 团队协作
+            { id: 'P2_Q1', category: 'principle', categoryId: 2, question: '团队协作原则的核心是？', options: ['A. 个人能力最大化', 'B. 创建协作的环境', 'C. 严格的等级制度', 'D. 独立工作'], correct: 1, explanation: '团队协作原则强调创建一个人人能够贡献、相互支持的协作环境。', difficulty: 'easy' },
+            { id: 'P2_Q2', category: 'principle', categoryId: 2, question: '以下哪项不是有效团队协作的特征？', options: ['A. 开放沟通', 'B. 知识共享', 'C. 相互指责', 'D. 相互支持'], correct: 2, explanation: '相互指责破坏团队信任，与有效协作背道而驰。', difficulty: 'easy' },
+            { id: 'P2_Q3', category: 'principle', categoryId: 2, question: '在跨时区团队中，促进协作的最佳做法是？', options: ['A. 要求所有人同一时间工作', 'B. 建立共享知识库和灵活会议时间', 'C. 只依靠邮件沟通', 'D. 减少沟通频率'], correct: 1, explanation: '跨时区团队需要通过共享知识库和灵活的会议安排来促进协作。', difficulty: 'medium' },
+            { id: 'P2_Q4', category: 'principle', categoryId: 2, question: '团队规范应该由谁制定？', options: ['A. 项目经理独自制定', 'B. 团队成员共同制定', 'C. 上级领导制定', 'D. 不需要规范'], correct: 1, explanation: '团队规范由成员共同制定能够增强认同感和执行力。', difficulty: 'medium' },
+            { id: 'P2_Q5', category: 'principle', categoryId: 2, question: '以下哪项最有利于团队知识共享？', options: ['A. 竞争排名', 'B. 经验教训总结会', 'C. 保密文化', 'D. 个人奖励'], correct: 1, explanation: '经验教训总结会为团队提供分享和学习的机会，促进知识共享。', difficulty: 'easy' },
+            { id: 'P2_Q6', category: 'principle', categoryId: 2, question: '当团队成员出现冲突时，项目经理应该？', options: ['A. 立即处罚', 'B. 忽视不管', 'C. 促进沟通并寻求共识', 'D. 调换岗位'], correct: 2, explanation: '项目经理应该促进冲突各方的沟通，帮助达成共识，维护团队协作。', difficulty: 'medium' },
+            { id: 'P2_Q7', category: 'principle', categoryId: 2, question: '团队凝聚力的来源不包括？', options: ['A. 共同目标', 'B. 相互信任', 'C. 有效沟通', 'D. 严格监控'], correct: 3, explanation: '严格监控会破坏信任，不利于团队凝聚力。', difficulty: 'medium' },
+            { id: 'P2_Q8', category: 'principle', categoryId: 2, question: '以下哪种沟通方式最适合团队协作？', options: ['A. 只使用正式文档', 'B. 多层次、多渠道沟通', 'C. 仅靠会议沟通', 'D. 避免直接沟通'], correct: 1, explanation: '多层次、多渠道的沟通能够满足不同场景需求，促进团队协作。', difficulty: 'easy' },
+            { id: 'P2_Q9', category: 'principle', categoryId: 2, question: '虚拟团队协作的最大挑战是？', options: ['A. 技术问题', 'B. 缺乏面对面交流', 'C. 工作时间', 'D. 语言障碍'], correct: 1, explanation: '缺乏面对面交流会影响信任建立和非正式沟通，是虚拟团队的主要挑战。', difficulty: 'medium' },
+            { id: 'P2_Q10', category: 'principle', categoryId: 2, question: '团队建设活动的主要目的是？', options: ['A. 消耗时间', 'B. 增强凝聚力和信任', 'C. '娱乐放松', 'D. 展示领导能力'], correct: 1, explanation: '团队建设活动旨在增强成员间的凝聚力和信任，改善协作效果。', difficulty: 'easy' },
+
+            // 原则 3: 干系人参与
+            { id: 'P3_Q1', category: 'principle', categoryId: 3, question: '干系人参与的首要步骤是？', options: ['A. 发送项目报告', 'B. 识别所有干系人', 'C. 召开项目会议', 'D. 制定沟通计划'], correct: 1, explanation: '在有效参与之前，必须先全面识别所有干系人。', difficulty: 'easy' },
+            { id: 'P3_Q2', category: 'principle', categoryId: 3, question: '以下哪项不是干系人？', options: ['A. 项目发起人', 'B. 最终用户', 'C. 竞争对手', 'D. 项目团队成员'], correct: 2, explanation: '竞争对手通常不被视为项目干系人，因为他们不直接影响或被项目影响。', difficulty: 'medium' },
+            { id: 'P3_Q3', category: 'principle', categoryId: 3, question: '干系人参与度评估矩阵用于？', options: ['A. 计算干系人数量', 'B. 分析干系人当前和期望参与水平', 'C. 制定预算', 'D. 分配任务'], correct: 1, explanation: '该矩阵用于分析干系人当前参与水平与期望水平的差距，制定相应策略。', difficulty: 'medium' },
+            { id: 'P3_Q4', category: 'principle', categoryId: 3, question: '对于高影响力、高利益的干系人，应该？', options: ['A. 保持观察', 'B. 定期告知', 'C. 重点管理、密切合作', 'D. 最小化接触'], correct: 2, explanation: '高影响力、高利益的干系人对项目成功至关重要，需要重点管理和密切合作。', difficulty: 'medium' },
+            { id: 'P3_Q5', category: 'principle', categoryId: 3, question: '干系人参与的主要目的是？', options: ['A. 完成任务', 'B. 获得持续支持和承诺', 'C. 减少会议', 'D. 增加预算'], correct: 1, explanation: '干系人参与的核心是获得他们的持续支持和承诺，确保项目成功。', difficulty: 'easy' },
+            { id: 'P3_Q6', category: 'principle', categoryId: 3, question: '以下哪种方法最适合收集干系人需求？', options: ['A. 问卷调查', 'B. 一对一访谈', 'C. 焦点小组', 'D. 以上都是'], correct: 3, explanation: '多种方法结合使用可以全面收集干系人需求。', difficulty: 'easy' },
+            { id: 'P3_Q7', category: 'principle', categoryId: 3, question: '干系人登记册应该包含？', options: ['A. 仅姓名和联系方式', 'B. 干系人信息、期望、影响力等', 'C. 仅职位和部门', 'D. 仅参与历史'], correct: 1, explanation: '干系人登记册应包含全面信息，包括基本信息、期望、影响力、分类等。', difficulty: 'medium' },
+            { id: 'P3_Q8', category: 'principle', categoryId: 3, question: '当干系人需求发生冲突时，应该？', options: ['A. 忽略冲突', 'B. 优先满足发起人需求', 'C. 寻求平衡和共识', 'D. 推迟决策'], correct: 2, explanation: '项目经理需要通过沟通和协商，在冲突的需求间寻求平衡和共识。', difficulty: 'medium' },
+            { id: 'P3_Q9', category: 'principle', categoryId: 3, question: '干系人参与计划应该何时更新？', options: ['A. 项目启动时', 'B. 整个项目期间定期更新', 'C. 项目结束时', 'D. 不需要更新'], correct: 1, explanation: '干系人可能随项目进展而变化，参与计划需要定期审查和更新。', difficulty: 'medium' },
+            { id: 'P3_Q10', category: 'principle', categoryId: 3, question: '有效的干系人参与可以带来以下所有好处，除了？', options: ['A. 减少阻力', 'B. 增加支持', 'C. 提高成功率', 'D. 消除所有风险'], correct: 3, explanation: '干系人参与可以减少风险和阻力，但无法消除所有风险。', difficulty: 'hard' },
+
+            // 原则 4-12 题库（精简版，每项 5 题，共 45 题）
+            // 原则 4: 价值聚焦
+            { id: 'P4_Q1', category: 'principle', categoryId: 4, question: '价值聚焦原则强调项目的所有决策应围绕？', options: ['A. 完成任务', 'B. 价值最大化', 'C. 控制成本', 'D. 遵循计划'], correct: 1, explanation: '价值聚焦原则要求所有决策围绕价值最大化，确保项目成果能够带来实际收益。', difficulty: 'easy' },
+            { id: 'P4_Q2', category: 'principle', categoryId: 4, question: '当资源有限时，价值聚焦要求优先？', options: ['A. 平均分配资源', 'B. 优先高价值功能', 'C. 按任务顺序分配', 'D. 满足所有需求'], correct: 1, explanation: '价值聚焦要求资源有限时优先交付高价值成果。', difficulty: 'medium' },
+            { id: 'P4_Q3', category: 'principle', categoryId: 4, question: '项目价值的度量应该？', options: ['A. 仅关注财务指标', 'B. 在项目结束后进行', 'C. 持续跟踪和验证', 'D. 由领导决定'], correct: 2, explanation: '价值度量应该持续进行，确保项目始终朝着价值创造方向前进。', difficulty: 'medium' },
+            { id: 'P4_Q4', category: 'principle', categoryId: 4, question: '以下哪项不是价值聚焦的体现？', options: ['A. 砍掉低价值功能', 'B. 优先交付核心功能', 'C. 完成所有计划任务', 'D. 跟踪商业收益'], correct: 2, explanation: '盲目完成所有任务不考虑价值，与价值聚焦原则相悖。', difficulty: 'medium' },
+            { id: 'P4_Q5', category: 'principle', categoryId: 4, question: '价值交付的最终责任人是？', options: ['A. 项目经理', 'B. 发起人', 'C. 整个项目团队', 'D. 客户'], correct: 2, explanation: '价值交付是整个项目团队的共同责任，需要协作实现。', difficulty: 'hard' },
+
+            // 原则 5: 系统思考
+            { id: 'P5_Q1', category: 'principle', categoryId: 5, question: '系统思考要求项目经理？', options: ['A. 只关注项目内部', 'B. 从全局视角理解关联', 'C. 忽略外部影响', 'D. 专注于细节'], correct: 1, explanation: '系统思考要求从全局视角理解项目与组织其他系统的关联和影响。', difficulty: 'easy' },
+            { id: 'P5_Q2', category: 'principle', categoryId: 5, question: '以下哪项不是系统思考的要素？', options: ['A. 整体视角', 'B. 相互关联', 'C. 孤立分析', 'D. 反馈循环'], correct: 2, explanation: '系统思考强调整体性和关联性，孤立分析与其相反。', difficulty: 'easy' },
+            { id: 'P5_Q3', category: 'principle', categoryId: 5, question: '系统边界的作用是？', options: ['A. 限制项目范围', 'B. 明确系统与外部环境的分界', 'C. 减少工作量', 'D. 增加文档'], correct: 1, explanation: '系统边界用于明确系统与外部环境的分界，帮助理解交互关系。', difficulty: 'medium' },
+            { id: 'P5_Q4', category: 'principle', categoryId: 5, question: '系统思考中反馈循环的作用是？', options: ['A. 增加工作量', 'B. 及时调整和改进', 'C. '推迟决策', 'D. 记录问题'], correct: 1, explanation: '反馈循环帮助项目团队及时了解情况并做出调整。', difficulty: 'medium' },
+            { id: 'P5_Q5', category: 'principle', categoryId: 5, question: '应用系统思考可以？', options: ['A. 增加项目成本', 'B. 减少集成冲突和返工', 'C. 延长项目周期', 'D. 增加文档数量'], correct: 1, explanation: '系统思考通过提前识别依赖关系，可以减少集成阶段的冲突和返工。', difficulty: 'medium' },
+
+            // 原则 6: 变革推动
+            { id: 'P6_Q1', category: 'principle', categoryId: 6, question: '变革推动原则认为项目成功的关键是？', options: ['A. 按时交付', 'B. 帮助人员顺利过渡', 'C. 控制成本', 'D. 完成文档'], correct: 1, explanation: '变革推动原则强调项目成功不仅是交付成果，更要帮助人员顺利过渡实现价值。', difficulty: 'easy' },
+            { id: 'P6_Q2', category: 'principle', categoryId: 6, question: '变革阻力主要来自？', options: ['A. 技术问题', 'B. 人员对未知的恐惧', 'C. 预算不足', 'D. 时间紧张'], correct: 1, explanation: '变革阻力主要来自人员对变化的恐惧和不确定性。', difficulty: 'medium' },
+            { id: 'P6_Q3', category: 'principle', categoryId: 6, question: '减少变革阻力的有效方法是？', options: ['A. 强制执行', 'B. 沟通和参与', 'C. 推迟变革', 'D. 隐瞒信息'], correct: 1, explanation: '通过沟通和参与让人员理解和支持变革，是减少阻力的有效方法。', difficulty: 'easy' },
+            { id: 'P6_Q4', category: 'principle', categoryId: 6, question: '变革曲线的第一阶段通常是？', options: ['A. 接受', 'B. 否认', 'C. 探索', 'D. 承诺'], correct: 1, explanation: '变革曲线通常从否认阶段开始，人员拒绝接受变革现实。', difficulty: 'medium' },
+            { id: 'P6_Q5', category: 'principle', categoryId: 6, question: '项目经理在变革中的角色是？', options: ['A. 执行者', 'B. 推动者和引导者', 'C. 旁观者', 'D. '决策者'], correct: 1, explanation: '项目经理需要推动和引导变革，帮助团队和组织顺利过渡。', difficulty: 'medium' },
+
+            // 原则 7: 裁剪
+            { id: 'P7_Q1', category: 'principle', categoryId: 7, question: '裁剪原则的核心是？', options: ['A. 减少工作量', 'B. 根据项目特点调整方法', 'C. 遵循标准流程', 'D. 最小化成本'], correct: 1, explanation: '裁剪原则强调根据项目的独特性调整方法、工件和流程。', difficulty: 'easy' },
+            { id: 'P7_Q2', category: 'principle', categoryId: 7, question: '裁剪应该考虑的因素不包括？', options: ['A. 项目规模', 'B. 复杂性', 'C. 个人喜好', 'D. 干系人需求'], correct: 2, explanation: '裁剪应基于项目客观特点，而非个人喜好。', difficulty: 'medium' },
+            { id: 'P7_Q3', category: 'principle', categoryId: 7, question: '对于小型简单项目，应该？', options: ['A. 使用完整流程', 'B. 简化文档和流程', 'C. 增加审批环节', 'D. 延长周期'], correct: 1, explanation: '小型简单项目应该简化文档和流程，避免过度管理。', difficulty: 'easy' },
+            { id: 'P7_Q4', category: 'principle', categoryId: 7, question: '裁剪的决策应该由谁做出？', options: ['A. 仅项目经理', 'B. 项目团队和干系人共同', 'C. 上级领导', 'D. 质量部门'], correct: 1, explanation: '裁剪决策应该由项目团队和相关干系人共同做出，确保合理性。', difficulty: 'medium' },
+            { id: 'P7_Q5', category: 'principle', categoryId: 7, question: '裁剪的结果应该？', options: ['A. 记录并沟通', 'B. 保密', 'C. 口头通知', 'D. 不需要记录'], correct: 0, explanation: '裁剪决策和结果应该记录并与干系人沟通，确保理解和执行。', difficulty: 'easy' },
+
+            // 原则 8: 质量
+            { id: 'P8_Q1', category: 'principle', categoryId: 8, question: '质量原则强调质量应该？', options: ['A. 最后检查', 'B. 内建到过程和交付物中', 'C. 由 QA 负责', 'D. '仅关注最终产品'], correct: 1, explanation: '质量原则要求将质量内建到所有过程和交付物中，而非仅靠最后检查。', difficulty: 'easy' },
+            { id: 'P8_Q2', category: 'principle', categoryId: 8, question: '质量成本包括？', options: ['A. 仅测试成本', 'B. 预防成本和失败成本', 'C. 仅返工成本', 'D. 仅检验成本'], correct: 1, explanation: '质量成本包括预防成本（培训、规划）和失败成本（返工、延误）。', difficulty: 'medium' },
+            { id: 'P8_Q3', category: 'principle', categoryId: 8, question: '持续改进是质量管理的核心理念，它强调？', options: ['A. 一次做好', 'B. 不断寻求改进机会', 'C. 达到标准即可', 'D. 减少变化'], correct: 1, explanation: '持续改进要求不断寻求改进机会，追求更高水平。', difficulty: 'medium' },
+            { id: 'P8_Q4', category: 'principle', categoryId: 8, question: '以下哪项不是预防成本？', options: ['A. 质量培训', 'B. '返工', 'C. 质量规划', 'D. 流程改进'], correct: 1, explanation: '返工属于失败成本，不是预防成本。', difficulty: 'medium' },
+            { id: 'P8_Q5', category: 'principle', categoryId: 8, question: '质量审计的主要目的是？', options: ['A. 找出错误', 'B. 评估过程是否符合要求', 'C. 处罚责任人', 'D. 增加文档'], correct: 1, explanation: '质量审计用于评估过程是否符合要求，识别改进机会。', difficulty: 'medium' },
+
+            // 原则 9: 复杂性
+            { id: 'P9_Q1', category: 'principle', categoryId: 9, question: '项目复杂性的来源不包括？', options: ['A. 人类行为', 'B. 系统交互', 'C. 环境变化', 'D. 明确的需求'], correct: 3, explanation: '明确的需求减少复杂性，不是复杂性的来源。', difficulty: 'medium' },
+            { id: 'P9_Q2', category: 'principle', categoryId: 9, question: '应对复杂性的有效方法是？', options: ['A. 详细计划', 'B. 迭代和增量方法', 'C. 增加资源', 'D. '延长周期'], correct: 1, explanation: '迭代和增量方法可以帮助团队在复杂环境中快速适应和学习。', difficulty: 'medium' },
+            { id: 'P9_Q3', category: 'principle', categoryId: 9, question: '复杂项目的最佳管理方式是？', options: ['A. 严格控制', 'B. 经验式过程控制', 'C. 遵循固定流程', 'D. 减少沟通'], correct: 1, explanation: '复杂项目需要经验式过程控制，通过透明、检查和适应来管理。', difficulty: 'hard' },
+            { id: 'P9_Q4', category: 'principle', categoryId: 9, question: 'VUCA 环境指的是？', options: ['A. 稳定、确定、简单、清晰', 'B. 易变、不确定、复杂、模糊', 'C. 快速、高效、优质、低成本', 'D. '计划、执行、检查、行动'], correct: 1, explanation: 'VUCA 代表 Volatile（易变）、Uncertain（不确定）、Complex（复杂）、Ambiguous（模糊）。', difficulty: 'medium' },
+            { id: 'P9_Q5', category: 'principle', categoryId: 9, question: '在复杂环境中，项目经理应该？', options: ['A. 坚持原计划', 'B. 拥抱变化并快速适应', 'C. 减少干系人参与', 'D. '增加文档'], correct: 1, explanation: '复杂环境要求项目经理拥抱变化，通过快速适应来应对不确定性。', difficulty: 'medium' },
+
+            // 原则 10: 机会与风险
+            { id: 'P10_Q1', category: 'principle', categoryId: 10, question: '风险管理的目标是？', options: ['A. 消除所有风险', 'B. 最大化机会、最小化威胁', 'C. 避免所有变化', 'D. 增加预算'], correct: 1, explanation: '风险管理的目标是平衡风险和机会，最大化积极影响，最小化消极影响。', difficulty: 'easy' },
+            { id: 'P10_Q2', category: 'principle', categoryId: 10, question: '风险登记册应该？', options: ['A. 项目启动时创建后不再更新', 'B. 整个项目期间持续更新', 'C. 项目结束时创建', 'D. 仅记录高风险'], correct: 1, explanation: '风险登记册需要在整个项目期间持续审查和更新。', difficulty: 'medium' },
+            { id: 'P10_Q3', category: 'principle', categoryId: 10, question: '风险应对策略不包括？', options: ['A. 规避', 'B. 转移', 'C. 忽视', 'D. 减轻'], correct: 2, explanation: '忽视不是有效的风险应对策略。', difficulty: 'easy' },
+            { id: 'P10_Q4', category: 'principle', categoryId: 10, question: '机会的应对策略包括？', options: ['A. 开拓', 'B. 分享', 'C. 提高', 'D. 以上都是'], correct: 3, explanation: '机会的应对策略包括开拓、分享、提高和接受。', difficulty: 'medium' },
+            { id: 'P10_Q5', category: 'principle', categoryId: 10, question: '残余风险是指？', options: ['A. 未识别的风险', 'B. 应对后仍然存在的风险', 'C. 已发生的风险', 'D. 次要风险'], correct: 1, explanation: '残余风险是采取应对措施后仍然存在的风险。', difficulty: 'hard' },
+
+            // 原则 11: 适应性与韧性
+            { id: 'P11_Q1', category: 'principle', categoryId: 11, question: '适应性项目团队的特点是？', options: ['A. 严格按计划执行', 'B. 快速响应变化', 'C. 拒绝新需求', 'D. 减少沟通'], correct: 1, explanation: '适应性团队能够快速响应变化，灵活调整方向。', difficulty: 'easy' },
+            { id: 'P11_Q2', category: 'principle', categoryId: 11, question: '韧性是指团队？', options: ['A. 从不失败', 'B. 从挫折中恢复的能力', 'C. 避免风险', 'D. 按计划执行'], correct: 1, explanation: '韧性是团队从挫折和困难中恢复并继续前进的能力。', difficulty: 'medium' },
+            { id: 'P11_Q3', category: 'principle', categoryId: 11, question: '建立团队韧性的方法不包括？', options: ['A. 建立信任', 'B. 鼓励学习', 'C. 责备失败', 'D. '提供支持'], correct: 2, explanation: '责备失败会破坏心理安全感，不利于建立韧性。', difficulty: 'medium' },
+            { id: 'P11_Q4', category: 'principle', categoryId: 11, question: '短迭代周期的好处是？', options: ['A. 增加文档', 'B. 快速获得反馈并调整', 'C. 减少沟通', 'D. '增加成本'], correct: 1, explanation: '短迭代可以让团队快速获得反馈，及时调整方向。', difficulty: 'medium' },
+            { id: 'P11_Q5', category: 'principle', categoryId: 11, question: '适应性与以下哪项最相关？', options: ['A. 计划驱动', 'B. 变更控制', 'C. 敏捷思维', 'D. 文档管理'], correct: 2, explanation: '适应性是敏捷思维的核心特征之一。', difficulty: 'easy' },
+
+            // 原则 12: 可持续性
+            { id: 'P12_Q1', category: 'principle', categoryId: 12, question: '可持续性包括哪三个维度？', options: ['A. 时间、成本、质量', 'B. 经济、环境、社会', 'C. 计划、执行、监控', 'D. '风险、机会、问题'], correct: 1, explanation: '可持续性包括经济、环境和社会三个维度，也称为三重底线。', difficulty: 'easy' },
+            { id: 'P12_Q2', category: 'principle', categoryId: 12, question: '项目可持续性要求？', options: ['A. 仅关注短期收益', 'B. 考虑长期影响', 'C. 忽略环境影响', 'D. 最小化成本'], correct: 1, explanation: '可持续性要求考虑项目的长期影响，而非仅短期收益。', difficulty: 'easy' },
+            { id: 'P12_Q3', category: 'principle', categoryId: 12, question: 'ESG 指的是？', options: ['A. 效率、速度、收益', 'B. 环境、社会、治理', 'C. 工程、销售、财务', 'D. '计划、执行、收尾'], correct: 1, explanation: 'ESG 代表 Environmental（环境）、Social（社会）、Governance（治理）。', difficulty: 'medium' },
+            { id: 'P12_Q4', category: 'principle', categoryId: 12, question: '项目团队可以通过以下方式支持可持续性，除了？', options: ['A. 减少浪费', 'B. 使用环保材料', 'C. 加班赶工', 'D. 考虑社区影响'], correct: 2, explanation: '过度加班不利于团队成员的可持续发展和福祉。', difficulty: 'medium' },
+            { id: 'P12_Q5', category: 'principle', categoryId: 12, question: '可持续项目管理的最终目标是？', options: ['A. 完成项目', 'B. 为干系人创造持久价值', 'C. 最小化成本', 'D. 最大化利润'], correct: 1, explanation: '可持续项目管理旨在为所有干系人创造持久的经济、环境和社会价值。', difficulty: 'medium' },
+
+            // ========== 7 个绩效域题库 (每域 5 题，共 35 题) ==========
+            // 绩效域 1: 项目治理
+            { id: 'D1_Q1', category: 'domain', categoryId: 1, question: '项目治理绩效域主要关注？', options: ['A. 代码质量', 'B. 项目 oversight 和决策', 'C. 团队管理', 'D. 进度控制'], correct: 1, explanation: '项目治理关注项目的监督、控制和决策机制。', difficulty: 'easy' },
+            { id: 'D1_Q2', category: 'domain', categoryId: 1, question: '治理委员会的主要职责是？', options: ['A. 编写代码', 'B. 做出关键决策和提供指导', 'C. 日常任务分配', 'D. 测试产品'], correct: 1, explanation: '治理委员会负责关键决策、资源审批和项目指导。', difficulty: 'easy' },
+            { id: 'D1_Q3', category: 'domain', categoryId: 1, question: '阶段审查 (Phase Gate) 的目的是？', options: ['A. 增加文档', 'B. 评估是否继续下一阶段', 'C. 延误进度', 'D. 增加成本'], correct: 1, explanation: '阶段审查用于评估项目是否满足进入下一阶段的条件。', difficulty: 'medium' },
+            { id: 'D1_Q4', category: 'domain', categoryId: 1, question: '有效的治理结构应该？', options: ['A. 过于复杂', 'B. 与项目规模相匹配', 'C. 完全集中', 'D. 完全分散'], correct: 1, explanation: '治理结构应该与项目规模、复杂性和风险相匹配。', difficulty: 'medium' },
+            { id: 'D1_Q5', category: 'domain', categoryId: 1, question: '治理框架不包括以下哪项？', options: ['A. 决策权限', 'B. 报告机制', 'C. 技术架构', 'D. 升级流程'], correct: 2, explanation: '技术架构属于技术决策，不是治理框架的核心内容。', difficulty: 'medium' },
+
+            // 绩效域 2: 团队
+            { id: 'D2_Q1', category: 'domain', categoryId: 2, question: '团队绩效域关注的是？', options: ['A. 个人表现', 'B. 团队整体效能', 'C. 领导能力', 'D. 技术技能'], correct: 1, explanation: '团队绩效域关注团队整体效能，而非仅个人表现。', difficulty: 'easy' },
+            { id: 'D2_Q2', category: 'domain', categoryId: 2, question: '高效团队的特征是？', options: ['A. 各自为政', 'B. 共同目标和相互信任', 'C. 严格等级', 'D. 最小沟通'], correct: 1, explanation: '高效团队有共同目标、相互信任和有效沟通。', difficulty: 'easy' },
+            { id: 'D2_Q3', category: 'domain', categoryId: 2, question: '塔克曼团队发展模型的"风暴"阶段特点是？', options: ['A. 高度协作', 'B. 冲突和对抗', 'C. 稳定执行', 'D. 解散分离'], correct: 1, explanation: '风暴阶段团队成员可能出现冲突和对抗，需要有效管理。', difficulty: 'medium' },
+            { id: 'D2_Q4', category: 'domain', categoryId: 2, question: '团队建设活动最适合何时进行？', options: ['A. 仅在执行阶段', 'B. 整个项目期间持续', 'C. 项目结束时', 'D. 项目启动时'], correct: 1, explanation: '团队建设应该贯穿整个项目生命周期。', difficulty: 'medium' },
+            { id: 'D2_Q5', category: 'domain', categoryId: 2, question: '虚拟团队管理的最大挑战是？', options: ['A. 技术工具', 'B. 建立信任和沟通', 'C. 工作时间', 'D. 语言能力'], correct: 1, explanation: '虚拟团队缺乏面对面交流，建立信任是最大挑战。', difficulty: 'medium' },
+
+            // 绩效域 3: 开发方法与生命周期
+            { id: 'D3_Q1', category: 'domain', categoryId: 3, question: '预测型方法适用于？', options: ['A. 需求频繁变化', 'B. 需求明确变更少', 'C. 高不确定性项目', 'D. 创新研发'], correct: 1, explanation: '预测型 (瀑布) 方法适用于需求明确、变更少的项目。', difficulty: 'easy' },
+            { id: 'D3_Q2', category: 'domain', categoryId: 3, question: '敏捷方法的核心是？', options: ['A. 详细文档', 'B. 迭代交付和响应变化', 'C. 严格计划', 'D. 阶段审查'], correct: 1, explanation: '敏捷方法强调迭代交付和快速响应变化。', difficulty: 'easy' },
+            { id: 'D3_Q3', category: 'domain', categoryId: 3, question: '混合型方法是？', options: ['A. 仅敏捷', 'B. 仅预测型', 'C. 结合预测和敏捷', 'D. 不用方法'], correct: 2, explanation: '混合型方法结合预测型和敏捷方法的元素。', difficulty: 'easy' },
+            { id: 'D3_Q4', category: 'domain', categoryId: 3, question: '选择开发方法不考虑？', options: ['A. 项目复杂性', 'B. 团队偏好', 'C. 干系人需求', 'D. 个人星座'], correct: 3, explanation: '星座与开发方法选择无关。', difficulty: 'easy' },
+            { id: 'D3_Q5', category: 'domain', categoryId: 3, question: '生命周期应该何时定义？', options: ['A. 项目结束时', 'B. 项目早期并可调整', 'C. 由外部强制', 'D. 保持不变'], correct: 1, explanation: '生命周期应在早期定义，但可根据需要调整。', difficulty: 'medium' },
+
+            // 绩效域 4: 规划
+            { id: 'D4_Q1', category: 'domain', categoryId: 4, question: '规划绩效域的主要输出是？', options: ['A. 可交付成果', 'B. 项目计划', 'C. 测试报告', 'D. 验收文档'], correct: 1, explanation: '规划绩效域的主要输出是各种项目计划。', difficulty: 'easy' },
+            { id: 'D4_Q2', category: 'domain', categoryId: 4, question: '渐进明细是指？', options: ['A. 一次规划所有', 'B. 逐步完善计划', 'C. 不规划', 'D. 仅规划第一阶段'], correct: 1, explanation: '渐进明细是随着信息增加逐步完善计划。', difficulty: 'medium' },
+            { id: 'D4_Q3', category: 'domain', categoryId: 4, question: 'WBS 是什么？', options: ['A. 工作分解结构', 'B. 时间分解结构', 'C. 成本分解结构', 'D. 风险分解结构'], correct: 0, explanation: 'WBS 是工作分解结构 (Work Breakdown Structure)。', difficulty: 'easy' },
+            { id: 'D4_Q4', category: 'domain', categoryId: 4, question: '规划应该由谁参与？', options: ['A. 仅项目经理', 'B. 团队和关键干系人', 'C. 仅发起人', 'D. 外部顾问'], correct: 1, explanation: '规划应由团队和关键干系人共同参与。', difficulty: 'medium' },
+            { id: 'D4_Q5', category: 'domain', categoryId: 4, question: '滚动式规划的特点是？', options: ['A. 规划所有阶段', 'B. 近期详细远期粗略', 'C. 不规划远期', 'D. 仅规划第一周'], correct: 1, explanation: '滚动式规划对近期详细规划，远期粗略规划。', difficulty: 'medium' },
+
+            // 绩效域 5: 交付
+            { id: 'D5_Q1', category: 'domain', categoryId: 5, question: '交付绩效域关注？', options: ['A. 过程文档', 'B. 可交付成果的范围和价值', 'C. 团队规模', 'D. 会议效率'], correct: 1, explanation: '交付绩效域关注可交付成果的范围、质量和价值。', difficulty: 'easy' },
+            { id: 'D5_Q2', category: 'domain', categoryId: 5, question: '范围蔓延是指？', options: ['A. 范围清晰', 'B. 未经控制的范围增加', 'C. 范围减少', 'D. 范围变更流程'], correct: 1, explanation: '范围蔓延是未经控制的范围增加。', difficulty: 'easy' },
+            { id: 'D5_Q3', category: 'domain', categoryId: 5, question: '变更请求应该？', options: ['A. 直接实施', 'B. 通过变更控制流程', 'C. 忽略', 'D. 推迟到结束'], correct: 1, explanation: '所有变更应通过正式变更控制流程审批。', difficulty: 'easy' },
+            { id: 'D5_Q4', category: 'domain', categoryId: 5, question: 'MVP 是？', options: ['A. 完整产品', 'B. 最小可行产品', 'C. 测试版本', 'D. 原型'], correct: 1, explanation: 'MVP 是具有核心功能的最小产品版本。', difficulty: 'medium' },
+            { id: 'D5_Q5', category: 'domain', categoryId: 5, question: '交付价值由谁定义？', options: ['A. 项目经理', 'B. 客户和发起人', 'C. 开发团队', 'D. 质量部门'], correct: 1, explanation: '价值应由客户和发起人定义。', difficulty: 'medium' },
+
+            // 绩效域 6: 测量
+            { id: 'D6_Q1', category: 'domain', categoryId: 6, question: '测量绩效域的目的是？', options: ['A. 收集数据', 'B. 评估绩效支持决策', 'C. 增加报告', 'D. 监控员工'], correct: 1, explanation: '测量用于评估项目绩效并支持决策。', difficulty: 'easy' },
+            { id: 'D6_Q2', category: 'domain', categoryId: 6, question: 'KPI 是？', options: ['A. 关键过程指标', 'B. 关键绩效指标', 'C. 关键项目指标', 'D. 关键人员指标'], correct: 1, explanation: 'KPI 是关键绩效指标。', difficulty: 'easy' },
+            { id: 'D6_Q3', category: 'domain', categoryId: 6, question: '挣值管理 (EVM) 测量？', options: ['A. 仅成本', 'B. 范围进度成本综合', 'C. 仅进度', 'D. 团队满意度'], correct: 1, explanation: 'EVM 综合测量范围、进度和成本绩效。', difficulty: 'medium' },
+            { id: 'D6_Q4', category: 'domain', categoryId: 6, question: '领先指标？', options: ['A. 反映过去', 'B. 预测未来', 'C. 难以改变', 'D. 仅用于报告'], correct: 1, explanation: '领先指标可预测未来趋势。', difficulty: 'medium' },
+            { id: 'D6_Q5', category: 'domain', categoryId: 6, question: '好的度量指标应该？', options: ['A. 越多越好', 'B. 与目标对齐且可操作', 'C. 仅用于考核', 'D. 由外部定义'], correct: 1, explanation: '好的指标应与目标对齐且可操作。', difficulty: 'medium' },
+
+            // 绩效域 7: 不确定性
+            { id: 'D7_Q1', category: 'domain', categoryId: 7, question: '不确定性绩效域包括？', options: ['A. 仅风险', 'B. 风险和不确定性', 'C. 仅问题', 'D. 仅变更'], correct: 1, explanation: '不确定性绩效域涵盖风险和不确定性。', difficulty: 'easy' },
+            { id: 'D7_Q2', category: 'domain', categoryId: 7, question: '风险和机会的区别？', options: ['A. 风险积极机会消极', 'B. 风险消极机会积极', 'C. 没区别', 'D. 风险确定机会不确定'], correct: 1, explanation: '风险通常指消极事件，机会指积极收益。', difficulty: 'easy' },
+            { id: 'D7_Q3', category: 'domain', categoryId: 7, question: '应急储备用于？', options: ['A. 已知风险', 'B. 未知风险', 'C. 范围变更', 'D. 质量改进'], correct: 0, explanation: '应急储备用于已识别的已知风险。', difficulty: 'medium' },
+            { id: 'D7_Q4', category: 'domain', categoryId: 7, question: '管理储备用于？', options: ['A. 已知风险', 'B. 未知风险', 'C. 日常开销', 'D. 团队奖励'], correct: 1, explanation: '管理储备用于未识别的未知风险。', difficulty: 'medium' },
+            { id: 'D7_Q5', category: 'domain', categoryId: 7, question: '模糊性属于？', options: ['A. 最简单不确定性', 'B. 中等不确定性', 'C. 最复杂', 'D. 不存在'], correct: 1, explanation: '模糊性是中等程度的不确定性。', difficulty: 'hard' },
+
+            // ========== 综合模拟题库 (50 题精选 20 题) ==========
+            { id: 'C_Q1', category: 'comprehensive', categoryId: 0, question: '项目章程的主要作用是？', options: ['A. 详细规划', 'B. 正式授权项目', 'C. 分配资源', 'D. 定义团队'], correct: 1, explanation: '项目章程正式授权项目启动。', difficulty: 'easy' },
+            { id: 'C_Q2', category: 'comprehensive', categoryId: 0, question: '关键路径是？', options: ['A. 最短路径', 'B. 决定最早完成的路径', 'C. 风险最高', 'D. 成本最高'], correct: 1, explanation: '关键路径决定项目最早完成时间。', difficulty: 'medium' },
+            { id: 'C_Q3', category: 'comprehensive', categoryId: 0, question: '项目收尾最重要的是？', options: ['A. 庆祝', 'B. 经验教训总结', 'C. 解散团队', 'D. 归档文档'], correct: 1, explanation: '经验教训总结对组织学习至关重要。', difficulty: 'medium' },
+            { id: 'C_Q4', category: 'comprehensive', categoryId: 0, question: 'CCB 的职责是？', options: ['A. 实施变更', 'B. 审批变更请求', 'C. 识别变更', 'D. 记录变更'], correct: 1, explanation: 'CCB 负责审批或拒绝变更请求。', difficulty: 'easy' },
+            { id: 'C_Q5', category: 'comprehensive', categoryId: 0, question: '项目成功的最终标准是？', options: ['A. 按时完成', 'B. 按预算完成', 'C. 实现预期价值', 'D. 完成所有任务'], correct: 2, explanation: '成功标准是实现预期商业价值。', difficulty: 'medium' },
+            { id: 'C_Q6', category: 'comprehensive', categoryId: 0, question: '敏捷宣言最重视？', options: ['A. 流程工具', 'B. 文档', 'C. 合同', 'D. 个体互动'], correct: 3, explanation: '敏捷宣言重视个体和互动。', difficulty: 'easy' },
+            { id: 'C_Q7', category: 'comprehensive', categoryId: 0, question: 'Scrum PO 的职责是？', options: ['A. 管理团队', 'B. 管理待办事项', 'C. 促进会议', 'D. 编写代码'], correct: 1, explanation: 'PO 负责管理产品待办事项和优先级。', difficulty: 'medium' },
+            { id: 'C_Q8', category: 'comprehensive', categoryId: 0, question: '每日站会时长？', options: ['A. 1 小时', 'B. 30 分钟', 'C. 15 分钟', 'D. 5 分钟'], correct: 2, explanation: 'Scrum 建议站会不超过 15 分钟。', difficulty: 'easy' },
+            { id: 'C_Q9', category: 'comprehensive', categoryId: 0, question: '发起人的主要职责？', options: ['A. 日常管理', 'B. 提供资金和支持', 'C. 编写需求', 'D. 测试产品'], correct: 1, explanation: '发起人提供资金和高层支持。', difficulty: 'easy' },
+            { id: 'C_Q10', category: 'comprehensive', categoryId: 0, question: '项目管理过程组顺序是？', options: ['A. 规划启动执行监控收尾', 'B. 启动规划执行监控收尾', 'C. 启动执行规划监控收尾', 'D. 规划启动监控执行收尾'], correct: 1, explanation: '正确顺序：启动、规划、执行、监控、收尾。', difficulty: 'easy' },
+            { id: 'C_Q11', category: 'comprehensive', categoryId: 0, question: '蒙特卡洛模拟用于？', options: ['A. 定性风险分析', 'B. 定量风险分析', 'C. SWOT 分析', 'D. 头脑风暴'], correct: 1, explanation: '蒙特卡洛是定量风险分析工具。', difficulty: 'hard' },
+            { id: 'C_Q12', category: 'comprehensive', categoryId: 0, question: '沟通管理计划包括？', options: ['A. 仅会议', 'B. 需求频率方式责任人', 'C. 仅模板', 'D. 仅列表'], correct: 1, explanation: '计划应全面定义沟通各方面。', difficulty: 'medium' },
+            { id: 'C_Q13', category: 'comprehensive', categoryId: 0, question: '资源平衡目的是？', options: ['A. 增加资源', 'B. 减少过度分配', 'C. 降低成本', 'D. 加快进度'], correct: 1, explanation: '资源平衡解决过度分配问题。', difficulty: 'medium' },
+            { id: 'C_Q14', category: 'comprehensive', categoryId: 0, question: '质量控制输出不包括？', options: ['A. 核实的可交付成果', 'B. 变更请求', 'C. 工作绩效信息', 'D. 项目章程'], correct: 3, explanation: '项目章程是启动过程输出。', difficulty: 'medium' },
+            { id: 'C_Q15', category: 'comprehensive', categoryId: 0, question: '采购关闭的活动是？', options: ['A. 选择供应商', 'B. 验收并关闭合同', 'C. 谈判合同', 'D. 编制招标文件'], correct: 1, explanation: '采购关闭包括验收和关闭合同。', difficulty: 'medium' },
+            { id: 'C_Q16', category: 'comprehensive', categoryId: 0, question: '整合管理作用是？', options: ['A. 仅协调进度', 'B. 协调所有知识领域', 'C. 仅管理团队', 'D. 仅管理风险'], correct: 1, explanation: '整合管理协调所有知识领域。', difficulty: 'medium' },
+            { id: 'C_Q17', category: 'comprehensive', categoryId: 0, question: '不是团队建设技术的是？', options: ['A. 集中办公', 'B. 培训', 'C. 团建活动', 'D. 个人绩效考核'], correct: 3, explanation: '个人绩效考核可能破坏团队合作。', difficulty: 'medium' },
+            { id: 'C_Q18', category: 'comprehensive', categoryId: 0, question: '绩效报告频率由？', options: ['A. 项目经理决定', 'B. 沟通计划定义', 'C. 团队投票', 'D. 固定每月'], correct: 1, explanation: '频率应在沟通计划中定义。', difficulty: 'easy' },
+            { id: 'C_Q19', category: 'comprehensive', categoryId: 0, question: '启动过程输出是？', options: ['A. 管理计划', 'B. 项目章程', 'C. WBS', 'D. 风险登记册'], correct: 1, explanation: '项目章程是启动过程输出。', difficulty: 'easy' },
+            { id: 'C_Q20', category: 'comprehensive', categoryId: 0, question: 'VUCA 代表？', options: ['A. 稳定确定简单清晰', 'B. 易变不确定复杂模糊', 'C. 快速高效优质低成', 'D. 计划执行检查行动'], correct: 1, explanation: 'VUCA: Volatile Uncertain Complex Ambiguous。', difficulty: 'medium' }
+        ];
+
+        // 从题库随机抽题
+        function getQuestionsFromBank(category, count) {
+            let filtered = questionBank;
+            if (category && category !== 'all') {
+                filtered = questionBank.filter(q => q.category === category);
+            }
+            // 随机打乱并取指定数量
+            const shuffled = [...filtered].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count);
+        }
 
         // =====================================================
         // PMBOK 第 7 版 - 8 个绩效域
@@ -3600,9 +4388,12 @@
             const p = principles.find(x => x.number === number);
             if (!p || !p.quiz) return;
 
+            // 记录学习进度：查看原则
+            trackLearning('view', { principleNumber: number });
+
             const body = document.getElementById('quizModalBody');
             body.innerHTML = `
-                <div class="quiz-container" data-correct="${p.quiz.correct}">
+                <div class="quiz-container" data-correct="${p.quiz.correct}" data-principle-number="${number}">
                     <div class="quiz-question">${p.quiz.question}</div>
                     <div class="quiz-options">
                         ${p.quiz.options.map((opt, i) => `
@@ -3770,6 +4561,20 @@
             const container = button.closest('.quiz-container');
             const options = container.querySelectorAll('.quiz-option');
             const feedback = container.querySelector('.quiz-feedback');
+            const questionText = container.querySelector('.quiz-question')?.textContent || '';
+
+            // 获取当前原则编号
+            const principleNumber = container.dataset?.principleNumber || 1;
+
+            // 记录学习进度（传递更多信息）
+            trackLearning('quiz', {
+                principleNumber: principleNumber,
+                correct: selectedIndex === correctIndex,
+                questionId: `principle_${principleNumber}_quiz`,
+                category: 'principle',
+                categoryId: principleNumber,
+                difficulty: 'medium'  // 原则_quiz 默认为中等难度
+            });
 
             // 禁用所有选项
             options.forEach(opt => opt.style.pointerEvents = 'none');
@@ -3777,15 +4582,1025 @@
             // 显示正确答案
             options[correctIndex].classList.add('correct');
 
-            // 如果选错了，显示错误
+            // 如果选错了，显示错误并记录到错题本
             if (selectedIndex !== correctIndex) {
                 button.classList.add('incorrect');
+                // 记录错题
+                recordWrongAnswer({
+                    id: `principle_${principleNumber}_quiz`,
+                    principleNumber: principleNumber,
+                    question: questionText,
+                    userAnswer: selectedIndex,
+                    correctAnswer: correctIndex,
+                    explanation: explanation,
+                    options: Array.from(options).map(opt => opt.textContent)
+                });
             }
 
             // 显示反馈
             feedback.textContent = (selectedIndex === correctIndex ? '✅ 正确！' : '❌ 错误。') + ' ' + explanation;
             feedback.classList.add(selectedIndex === correctIndex ? 'correct' : 'incorrect');
             feedback.style.display = 'block';
+        }
+
+        // =====================================================
+        // 错题本功能
+        // =====================================================
+
+        // 获取错题本数据
+        function getWrongBookData() {
+            const data = localStorage.getItem('pmbok7_wrong_book');
+            return data ? JSON.parse(data) : { wrongAnswers: [], history: [] };
+        }
+
+        // 保存错题本数据
+        function saveWrongBookData(data) {
+            localStorage.setItem('pmbok7_wrong_book', JSON.stringify(data));
+        }
+
+        // 记录错题
+        function recordWrongAnswer(wrongItem) {
+            const data = getWrongBookData();
+            const existingIndex = data.wrongAnswers.findIndex(item => item.id === wrongItem.id);
+
+            if (existingIndex >= 0) {
+                // 已存在，更新记录
+                data.wrongAnswers[existingIndex].wrongCount += 1;
+                data.wrongAnswers[existingIndex].lastWrongAt = new Date().toISOString();
+                data.wrongAnswers[existingIndex].userAnswer = wrongItem.userAnswer;
+            } else {
+                // 新错题，添加到列表
+                data.wrongAnswers.push({
+                    ...wrongItem,
+                    wrongCount: 1,
+                    lastWrongAt: new Date().toISOString(),
+                    mastered: false
+                });
+            }
+
+            // 添加到历史记录
+            data.history.push({
+                id: wrongItem.id,
+                answeredAt: new Date().toISOString(),
+                correct: false
+            });
+
+            saveWrongBookData(data);
+            console.log('✅ 错题已记录');
+        }
+
+        // 打开错题本
+        function openWrongBookModal() {
+            if (!checkPremiumFeature()) return;
+            renderWrongBookContent('all');
+            document.getElementById('wrongBookModalOverlay').style.display = 'block';
+            setTimeout(() => document.getElementById('wrongBookModalOverlay').classList.add('active'), 10);
+        }
+
+        // 关闭错题本
+        function closeWrongBookModal() {
+            const modal = document.getElementById('wrongBookModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 渲染错题本内容
+        function renderWrongBookContent(filter = 'all') {
+            const data = getWrongBookData();
+            const container = document.getElementById('wrongBookContent');
+            const filterBtns = document.querySelectorAll('.wrong-book-filters .filter-btn');
+
+            // 更新筛选按钮状态
+            filterBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+
+            // 筛选错题
+            let filtered = data.wrongAnswers;
+            if (filter === 'unmastered') {
+                filtered = data.wrongAnswers.filter(item => !item.mastered);
+            } else if (filter === 'mastered') {
+                filtered = data.wrongAnswers.filter(item => item.mastered);
+            }
+
+            // 绑定筛选事件
+            document.querySelectorAll('.wrong-book-filters .filter-btn').forEach(btn => {
+                btn.onclick = () => renderWrongBookContent(btn.dataset.filter);
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#888">
+                        <p style="font-size:16px;margin-bottom:10px">${filter === 'all' ? '🎉 暂无错题' : '🎉 该分类下暂无错题'}</p>
+                        <p style="font-size:13px">开始答题后，做错的题目会自动记录在这里</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="margin-bottom:15px;font-size:13px;color:#888">
+                    共 ${filtered.length} 道错题
+                </div>
+                ${filtered.map((item, index) => `
+                    <div class="wrong-item">
+                        <div class="wrong-item-header">
+                            <span class="wrong-item-source">原则 ${item.principleNumber} · 自测题</span>
+                            <div style="display:flex;align-items:center;gap:8px">
+                                ${item.mastered ? '<span class="mastered-badge">已掌握</span>' : `<span class="wrong-count-badge">做错${item.wrongCount}次</span>`}
+                            </div>
+                        </div>
+                        <div class="wrong-item-question">${item.question}</div>
+                        <div class="wrong-item-stats">
+                            <span>你的答案：${item.options[item.userAnswer]?.substring(0, 20)}...</span>
+                            <span style="color:#28a745">正确答案：${item.options[item.correctAnswer]?.substring(0, 20)}...</span>
+                        </div>
+                        <div class="wrong-item-actions">
+                            <button onclick="retryWrongItem('${item.id}')" class="wrong-item-btn retry">🔄 重做</button>
+                            ${!item.mastered ? `<button onclick="markAsMastered('${item.id}')" class="wrong-item-btn mastered">✅ 已掌握</button>` : ''}
+                            <button onclick="deleteWrongItem('${item.id}')" class="wrong-item-btn delete">🗑️ 删除</button>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // 重做错题
+        function retryWrongItem(itemId) {
+            const data = getWrongBookData();
+            const item = data.wrongAnswers.find(w => w.id === itemId);
+            if (!item) return;
+
+            // 打开原题
+            openQuizModal(item.principleNumber);
+        }
+
+        // 标记为已掌握
+        function markAsMastered(itemId) {
+            const data = getWrongBookData();
+            const item = data.wrongAnswers.find(w => w.id === itemId);
+            if (!item) return;
+
+            item.mastered = true;
+            saveWrongBookData(data);
+            renderWrongBookContent('all');
+            showToast('已标记为已掌握', 'success');
+        }
+
+        // 删除错题
+        function deleteWrongItem(itemId) {
+            if (!confirm('确定要删除这道错题吗？')) return;
+
+            const data = getWrongBookData();
+            data.wrongAnswers = data.wrongAnswers.filter(w => w.id !== itemId);
+            saveWrongBookData(data);
+            renderWrongBookContent('all');
+            showToast('已删除', 'success');
+        }
+
+        // 全部重做
+        function retryAllWrong() {
+            const data = getWrongBookData();
+            if (data.wrongAnswers.length === 0) {
+                showToast('暂无错题', 'info');
+                return;
+            }
+            showToast(`共有 ${data.wrongAnswers.length} 道错题，请逐一重做`, 'info');
+        }
+
+        // =====================================================
+        // 学习进度追踪功能
+        // =====================================================
+
+        // 获取学习进度数据
+        function getLearningProgressData() {
+            const data = localStorage.getItem('pmbok7_learning_progress');
+            return data ? JSON.parse(data) : {
+                principlesViewed: [],
+                quizzesCompleted: 0,
+                quizzesCorrect: 0,
+                totalTimeSpent: 0,
+                lastStudyAt: null,
+                streakDays: 0,
+                streakHistory: [],
+                principles: {},
+                quizHistory: []  // 新增：答题历史记录
+            };
+        }
+
+        // 保存学习进度数据
+        function saveLearningProgressData(data) {
+            localStorage.setItem('pmbok7_learning_progress', JSON.stringify(data));
+        }
+
+        // 追踪学习行为
+        function trackLearning(action, details) {
+            const data = getLearningProgressData();
+            const now = new Date();
+            const today = now.toDateString();
+
+            // 更新最后学习时间
+            data.lastStudyAt = now.toISOString();
+
+            // 更新学习时长（简单估计：每次学习 2 分钟）
+            if (action === 'view') {
+                data.totalTimeSpent += 120;
+                if (details.principleNumber && !data.principlesViewed.includes(details.principleNumber)) {
+                    data.principlesViewed.push(details.principleNumber);
+                }
+            } else if (action === 'quiz') {
+                data.quizzesCompleted += 1;
+                if (details.correct) {
+                    data.quizzesCorrect += 1;
+                }
+                if (details.principleNumber) {
+                    if (!data.principles[details.principleNumber]) {
+                        data.principles[details.principleNumber] = { viewed: true, quizCorrect: 0, quizTotal: 0 };
+                    }
+                    data.principles[details.principleNumber].quizTotal += 1;
+                    if (details.correct) {
+                        data.principles[details.principleNumber].quizCorrect += 1;
+                    }
+                }
+                // 记录答题历史（用于薄弱点分析）
+                data.quizHistory.push({
+                    questionId: details.questionId || `principle_${details.principleNumber}_quiz`,
+                    category: details.category || 'principle',
+                    categoryId: details.categoryId || details.principleNumber,
+                    difficulty: details.difficulty || 'medium',
+                    correct: details.correct,
+                    answeredAt: now.toISOString()
+                });
+                // 只保留最近 500 条记录
+                if (data.quizHistory.length > 500) {
+                    data.quizHistory = data.quizHistory.slice(-500);
+                }
+            }
+
+            // 更新连续学习天数
+            const lastDate = data.lastStudyAt ? new Date(data.lastStudyAt).toDateString() : null;
+            if (lastDate !== today) {
+                const yesterday = new Date(now.getTime() - 86400000).toDateString();
+                if (lastDate === yesterday) {
+                    data.streakDays += 1;
+                } else if (lastDate !== today) {
+                    data.streakDays = 1;
+                }
+                data.streakHistory.push({ date: today, studied: true });
+            }
+
+            saveLearningProgressData(data);
+        }
+
+        // 打开学习进度中心
+        function openProgressCenterModal() {
+            if (!checkPremiumFeature()) return;
+            renderProgressContent();
+            document.getElementById('progressCenterModalOverlay').style.display = 'block';
+            setTimeout(() => document.getElementById('progressCenterModalOverlay').classList.add('active'), 10);
+        }
+
+        // 关闭学习进度中心
+        function closeProgressCenterModal() {
+            const modal = document.getElementById('progressCenterModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 渲染学习进度内容
+        function renderProgressContent() {
+            const data = getLearningProgressData();
+
+            // 计算统计数据
+            const totalHours = (data.totalTimeSpent / 3600).toFixed(1);
+            const accuracy = data.quizzesCompleted > 0
+                ? Math.round((data.quizzesCorrect / data.quizzesCompleted) * 100)
+                : 0;
+
+            // 更新统计卡片
+            document.getElementById('totalStudyTime').textContent = `${totalHours}h`;
+            document.getElementById('totalQuizzes').textContent = data.quizzesCompleted;
+            document.getElementById('accuracyRate').textContent = `${accuracy}%`;
+            document.getElementById('streakDays').textContent = data.streakDays;
+
+            // 渲染原则进度条
+            const principlesContainer = document.getElementById('principlesProgressBar');
+            let principlesHtml = '';
+            for (let i = 1; i <= 12; i++) {
+                const p = data.principles[i] || { viewed: false, quizCorrect: 0, quizTotal: 0 };
+                const viewed = data.principlesViewed.includes(i);
+                const progress = p.quizTotal > 0 ? Math.round((p.quizCorrect / p.quizTotal) * 100) : 0;
+                const status = viewed ? (p.quizCorrect > 0 ? '已学习' : '已查看') : '未学习';
+
+                principlesHtml += `
+                    <div style="margin-bottom:12px">
+                        <div class="progress-item">
+                            <span>原则 ${i}</span>
+                            <span style="color:#888">${status} ${p.quizTotal > 0 ? `· 正确率${progress}%` : ''}</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${viewed ? (progress || 20)}%"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            principlesContainer.innerHTML = principlesHtml;
+
+            // 渲染连续学习日历（简单版：显示最近 7 天）
+            const calendarContainer = document.getElementById('streakCalendar');
+            const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
+            const today = new Date();
+            let calendarHtml = '';
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today.getTime() - i * 86400000);
+                const dateStr = date.toDateString();
+                const studied = data.streakHistory.some(h => new Date(h.date).toDateString() === dateStr);
+                const isToday = i === 0;
+                const dayName = weekDays[date.getDay() === 0 ? 6 : date.getDay() - 1];
+
+                calendarHtml += `
+                    <div class="streak-day ${studied ? 'active' : ''} ${isToday ? 'today' : ''}">
+                        <div style="text-align:center">
+                            <div style="font-size:8px;color:#888">${dayName}</div>
+                            <div style="font-weight:600">${date.getDate()}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            calendarContainer.innerHTML = calendarHtml;
+        }
+
+        // Premium 功能检查
+        function checkPremiumFeature() {
+            if (!isPremiumUser) {
+                showPremiumModal();
+                return false;
+            }
+            return true;
+        }
+
+        // Toast 提示（新增）
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // =====================================================
+        // 模拟考试功能
+        // =====================================================
+        let examState = {
+            questions: [],
+            answers: {},
+            marked: [],
+            currentQuestion: 0,
+            timer: null,
+            timeLeft: 230 * 60, // 230 分钟
+            started: false,
+            submitted: false
+        };
+
+        // 打开模拟考试
+        function openExamModal() {
+            if (!checkPremiumFeature()) return;
+            document.getElementById('examModalOverlay').style.display = 'block';
+            setTimeout(() => document.getElementById('examModalOverlay').classList.add('active'), 10);
+            resetExamState();
+        }
+
+        // 关闭模拟考试
+        function closeExamModal() {
+            if (examState.started && !examState.submitted) {
+                if (!confirm('考试正在进行，确定要退出吗？进度将丢失。')) return;
+            }
+            stopExamTimer();
+            const modal = document.getElementById('examModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 重置考试状态
+        function resetExamState() {
+            examState = {
+                questions: [],
+                answers: {},
+                marked: [],
+                currentQuestion: 0,
+                timer: null,
+                timeLeft: 230 * 60,
+                started: false,
+                submitted: false
+            };
+            document.getElementById('examQuestionArea').innerHTML = `
+                <div style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 48px; margin-bottom: 20px;">📝</div>
+                    <h3 style="color: var(--pmi-dark); margin-bottom: 10px;">PMP 全真模拟考试</h3>
+                    <p style="color: #666; margin-bottom: 20px;">共 180 题，考试时间 230 分钟</p>
+                    <ul style="text-align: left; max-width: 500px; margin: 0 auto; color: #555; line-height: 2;">
+                        <li>✅ 涵盖项目管理所有知识领域</li>
+                        <li>✅ 包含情境题、计算题、概念题</li>
+                        <li>✅ 答题后可查看详细解析</li>
+                        <li>✅ 自动计算分数和能力分析</li>
+                    </ul>
+                    <button onclick="startExam()" style="margin-top: 30px; padding: 15px 40px; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);">
+                        🚀 开始考试
+                    </button>
+                </div>
+            `;
+            document.getElementById('examQuestionNav').innerHTML = '';
+            document.getElementById('startExamBtn').style.display = 'block';
+            document.getElementById('submitExamBtn').style.display = 'none';
+            updateExamTimerDisplay();
+        }
+
+        // 开始考试
+        function startExam() {
+            // 从题库随机抽取 180 题
+            const allQuestions = [...questionBank].sort(() => Math.random() - 0.5);
+            examState.questions = allQuestions.slice(0, 180);
+            examState.started = true;
+
+            // 显示开始按钮和交卷按钮
+            document.getElementById('startExamBtn').style.display = 'none';
+            document.getElementById('submitExamBtn').style.display = 'block';
+
+            // 生成题号导航
+            renderExamNavigation();
+
+            // 显示第一题
+            showExamQuestion(0);
+
+            // 启动计时器
+            startExamTimer();
+
+            showToast('考试开始！祝你好运！', 'success');
+        }
+
+        // 渲染题号导航
+        function renderExamNavigation() {
+            const nav = document.getElementById('examQuestionNav');
+            let html = '';
+            for (let i = 0; i < examState.questions.length; i++) {
+                const isAnswered = examState.answers[i] !== undefined;
+                const isMarked = examState.marked.includes(i);
+                const isCurrent = i === examState.currentQuestion;
+
+                let className = 'exam-nav-btn';
+                let style = '';
+
+                if (isCurrent) {
+                    style = 'background: #3b82f6; color: white; border-color: #3b82f6;';
+                } else if (isMarked) {
+                    style = 'background: #fbbf24; border-color: #fbbf24;';
+                } else if (isAnswered) {
+                    style = 'background: #3b82f6; color: white; border-color: #3b82f6;';
+                }
+
+                html += `<button class="exam-nav-btn" style="width: 36px; height: 36px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; cursor: pointer; ${style}" onclick="showExamQuestion(${i})">${i + 1}</button>`;
+            }
+            nav.innerHTML = html;
+        }
+
+        // 显示题目
+        function showExamQuestion(index) {
+            if (index < 0 || index >= examState.questions.length) return;
+
+            examState.currentQuestion = index;
+            const question = examState.questions[index];
+            const area = document.getElementById('examQuestionArea');
+            const isMarked = examState.marked.includes(index);
+
+            area.innerHTML = `
+                <div class="exam-question-card">
+                    <div class="exam-question-header">
+                        <span style="font-size: 14px; color: #888;">第 ${index + 1} 题 / 共 ${examState.questions.length} 题</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="exam-mark-btn ${isMarked ? 'marked' : ''}" onclick="toggleExamMark(${index})">
+                                📌 ${isMarked ? '已标记' : '标记'}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="exam-question-text">${index + 1}. ${question.question}</div>
+                    <div class="exam-options">
+                        ${question.options.map((opt, i) => `
+                            <div class="exam-option ${examState.answers[index] === i ? 'selected' : ''}" onclick="selectExamAnswer(${index}, ${i})">
+                                <div class="exam-option-radio"></div>
+                                <span>${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="exam-question-footer">
+                        <button class="exam-question-nav-btn" onclick="prevExamQuestion()" ${index === 0 ? 'disabled' : ''}>⬅️ 上一题</button>
+                        <span style="color: #888; font-size: 13px;">${question.difficulty === 'easy' ? '简单' : question.difficulty === 'medium' ? '中等' : '困难'}</span>
+                        <button class="exam-question-nav-btn" onclick="nextExamQuestion()" ${index === examState.questions.length - 1 ? 'disabled' : ''}>下一题 ➡️</button>
+                    </div>
+                </div>
+            `;
+
+            // 更新导航
+            renderExamNavigation();
+        }
+
+        // 选择答案
+        function selectExamAnswer(questionIndex, answerIndex) {
+            examState.answers[questionIndex] = answerIndex;
+            showExamQuestion(questionIndex);
+        }
+
+        // 上一题
+        function prevExamQuestion() {
+            if (examState.currentQuestion > 0) {
+                showExamQuestion(examState.currentQuestion - 1);
+            }
+        }
+
+        // 下一题
+        function nextExamQuestion() {
+            if (examState.currentQuestion < examState.questions.length - 1) {
+                showExamQuestion(examState.currentQuestion + 1);
+            }
+        }
+
+        // 标记题目
+        function toggleExamMark(index) {
+            const markIndex = examState.marked.indexOf(index);
+            if (markIndex >= 0) {
+                examState.marked.splice(markIndex, 1);
+            } else {
+                examState.marked.push(index);
+            }
+            showExamQuestion(index);
+            updateExamMarkedList();
+        }
+
+        // 更新标记列表
+        function updateExamMarkedList() {
+            const list = document.getElementById('examMarkedList');
+            if (examState.marked.length === 0) {
+                list.innerHTML = '<p>暂无标记题目</p>';
+            } else {
+                list.innerHTML = examState.marked.map(i =>
+                    `<button onclick="showExamQuestion(${i})" style="width: 32px; height: 32px; background: #fbbf24; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; margin: 2px;">${i + 1}</button>`
+                ).join('');
+            }
+        }
+
+        // 启动计时器
+        function startExamTimer() {
+            stopExamTimer();
+            examState.timer = setInterval(() => {
+                examState.timeLeft--;
+                updateExamTimerDisplay();
+
+                if (examState.timeLeft <= 0) {
+                    stopExamTimer();
+                    submitExam();
+                }
+            }, 1000);
+        }
+
+        // 停止计时器
+        function stopExamTimer() {
+            if (examState.timer) {
+                clearInterval(examState.timer);
+                examState.timer = null;
+            }
+        }
+
+        // 更新计时器显示
+        function updateExamTimerDisplay() {
+            const minutes = Math.floor(examState.timeLeft / 60);
+            const seconds = examState.timeLeft % 60;
+            document.getElementById('examTimer').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 交卷
+        function submitExam() {
+            if (!confirm('确定要交卷吗？交卷后将显示成绩。')) return;
+
+            stopExamTimer();
+            examState.submitted = true;
+
+            // 计算成绩
+            let correct = 0;
+            let wrong = 0;
+            let unanswered = 0;
+
+            examState.questions.forEach((q, i) => {
+                if (examState.answers[i] === undefined) {
+                    unanswered++;
+                } else if (examState.answers[i] === q.correct) {
+                    correct++;
+                } else {
+                    wrong++;
+                }
+                // 记录答题历史
+                trackLearning('quiz', {
+                    questionId: q.id,
+                    category: q.category,
+                    categoryId: q.categoryId,
+                    difficulty: q.difficulty,
+                    correct: examState.answers[i] === q.correct
+                });
+            });
+
+            const score = Math.round((correct / examState.questions.length) * 100);
+
+            // 显示成绩
+            showExamResult(score, correct, wrong, unanswered);
+        }
+
+        // 显示成绩
+        function showExamResult(score, correct, wrong, unanswered) {
+            const area = document.getElementById('examQuestionArea');
+            const passed = score >= 70;
+
+            area.innerHTML = `
+                <div class="exam-result-card">
+                    <div style="font-size: 48px; margin-bottom: 10px;">${passed ? '🎉' : '📚'}</div>
+                    <h2 style="color: var(--pmi-dark); margin-bottom: 10px;">${passed ? '恭喜通过！' : '继续努力！'}</h2>
+                    <p style="color: #888;">${passed ? '你已经具备了 PMP 考试的能力！' : '建议继续复习，重点强化薄弱环节。'}</p>
+
+                    <div class="exam-result-score">${score}%</div>
+
+                    <div class="exam-result-stats">
+                        <div class="exam-stat-card">
+                            <div class="exam-stat-value" style="color: #22c55e;">${correct}</div>
+                            <div class="exam-stat-label">正确题目</div>
+                        </div>
+                        <div class="exam-stat-card">
+                            <div class="exam-stat-value" style="color: #dc2626;">${wrong}</div>
+                            <div class="exam-stat-label">错误题目</div>
+                        </div>
+                        <div class="exam-stat-card">
+                            <div class="exam-stat-value" style="color: #f59e0b;">${unanswered}</div>
+                            <div class="exam-stat-label">未答题目</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+                        <button onclick="reviewExamAnswers()" style="padding: 12px 30px; background: var(--pmi-blue); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">📖 查看解析</button>
+                        <button onclick="resetExam()" style="padding: 12px 30px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">🔄 重新考试</button>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('submitExamBtn').style.display = 'none';
+        }
+
+        // 查看答案
+        function reviewExamAnswers() {
+            // 切换到第一题，让用户可以逐一查看
+            showExamQuestion(0);
+            showToast('请使用上下题按钮逐一查看解析', 'info');
+        }
+
+        // 重新考试
+        function resetExam() {
+            resetExamState();
+        }
+
+        // 在侧边栏添加考试入口（Premium 用户）
+        function renderSidebarAd() {
+            const container = document.getElementById('sidebarAdContainer');
+            if (!container) return;
+
+            if (checkPremiumStatus()) {
+                // Premium 用户显示高级功能入口
+                container.innerHTML = `
+                    <div style="padding:10px;background:linear-gradient(135deg, #f5f5f5, #e8e8e8);border-radius:8px;margin-bottom:10px">
+                        <div style="font-size:13px;font-weight:600;color:var(--pmi-dark);margin-bottom:10px">📚 高级功能</div>
+                        <button onclick="openWrongBookModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📝</span> 错题本
+                        </button>
+                        <button onclick="openProgressCenterModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📊</span> 学习进度
+                        </button>
+                        <button onclick="openExamModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📝</span> 模拟考试
+                        </button>
+                        <button onclick="openAnalysisModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>🎯</span> 薄弱点分析
+                        </button>
+                    </div>
+                `;
+            } else {
+                // 非 Premium 用户显示广告
+                container.innerHTML = `
+                    <div class="ad-banner">
+                        <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
+                        <div class="ad-banner-title">广告 · Ad</div>
+                        <div class="ad-banner-content">
+                            🎯 想要去除广告？<br>
+                            <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
+                                👑 升级专业版
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // =====================================================
+        // 薄弱点分析功能
+        // =====================================================
+
+        // 打开薄弱点分析
+        function openAnalysisModal() {
+            if (!checkPremiumFeature()) return;
+            document.getElementById('analysisModalOverlay').style.display = 'block';
+            setTimeout(() => document.getElementById('analysisModalOverlay').classList.add('active'), 10);
+            renderAnalysisContent();
+        }
+
+        // 关闭薄弱点分析
+        function closeAnalysisModal() {
+            const modal = document.getElementById('analysisModalOverlay');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 渲染分析内容
+        function renderAnalysisContent() {
+            const learningData = getLearningProgressData();
+            const wrongBookData = getWrongBookData();
+
+            // 按领域分析
+            const domainAnalysis = analyzeByDomain(learningData, wrongBookData);
+            // 按难度分析
+            const difficultyAnalysis = analyzeByDifficulty(learningData, wrongBookData);
+            // 时间趋势
+            const trendAnalysis = analyzeTimeTrend(learningData);
+            // 生成建议
+            const recommendations = generateRecommendations(domainAnalysis, difficultyAnalysis);
+
+            const container = document.getElementById('analysisModalBody');
+            container.innerHTML = `
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; color: var(--pmi-dark); margin-bottom: 15px;">📊 总体概览</h3>
+                    <div class="analysis-overview-grid">
+                        <div class="analysis-card">
+                            <div class="analysis-card-title">📚 总答题数</div>
+                            <div style="font-size: 32px; font-weight: 700; color: var(--pmi-blue);">${learningData.quizHistory?.length || 0}</div>
+                            <div style="font-size: 13px; color: #888; margin-top: 5px;">累计完成题目</div>
+                        </div>
+                        <div class="analysis-card">
+                            <div class="analysis-card-title">✅ 正确率</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #22c55e;">${calculateOverallAccuracy(learningData)}%</div>
+                            <div style="font-size: 13px; color: #888; margin-top: 5px;">平均正确率</div>
+                        </div>
+                        <div class="analysis-card">
+                            <div class="analysis-card-title">📝 错题数量</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #dc2626;">${wrongBookData.wrongAnswers?.filter(w => !w.mastered).length || 0}</div>
+                            <div style="font-size: 13px; color: #888; margin-top: 5px;">待掌握题目</div>
+                        </div>
+                        <div class="analysis-card">
+                            <div class="analysis-card-title">🔥 连续学习</div>
+                            <div style="font-size: 32px; font-weight: 700; color: #f59e0b;">${learningData.streakDays || 0}天</div>
+                            <div style="font-size: 13px; color: #888; margin-top: 5px;">持续学习天数</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; color: var(--pmi-dark); margin-bottom: 15px;">📈 按领域正确率分析</h3>
+                    <div class="analysis-card">
+                        <div class="chart-container">
+                            ${renderDomainChart(domainAnalysis)}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; color: var(--pmi-dark); margin-bottom: 15px;">⚠️ 薄弱领域</h3>
+                    ${renderWeaknesses(domainAnalysis)}
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h3 style="font-size: 16px; color: var(--pmi-dark); margin-bottom: 15px;">💡 个性化学习建议</h3>
+                    ${renderRecommendations(recommendations)}
+                </div>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="closeAnalysisModal()" style="padding: 12px 40px; background: var(--pmi-blue); color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        关闭
+                    </button>
+                </div>
+            `;
+        }
+
+        // 按领域分析
+        function analyzeByDomain(learningData, wrongBookData) {
+            const domains = [
+                { id: 1, name: '原则 1-价值', key: 'principle_1' },
+                { id: 2, name: '原则 2-团队', key: 'principle_2' },
+                { id: 3, name: '原则 3-环境', key: 'principle_3' },
+                { id: 4, name: '原则 4-规划', key: 'principle_4' },
+                { id: 5, name: '原则 5-风险', key: 'principle_5' },
+                { id: 6, name: '原则 6-适应', key: 'principle_6' },
+                { id: 7, name: '原则 7-干系人', key: 'principle_7' },
+                { id: 8, name: '原则 8-协作', key: 'principle_8' },
+                { id: 9, name: '原则 9-整合', key: 'principle_9' },
+                { id: 10, name: '原则 10-质量', key: 'principle_10' },
+                { id: 11, name: '原则 11-复杂', key: 'principle_11' },
+                { id: 12, name: '原则 12-定制', key: 'principle_12' },
+                { id: 13, name: '人员绩效域', key: 'domain_1' },
+                { id: 14, name: '团队绩效域', key: 'domain_2' },
+                { id: 15, name: '开发方法绩效域', key: 'domain_3' },
+                { id: 16, name: '规划绩效域', key: 'domain_4' },
+                { id: 17, name: '项目工作绩效域', key: 'domain_5' },
+                { id: 18, name: '交付绩效域', key: 'domain_6' },
+                { id: 19, name: '测量绩效域', key: 'domain_7' }
+            ];
+
+            const analysis = domains.map(domain => {
+                const history = learningData.quizHistory || [];
+                const domainQuestions = history.filter(q => {
+                    if (q.category === 'principle' && domain.key.startsWith('principle')) {
+                        return q.categoryId === domain.id;
+                    }
+                    if (q.category === 'domain' && domain.key.startsWith('domain')) {
+                        return q.categoryId === (domain.id - 12);
+                    }
+                    return false;
+                });
+
+                const total = domainQuestions.length;
+                const correct = domainQuestions.filter(q => q.correct).length;
+                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+                return {
+                    ...domain,
+                    total,
+                    correct,
+                    accuracy,
+                    level: accuracy >= 80 ? 'strong' : accuracy >= 60 ? 'intermediate' : 'weak'
+                };
+            });
+
+            return analysis.sort((a, b) => a.accuracy - b.accuracy);
+        }
+
+        // 按难度分析
+        function analyzeByDifficulty(learningData, wrongBookData) {
+            const difficulties = ['easy', 'medium', 'hard'];
+            const analysis = {};
+
+            difficulties.forEach(diff => {
+                const history = learningData.quizHistory || [];
+                const diffQuestions = history.filter(q => q.difficulty === diff);
+                const total = diffQuestions.length;
+                const correct = diffQuestions.filter(q => q.correct).length;
+                const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+                analysis[diff] = {
+                    total,
+                    correct,
+                    accuracy,
+                    level: accuracy >= 80 ? 'strong' : accuracy >= 60 ? 'intermediate' : 'weak'
+                };
+            });
+
+            return analysis;
+        }
+
+        // 时间趋势分析
+        function analyzeTimeTrend(learningData) {
+            const history = learningData.quizHistory || [];
+            const weeks = {};
+
+            history.forEach(q => {
+                const date = new Date(q.answeredAt);
+                const weekKey = date.getFullYear() + '-W' + Math.ceil(date.getDate() / 7);
+                if (!weeks[weekKey]) {
+                    weeks[weekKey] = { total: 0, correct: 0, date: weekKey };
+                }
+                weeks[weekKey].total++;
+                if (q.correct) weeks[weekKey].correct++;
+            });
+
+            return Object.values(weeks).map(w => ({
+                ...w,
+                accuracy: w.total > 0 ? Math.round((w.correct / w.total) * 100) : 0
+            })).sort((a, b) => a.date.localeCompare(b.date)).slice(-6);
+        }
+
+        // 生成建议
+        function generateRecommendations(domainAnalysis, difficultyAnalysis) {
+            const recommendations = [];
+
+            // 找出最弱的 3 个领域
+            const weakDomains = domainAnalysis.filter(d => d.level === 'weak').slice(0, 3);
+            weakDomains.forEach(domain => {
+                recommendations.push({
+                    type: 'weakness',
+                    priority: 'high',
+                    title: `重点强化：${domain.name}`,
+                    desc: `该领域正确率仅${domain.accuracy}%，建议优先复习相关知识点，完成至少 10 道相关练习题。`,
+                    action: 'review'
+                });
+            });
+
+            // 难度建议
+            if (difficultyAnalysis.hard.accuracy < 50 && difficultyAnalysis.hard.total > 5) {
+                recommendations.push({
+                    type: 'difficulty',
+                    priority: 'medium',
+                    title: '挑战高难度题目',
+                    desc: '高难度题目正确率偏低，建议先从中等难度开始，逐步提升后再挑战难题。',
+                    action: 'practice'
+                });
+            }
+
+            // 鼓励
+            const strongDomains = domainAnalysis.filter(d => d.level === 'strong');
+            if (strongDomains.length >= 5) {
+                recommendations.push({
+                    type: 'encouragement',
+                    priority: 'low',
+                    title: '表现优秀！',
+                    desc: `已有${strongDomains.length}个领域达到熟练水平，继续保持！建议将精力转向薄弱环节。`,
+                    action: 'continue'
+                });
+            }
+
+            return recommendations;
+        }
+
+        // 渲染领域图表
+        function renderDomainChart(analysis) {
+            const maxAccuracy = Math.max(...analysis.map(d => d.accuracy), 100);
+
+            return analysis.slice(0, 10).map(domain => {
+                const height = (domain.accuracy / maxAccuracy) * 150;
+                const color = domain.level === 'strong' ? '#22c55e' : domain.level === 'intermediate' ? '#f59e0b' : '#dc2626';
+
+                return `
+                    <div class="chart-bar">
+                        <div class="chart-bar-fill" style="height: ${height}px; background: ${color};"></div>
+                        <div class="chart-bar-label">${domain.name.replace('原则 ', '').replace('绩效域', '')}</div>
+                        <div class="chart-bar-label" style="font-weight: 600;">${domain.accuracy}%</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 渲染薄弱点
+        function renderWeaknesses(analysis) {
+            const weakDomains = analysis.filter(d => d.level === 'weak');
+
+            if (weakDomains.length === 0) {
+                return `
+                    <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
+                        <div style="color: #059669; font-weight: 600;">暂无明显薄弱环节</div>
+                        <div style="color: #888; font-size: 13px; margin-top: 5px;">所有领域正确率均达到 60% 以上</div>
+                    </div>
+                `;
+            }
+
+            return weakDomains.map(domain => `
+                <div class="weakness-item">
+                    <div class="weakness-title">${domain.name} - 正确率 ${domain.accuracy}%</div>
+                    <div class="weakness-desc">
+                        答题数：${domain.total} | 正确：${domain.correct} | 错误：${domain.total - domain.correct}<br>
+                        建议：重点复习该领域相关知识点，推荐完成 10-15 道专项练习题。
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染建议
+        function renderRecommendations(recommendations) {
+            if (recommendations.length === 0) {
+                return `
+                    <div style="padding: 20px; background: #fef3c7; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; margin-bottom: 10px;">📚</div>
+                        <div style="color: #d97706; font-weight: 600;">数据不足，无法分析</div>
+                        <div style="color: #888; font-size: 13px; margin-top: 5px;">请先完成更多练习题后再来查看分析</div>
+                    </div>
+                `;
+            }
+
+            return recommendations.map(rec => `
+                <div class="recommendation-item" style="border-left-color: ${rec.priority === 'high' ? '#dc2626' : rec.priority === 'medium' ? '#f59e0b' : '#16a34a'};">
+                    <div class="recommendation-title">
+                        ${rec.priority === 'high' ? '🔴' : rec.priority === 'medium' ? '🟡' : '🟢'} ${rec.title}
+                    </div>
+                    <div class="recommendation-desc">${rec.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        // 计算总体正确率
+        function calculateOverallAccuracy(learningData) {
+            const history = learningData.quizHistory || [];
+            if (history.length === 0) return 0;
+            const correct = history.filter(q => q.correct).length;
+            return Math.round((correct / history.length) * 100);
         }
 
         // =====================================================
@@ -4295,6 +6110,8 @@
             if (event.target.id === 'caseModalOverlay') closeCaseModal();
             if (event.target.id === 'exampleModalOverlay') closeExampleModal();
             if (event.target.id === 'quizModalOverlay') closeQuizModal();
+            if (event.target.id === 'wrongBookModalOverlay') closeWrongBookModal();
+            if (event.target.id === 'progressCenterModalOverlay') closeProgressCenterModal();
         }
 
         // 初始化拖动功能
