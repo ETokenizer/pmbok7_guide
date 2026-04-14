@@ -1694,6 +1694,13 @@
                     SUPABASE_CONFIG.key
                 );
                 console.log('✅ Supabase 初始化成功');
+                // SDK 加载完成后，立即加载题库
+                loadQuestionBankFromSupabase('all')
+                    .then(() => console.log('✅ 题库初始化完成'))
+                    .catch(e => {
+                        console.warn('Supabase 加载失败，使用备用题库');
+                        questionBank = window.localQuestionBank;
+                    });
             };
             document.head.appendChild(script);
         }
@@ -2867,12 +2874,6 @@
         }
 
         // 本地备用题库（Supabase 不可用时使用）
-        // 注意：为了减小文件大小，这里仅存储部分核心题目作为演示
-        // 完整题库应该存储在 Supabase 数据库中
-        window.localQuestionBank = null; // 设置为 null 表示不使用本地缓存
-
-
-        // 本地备用题库（Supabase 不可用时使用）
         // 仅存储 5 道测试题用于演示 fallback 机制
         window.localQuestionBank = [
             { id: 'TEST_Q1', category: 'principle', categoryId: 1, question: '项目管理的首要原则是？', options: ['A. 按时交付', 'B. 关注价值交付', 'C. 控制成本', 'D. 完成任务'], correct: 1, explanation: 'PMBOK7 强调价值交付是首要原则。', difficulty: 'easy' },
@@ -2882,25 +2883,8 @@
             { id: 'TEST_Q5', category: 'ethics', categoryId: 0, question: '收到供应商贵重礼品，应该？', options: ['A. 接受', 'B. 拒绝或报告', 'C. 转送他人', 'D. 藏起来'], correct: 1, explanation: '应避免利益冲突，拒绝或报告贵重礼品。', difficulty: 'medium' }
         ];
 
-        // 完整题库存储在 Supabase 数据库中
-        // 页面加载时从 Supabase 异步加载
-        const questionBankData = [];
-
-        // 初始化：从 Supabase 加载题库
-        (async function initQuestionBank() {
-            if (window.supabaseClient) {
-                try {
-                    await loadQuestionBankFromSupabase('all');
-                    console.log('✅ 题库初始化完成');
-                } catch (e) {
-                    console.warn('Supabase 加载失败，使用备用题库');
-                    questionBank = window.localQuestionBank;
-                }
-            } else {
-                questionBank = window.localQuestionBank;
-                console.log('使用备用题库（5 道测试题）');
-            }
-        })();
+        // 初始化 questionBank 为空数组，等待 Supabase 加载
+        questionBank = [];
 
         // =====================================================
         // PMBOK 第 7 版 - 8 个绩效域
