@@ -28,8 +28,10 @@
 这将创建：
 - `questions` 表（题目存储）
 - `user_answers` 表（答题记录）
-- 相关索引和 RLS 策略
+- 相关索引
 - 两个辅助函数（随机抽题和统计）
+
+**注意：** RLS 策略已简化，答题记录允许公开读取（仅应用层过滤）。如果需要更严格的控制，可以在应用层实现权限验证。
 
 ### 步骤 2: 导入题目数据
 
@@ -61,8 +63,33 @@ const SUPABASE_CONFIG = {
 
 **获取 Anon Key:**
 1. Supabase Dashboard → Settings → API
-2. 复制 `anon` `public` key
+2. 复制 `anon public` key
 3. 替换上面的 `YOUR_ANON_KEY`
+
+---
+
+## 安全说明
+
+### 当前 RLS 策略
+
+| 表 | 策略 | 说明 |
+|---|---|---|
+| questions | 公开读取（仅 active=true） | 允许所有用户读取启用的题目 |
+| user_answers | 公开插入和读取 | 应用层过滤用户数据 |
+
+### 如需更严格控制
+
+可以在应用层实现 License 验证后，再调用 Supabase API：
+
+```javascript
+// 检查用户 License
+if (!isValidLicense) {
+    throw new Error('未授权访问');
+}
+
+// 然后允许访问题库
+const questions = await loadQuestionBank();
+```
 
 ### 步骤 4: 测试验证
 
