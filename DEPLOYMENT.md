@@ -35,11 +35,29 @@
 
 ### 步骤 2: 导入题目数据
 
+**重要：** 如果是首次导入，直接执行；如果之前已导入过，会跳过已存在的题目。
+
 1. 在同一个 SQL Editor 中
 2. 复制 `questions_migration.sql` 的内容并执行
 3. 等待执行完成（约 3-5 秒）
 
-验证导入：
+**如果遇到"duplicate key"错误：**
+
+说明数据库已有数据，有两种解决方案：
+
+**方案 A - 清空重装（推荐首次部署）:**
+```sql
+-- 先清空表
+TRUNCATE TABLE questions RESTART IDENTITY;
+
+-- 然后重新执行 questions_migration.sql
+```
+
+**方案 B - 跳过已存在（推荐更新题库）:**
+- 使用 `questions_migration.sql` 文件（已包含 `ON CONFLICT DO NOTHING`）
+- 已存在的题目会自动跳过，不会报错
+
+**验证导入：**
 ```sql
 SELECT category, COUNT(*) as count 
 FROM questions 
@@ -48,6 +66,12 @@ ORDER BY category;
 ```
 
 应该看到 25 个分类，共 1001 条记录。
+
+```sql
+-- 快速验证
+SELECT COUNT(*) FROM questions;  -- 应该返回 1001
+SELECT COUNT(*) FROM questions WHERE is_active = true;  -- 应该返回 1001
+```
 
 ### 步骤 3: 配置前端（可选）
 
