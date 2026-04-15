@@ -4014,7 +4014,8 @@
 
             const p = principles.find(x => x.number === number);
             const exampleBtn = p.example ? `<button class="detail-header-btn" onclick="openExampleModal(${p.number})">💼 案例</button>` : '';
-            const quizBtn = p.quiz ? `<button class="detail-header-btn" onclick="openQuizModal(${p.number})">📝 自测</button>` : '';
+            // 自测按钮：从题库中抽取该原则的 5 道题目
+            const quizBtn = `<button class="detail-header-btn" onclick="openQuizModal(${p.number}, 'principle', ${p.number}, '原则 ${p.number} 自测')">📝 自测</button>`;
             document.getElementById('detailSection').innerHTML = `
                 <div class="detail-header">
                     <div style="flex:1;min-width:0">
@@ -4072,9 +4073,14 @@
             const d = performanceDomains.find(x => x.number === number);
             document.getElementById('detailSection').innerHTML = `
                 <div class="detail-header" style="background:linear-gradient(135deg, ${d.color}, ${adjustColor(d.color, 20)})">
-                    <h2><span class="detail-number">绩效域 ${d.number}</span>${d.name}</h2>
-                    <div class="detail-meta">${d.nameEn}</div>
-                    <div class="detail-meta" style="margin-top:8px;font-size:14px">${d.icon} ${d.summary}</div>
+                    <div style="flex:1;min-width:0">
+                        <h2><span class="detail-number">绩效域 ${d.number}</span>${d.name}</h2>
+                        <div class="detail-meta">${d.nameEn}</div>
+                        <div class="detail-meta" style="margin-top:8px;font-size:14px">${d.icon} ${d.summary}</div>
+                    </div>
+                    <div class="detail-header-actions">
+                        <button class="detail-header-btn" onclick="openQuizModal(${d.number}, 'domain', ${d.number}, '绩效域 ${d.number} 自测')">📝 自测</button>
+                    </div>
                 </div>
                 <div class="detail-body">
                     <div class="principle-card" style="border-left-color:${d.color}">
@@ -4152,9 +4158,14 @@
             const p = processes.find(x => x.number === number);
             document.getElementById('detailSection').innerHTML = `
                 <div class="detail-header" style="background:linear-gradient(135deg, ${p.color}, ${adjustColor(p.color, 20)})">
-                    <h2><span class="detail-number">${p.focusArea} | ${p.focusAreaEn}</span>${p.name}</h2>
-                    <div class="detail-meta">${p.nameEn}</div>
-                    <div class="detail-meta" style="margin-top:8px;font-size:14px">${p.icon} 流程 #${p.number}</div>
+                    <div style="flex:1;min-width:0">
+                        <h2><span class="detail-number">${p.focusArea} | ${p.focusAreaEn}</span>${p.name}</h2>
+                        <div class="detail-meta">${p.nameEn}</div>
+                        <div class="detail-meta" style="margin-top:8px;font-size:14px">${p.icon} 流程 #${p.number}</div>
+                    </div>
+                    <div class="detail-header-actions">
+                        <button class="detail-header-btn" onclick="openQuizModal(${p.number}, 'process', ${p.number}, '流程 ${p.number} 自测')">📝 自测</button>
+                    </div>
                 </div>
                 <div class="detail-body">
                     <div class="principle-card" style="border-left-color:${p.color}">
@@ -4287,27 +4298,144 @@
             document.getElementById('exampleModalOverlay').style.display = 'none';
         }
 
-        // 打开自测弹窗
-        function openQuizModal(number) {
-            const p = principles.find(x => x.number === number);
-            if (!p || !p.quiz) return;
+        // 当前自测状态
+        let currentQuizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
 
-            // 记录学习进度：查看原则
-            trackLearning('view', { principleNumber: number });
-
+        // 打开自测弹窗（支持多题模式）
+        // 参数说明：
+        // - number: 原则/绩效域/流程编号
+        // - category: 类别 (principle/domain/process)
+        // - categoryId: 子类别 ID
+        // - title: 自测标题
+        async function openQuizModal(number, category = 'principle', categoryId = null, title = null) {
             const body = document.getElementById('quizModalBody');
-            body.innerHTML = `
-                <div class="quiz-container" data-correct="${p.quiz.correct}" data-principle-number="${number}">
-                    <div class="quiz-question">${p.quiz.question}</div>
+            const quizTitle = title || `自测练习`;
+
+            // 记录学习进度
+            if (category === 'principle' && number) {
+                trackLearning('view', { principleNumber: number });
+            }
+
+            // 从题库中抽取题目
+            let questions = [];
+            if (window.supabaseClient && questionBank.length > 0) {
+                // 从全局题库中筛选
+                questions = questionBank.filter(q => {
+                    if (category && q.category !== category) return false;
+                    if (categoryId !== null && q.categoryId !== categoryId) return false;
+                    return true;
+                });
+            }
+
+            if (questions.length === 0) {
+                // 如果没有找到题目，显示提示
+                body.innerHTML = `
+                    <div style="text-align:center;padding:30px;color:#666">
+                        <div style="font-size:48px;margin-bottom:10px">📚</div>
+                        <div>该分类下暂无题目</div>
+                        <button onclick="closeQuizModal()" style="margin-top:15px;padding:10px 20px;background:#666;color:white;border:none;border-radius:6px;cursor:pointer">关闭</button>
+                    </div>
+                `;
+                document.getElementById('quizModalOverlay').style.display = 'block';
+                return;
+            }
+
+            // 随机抽取 5 题（如果不足 5 题则全取）
+            const shuffled = [...questions].sort(() => Math.random() - 0.5);
+            currentQuizQuestions = shuffled.slice(0, 5);
+            currentQuizIndex = 0;
+            quizScore = 0;
+
+            renderQuizQuestion(body, category, categoryId, quizTitle);
+            document.getElementById('quizModalOverlay').style.display = 'block';
+        }
+
+        // 渲染单道题目
+        function renderQuizQuestion(container, category, categoryId, title) {
+            const q = currentQuizQuestions[currentQuizIndex];
+            if (!q) {
+                // 答题完成，显示结果
+                renderQuizResult(container, title);
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="quiz-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;padding-bottom:10px;border-bottom:1px solid #eee">
+                    <span style="font-size:14px;font-weight:600;color:var(--pmi-dark)">${title}</span>
+                    <span style="font-size:13px;color:#666">第 ${currentQuizIndex + 1}/${currentQuizQuestions.length} 题</span>
+                </div>
+                <div class="quiz-container" data-category="${category}" data-category-id="${categoryId}">
+                    <div class="quiz-question">${q.question}</div>
                     <div class="quiz-options">
-                        ${p.quiz.options.map((opt, i) => `
-                            <button class="quiz-option" onclick="checkAnswer(this, ${i}, ${p.quiz.correct}, '${p.quiz.explanation.replace(/'/g, "\\'")}')">${opt}</button>
-                        `).join('')}
+                        ${q.options.map((opt, i) => {
+                            const optionText = typeof opt === 'string' ? opt : opt.value || opt;
+                            return `<button class="quiz-option" onclick="checkQuizAnswer(this, ${i}, ${q.correct}, '${q.explanation.replace(/'/g, "\\'").replace(/"/g, '&quot;')}')">${optionText}</button>`;
+                        }).join('')}
                     </div>
                     <div class="quiz-feedback" style="display:none"></div>
                 </div>
             `;
-            document.getElementById('quizModalOverlay').style.display = 'block';
+        }
+
+        // 检查答案（多题模式）
+        function checkQuizAnswer(btn, selectedIndex, correctIndex, explanation) {
+            const container = btn.closest('.quiz-container');
+            const feedback = container.querySelector('.quiz-feedback');
+            const options = container.querySelectorAll('.quiz-option');
+
+            // 禁用所有按钮
+            options.forEach(opt => opt.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                btn.classList.add('correct');
+                quizScore++;
+                feedback.innerHTML = `<div style="color:#22c55e;font-weight:600;margin-bottom:8px">✅ 回答正确！</div><div style="color:#666;font-size:14px">${explanation}</div>`;
+            } else {
+                btn.classList.add('wrong');
+                options[correctIndex].classList.add('correct');
+                feedback.innerHTML = `<div style="color:#dc2626;font-weight:600;margin-bottom:8px">❌ 回答错误</div><div style="color:#666;font-size:14px">${explanation}</div>`;
+            }
+
+            feedback.style.display = 'block';
+
+            // 1.5 秒后进入下一题
+            setTimeout(() => {
+                currentQuizIndex++;
+                const body = document.getElementById('quizModalBody');
+                const title = body.querySelector('.quiz-header span')?.textContent || '自测练习';
+                renderQuizQuestion(body, container.dataset.category, parseInt(container.dataset.categoryId), title);
+            }, 2000);
+        }
+
+        // 显示答题结果
+        function renderQuizResult(container, title) {
+            const percentage = Math.round((quizScore / currentQuizQuestions.length) * 100);
+            let message = '';
+            let color = '';
+
+            if (percentage >= 80) {
+                message = '🎉 太棒了！继续保持！';
+                color = '#22c55e';
+            } else if (percentage >= 60) {
+                message = '👍 不错，还有进步空间！';
+                color = '#f59e0b';
+            } else {
+                message = '📚 建议复习相关内容后再试！';
+                color = '#dc2626';
+            }
+
+            container.innerHTML = `
+                <div style="text-align:center;padding:30px">
+                    <div style="font-size:48px;margin-bottom:10px">${percentage >= 80 ? '🏆' : percentage >= 60 ? '👍' : '📚'}</div>
+                    <div style="font-size:24px;font-weight:700;color:${color};margin-bottom:10px">${message}</div>
+                    <div style="font-size:18px;color:#666;margin-bottom:20px">得分：${quizScore}/${currentQuizQuestions.length}（${percentage}%）</div>
+                    <button onclick="closeQuizModal()" style="padding:12px 30px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;margin:5px">
+                        完成
+                    </button>
+                </div>
+            `;
         }
 
         // 关闭自测弹窗
@@ -5183,7 +5311,7 @@
                         <button onclick="openProgressCenterModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
                             <span>📊</span> 学习进度
                         </button>
-                        <button onclick="openExamModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;text-align:left;display:flex;align-items:center;gap:8px">
+                        <button onclick="openExamModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
                             <span>📝</span> 模拟考试
                         </button>
                         <button onclick="openAnalysisModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:8px">
