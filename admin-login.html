@@ -134,9 +134,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // Supabase 配置
+        // Supabase 配置 - 与 index.html 和 admin.html 使用相同的密钥
         const SUPABASE_URL = 'https://afuesynrviwicnjisuma.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydml3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MDkyNzIsImV4cCI6MjA5MTQ4NTI3Mn0.Ca_zhP03FkZiVvchStzgZuIRf-PFa1Alq-HZszKMxYw';
 
         // 使用 supabaseClient 避免与全局 window.supabase 冲突
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
