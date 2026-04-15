@@ -138,11 +138,12 @@
         const SUPABASE_URL = 'https://afuesynrviwicnjisuma.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // 使用 supabaseClient 避免与全局 window.supabase 冲突
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 检查是否已登录
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 // 检查是否是管理员
                 const isAdmin = await checkAdminRole(session.user.email);
@@ -173,7 +174,7 @@
             errorMessage.style.display = 'none';
 
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
@@ -185,7 +186,7 @@
                 // 检查是否是管理员
                 const isAdmin = await checkAdminRole(data.user.email);
                 if (!isAdmin) {
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                     throw new Error('该账号没有管理员权限');
                 }
 
