@@ -36,13 +36,28 @@
         }
 
         .admin-header h1 { font-size: 22px; }
-        .admin-header a {
+        .admin-header-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .admin-header a, .admin-header button {
             color: var(--white);
             text-decoration: none;
             padding: 8px 16px;
             background: rgba(255,255,255,0.2);
             border-radius: 6px;
             font-size: 13px;
+            border: none;
+            cursor: pointer;
+        }
+        .admin-header button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .admin-email {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-right: 8px;
         }
 
         .admin-container {
@@ -343,7 +358,11 @@
 <body>
     <header class="admin-header">
         <h1>🔧 PMBOK7 管理后台</h1>
-        <a href="index.html">← 返回主页</a>
+        <div class="admin-header-links">
+            <span class="admin-email" id="adminEmail Display"></span>
+            <a href="index.html">← 返回主页</a>
+            <button onclick="logout()">🚪 退出登录</button>
+        </div>
     </header>
 
     <div class="admin-container">
@@ -459,10 +478,46 @@
     </div>
 
     <script>
-        // Supabase 配置 - 与主应用共享
+        // 管理员认证检查
+        async function checkAdminAuth() {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+            script.onload = async () => {
+                const supabase = window.supabase.createClient(
+                    'https://afuesynrviwicnjisuma.supabase.co',
+                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0'
+                );
+
+                const { data: { session } } = await supabase.auth.getSession();
+
+                if (!session) {
+                    // 未登录，重定向到登录页
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                // 检查管理员权限
+                const adminEmails = ['lh_js@163.com', 'admin@pmlearning.cn'];
+                if (!adminEmails.includes(session.user.email)) {
+                    await supabase.auth.signOut();
+                    alert('该账号没有管理员权限');
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                // 认证通过，继续加载管理后台
+                loadSupabase();
+            };
+            document.head.appendChild(script);
+        }
+
+        // 页面加载时先检查认证
+        checkAdminAuth();
+
+        // 全局变量
         const SUPABASE_CONFIG = {
             url: 'https://afuesynrviwicnjisuma.supabase.co',
-            key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydml3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MDkyNzIsImV4cCI6MjA5MTQ4NTI3Mn0.Ca_zhP03FkZiVvchStzgZuIRf-PFa1Alq-HZszKMxYw'
+            key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MDkyNzIsImV4cCI6MjA5MTQ4NTI3Mn0.Ca_zhP03FkZiVvchStzgZuIRf-PFa1Alq-HZszKMxYw'
         };
 
         let supabaseClient = null;
@@ -479,8 +534,6 @@
             };
             document.head.appendChild(script);
         }
-
-        loadSupabase();
 
         // 刷新数据
         async function refreshData() {
@@ -796,6 +849,36 @@
                 toast.remove();
             }, 3000);
         }
+
+        // 退出登录
+        async function logout() {
+            if (!confirm('确定要退出登录吗？')) return;
+
+            const supabase = window.supabase.createClient(
+                'https://afuesynrviwicnjisuma.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0'
+            );
+
+            await supabase.auth.signOut();
+            localStorage.removeItem('pm_admin_auth');
+            window.location.href = 'admin-login.html';
+        }
+
+        // 显示管理员邮箱
+        async function displayAdminEmail() {
+            const supabase = window.supabase.createClient(
+                'https://afuesynrviwicnjisuma.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0'
+            );
+
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                document.getElementById('adminEmailDisplay').textContent = user.email;
+            }
+        }
+
+        // 页面加载时显示邮箱
+        displayAdminEmail();
     </script>
 </body>
 </html>

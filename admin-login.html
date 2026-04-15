@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PMBOK7 管理后台 - 登录</title>
+    <style>
+        :root {
+            --pmi-blue: #005A9D;
+            --pmi-dark: #003366;
+            --pmi-light: #0077C8;
+            --pmi-gold: #D4AF37;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--pmi-dark), var(--pmi-blue));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h1 {
+            color: var(--pmi-dark);
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--pmi-dark);
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--pmi-blue);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--pmi-blue), var(--pmi-dark));
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+        }
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .error-message {
+            background: #ffe6e6;
+            color: #dc3545;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .login-tip {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+        }
+        .login-tip a {
+            color: var(--pmi-blue);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>🔐 PMBOK7 管理后台</h1>
+            <p>请使用管理员账号登录</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="adminEmail">管理员邮箱</label>
+                <input type="email" id="adminEmail" required placeholder="admin@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="adminPassword">密码</label>
+                <input type="password" id="adminPassword" required placeholder="请输入密码">
+            </div>
+
+            <button type="submit" class="btn-login" id="loginBtn">登录</button>
+        </form>
+
+        <div class="login-tip">
+            <p>需要帮助？<a href="mailto:support@pmlearning.cn">联系技术支持</a></p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase 配置
+        const SUPABASE_URL = 'https://afuesynrviwicnjisuma.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 检查是否已登录
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // 检查是否是管理员
+                const isAdmin = await checkAdminRole(session.user.email);
+                if (isAdmin) {
+                    window.location.href = 'admin.html';
+                }
+            }
+        }
+
+        // 检查管理员角色
+        async function checkAdminRole(email) {
+            // 简单检查：只允许特定邮箱
+            const adminEmails = ['lh_js@163.com', 'admin@pmlearning.cn'];
+            return adminEmails.includes(email);
+        }
+
+        // 处理登录
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            errorMessage.style.display = 'none';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                // 检查是否是管理员
+                const isAdmin = await checkAdminRole(data.user.email);
+                if (!isAdmin) {
+                    await supabase.auth.signOut();
+                    throw new Error('该账号没有管理员权限');
+                }
+
+                // 存储会话标记
+                localStorage.setItem('pm_admin_auth', 'true');
+                window.location.href = 'admin.html';
+
+            } catch (err) {
+                errorMessage.textContent = '登录失败：' + err.message;
+                errorMessage.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登录';
+            }
+        });
+
+        // 页面加载时检查登录状态
+        checkAuth();
+    </script>
+</body>
+</html>
