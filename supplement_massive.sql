@@ -92,11 +92,11 @@ VALUES ('PEO_S014', 'people', 2, '干系人参与计划应该____审查和更新
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PEO_S015', 'people', 2, '干系人参与度评估矩阵中，'支持型'干系人是指？', '["A. 反对项目", "B. 中立", "C. 支持项目并希望其成功", "D. 不了解项目"]'::jsonb, 2, '支持型干系人了解项目并支持其成功。', 'easy')
+VALUES ('PEO_S015', 'people', 2, '干系人参与度评估矩阵中，"支持型"干系人是指？', '["A. 反对项目", "B. 中立", "C. 支持项目并希望其成功", "D. 不了解项目"]'::jsonb, 2, '支持型干系人了解项目并支持其成功。', 'easy')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PEO_S016', 'people', 2, '干系人参与度评估矩阵中，'抵制型'干系人是指？', '["A. 支持项目", "B. 不了解项目", "C. 反对项目变革", "D. 中立"]'::jsonb, 2, '抵制型干系人反对项目或其带来的变革。', 'easy')
+VALUES ('PEO_S016', 'people', 2, '干系人参与度评估矩阵中，"抵制型"干系人是指？', '["A. 支持项目", "B. 不了解项目", "C. 反对项目变革", "D. 中立"]'::jsonb, 2, '抵制型干系人反对项目或其带来的变革。', 'easy')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
