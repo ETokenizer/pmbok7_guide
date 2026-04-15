@@ -260,15 +260,15 @@ VALUES ('PRO_R013', 'process', 8, '机会应对策略包括？', '["A. 开拓、
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R014', 'process', 8, ''开拓'策略是？', '["A. 消除不确定性，确保机会发生", "B. 与第三方合作", "C. 增加概率", "D. 什么都不做"]'::jsonb, 0, '开拓策略通过消除不确定性来确保机会肯定会发生。', 'hard')
+VALUES ('PRO_R014', 'process', 8, "开拓"策略是？', '["A. 消除不确定性，确保机会发生", "B. 与第三方合作", "C. 增加概率", "D. 什么都不做"]'::jsonb, 0, '开拓策略通过消除不确定性来确保机会肯定会发生。', 'hard')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R015', 'process', 8, ''分享'策略是？', '["A. 将机会分配给最能利用它的第三方", "B. 独自承担", "C. 忽略", "D. 放弃"]'::jsonb, 0, '分享策略将机会分配给第三方 (如合资企业、团队)，使其能更好地利用机会。', 'hard')
+VALUES ('PRO_R015', 'process', 8, "分享"策略是？', '["A. 将机会分配给最能利用它的第三方", "B. 独自承担", "C. 忽略", "D. 放弃"]'::jsonb, 0, '分享策略将机会分配给第三方 (如合资企业、团队)，使其能更好地利用机会。', 'hard')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R016', 'process', 8, ''提高'策略是？', '["A. 增加机会发生的概率或影响", "B. 减少机会", "C. 忽略机会", "D. 转移机会"]'::jsonb, 0, '提高策略是增加机会发生的概率或影响，使其更可能发生或带来更大收益。', 'hard')
+VALUES ('PRO_R016', 'process', 8, "提高"策略是？', '["A. 增加机会发生的概率或影响", "B. 减少机会", "C. 忽略机会", "D. 转移机会"]'::jsonb, 0, '提高策略是增加机会发生的概率或影响，使其更可能发生或带来更大收益。', 'hard')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
@@ -276,19 +276,19 @@ VALUES ('PRO_R017', 'process', 8, '威胁应对策略包括？', '["A. 规避、
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R018', 'process', 8, ''规避'策略是？', '["A. 改变计划消除风险", "B. 购买保险", "C. 增加资源", "D. 什么都不做"]'::jsonb, 0, '规避策略通过改变计划来消除风险或其影响。', 'medium')
+VALUES ('PRO_R018', 'process', 8, "规避"策略是？', '["A. 改变计划消除风险", "B. 购买保险", "C. 增加资源", "D. 什么都不做"]'::jsonb, 0, '规避策略通过改变计划来消除风险或其影响。', 'medium')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R019', 'process', 8, ''转移'策略是？', '["A. 将风险后果连同应对责任转移给第三方", "B. 消除风险", "C. 减少风险", "D. 接受风险"]'::jsonb, 0, '转移策略将风险后果和应对责任转移给第三方，如购买保险、外包等。', 'medium')
+VALUES ('PRO_R019', 'process', 8, "转移"策略是？', '["A. 将风险后果连同应对责任转移给第三方", "B. 消除风险", "C. 减少风险", "D. 接受风险"]'::jsonb, 0, '转移策略将风险后果和应对责任转移给第三方，如购买保险、外包等。', 'medium')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R020', 'process', 8, ''减轻'策略是？', '["A. 降低风险概率或影响", "B. 消除风险", "C. 转移风险", "D. 忽略风险"]'::jsonb, 0, '减轻策略通过采取措施降低风险发生的概率或减轻其影响。', 'medium')
+VALUES ('PRO_R020', 'process', 8, "减轻"策略是？', '["A. 降低风险概率或影响", "B. 消除风险", "C. 转移风险", "D. 忽略风险"]'::jsonb, 0, '减轻策略通过采取措施降低风险发生的概率或减轻其影响。', 'medium')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
-VALUES ('PRO_R021', 'process', 8, ''接受'策略适用于？', '["A. 低优先级风险或无法经济有效应对的风险", "B. 所有风险", "C. 高优先级风险", "D. 仅机会"]'::jsonb, 0, '接受策略用于低优先级风险或无法经济有效应对的风险。', 'medium')
+VALUES ('PRO_R021', 'process', 8, "接受"策略适用于？', '["A. 低优先级风险或无法经济有效应对的风险", "B. 所有风险", "C. 高优先级风险", "D. 仅机会"]'::jsonb, 0, '接受策略用于低优先级风险或无法经济有效应对的风险。', 'medium')
 ON CONFLICT (code) DO NOTHING;
 
 INSERT INTO questions (code, category, category_id, question, options, correct, explanation, difficulty)
