@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key 测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .result { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        .pending { border-left: 4px solid #ffc107; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Supabase API Key 测试</h1>
+    <div id="results"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const results = document.getElementById('results');
+
+        const TESTS = [
+            {
+                name: 'API Key 配置检查',
+                test: () => {
+                    const key = 'sb_publishable_fIEpAlMH3j4qgc9CXDP6Dw__31BR7pN';
+                    if (!key || key.includes('eyJ')) {
+                        throw new Error('API key 可能已过期，请使用新的 sb_publishable 格式的 key');
+                    }
+                    return 'API Key 格式正确：' + key.substring(0, 20) + '...';
+                }
+            },
+            {
+                name: 'REST API 测试 (带 API key)',
+                test: async () => {
+                    const key = 'sb_publishable_fIEpAlMH3j4qgc9CXDP6Dw__31BR7pN';
+                    const url = 'https://afuesynrviwicnjisuma.supabase.co/rest/v1/licenses?select=count';
+                    const res = await fetch(url, {
+                        headers: {
+                            'apikey': key,
+                            'Authorization': 'Bearer ' + key,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error.message || JSON.stringify(data));
+                    return '成功! ' + JSON.stringify(data);
+                }
+            },
+            {
+                name: 'Supabase Client 测试',
+                test: async () => {
+                    const key = 'sb_publishable_fIEpAlMH3j4qgc9CXDP6Dw__31BR7pN';
+                    const url = 'https://afuesynrviwicnjisuma.supabase.co';
+                    const client = supabase.createClient(url, key);
+                    const { data, error } = await client.from('licenses').select('count');
+                    if (error) throw new Error(error.message + (error.hint ? ' - ' + error.hint : ''));
+                    return '成功! 记录数：' + JSON.stringify(data);
+                }
+            },
+            {
+                name: '认证状态检查',
+                test: async () => {
+                    const key = 'sb_publishable_fIEpAlMH3j4qgc9CXDP6Dw__31BR7pN';
+                    const url = 'https://afuesynrviwicnjisuma.supabase.co';
+                    const client = supabase.createClient(url, key);
+                    const { data: { session } } = await client.auth.getSession();
+                    if (!session) return '未登录（这是正常的，需要先登录）';
+                    return '已登录用户：' + session.user.email;
+                }
+            }
+        ];
+
+        async function runTests() {
+            for (const { name, test } of TESTS) {
+                const div = document.createElement('div');
+                div.className = 'result pending';
+                div.innerHTML = `<strong>${name}</strong><pre>测试中...</pre>`;
+                results.appendChild(div);
+
+                try {
+                    const result = await Promise.resolve(test());
+                    div.className = 'result success';
+                    div.innerHTML = `<strong>✅ ${name}</strong><pre>${result}</pre>`;
+                } catch (err) {
+                    div.className = 'result error';
+                    div.innerHTML = `<strong>❌ ${name}</strong><pre>${err.message}</pre>`;
+                }
+            }
+        }
+
+        runTests();
+    </script>
+</body>
+</html>
