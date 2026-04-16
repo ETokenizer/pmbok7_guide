@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习进度实时检查</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .card { background: #fff; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat { display: inline-block; margin: 10px 20px 10px 0; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #005A9D; }
+        .stat-label { font-size: 13px; color: #888; }
+        button { padding: 10px 20px; margin: 5px; background: #005A9D; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #003366; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .log { max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>📊 学习进度实时检查</h1>
+    <p>自动刷新显示当前学习进度数据</p>
+
+    <div>
+        <button onclick="checkNow()">🔄 立即检查</button>
+        <button onclick="toggleAutoRefresh()">⏱️ 自动刷新：<span id="autoStatus">关</span></button>
+        <button onclick="copyData()">📋 复制数据</button>
+        <button onclick="clearData()">🗑️ 清空数据</button>
+    </div>
+
+    <div class="card">
+        <h3>统计数据</h3>
+        <div id="stats"></div>
+    </div>
+
+    <div class="card">
+        <h3>已学习的原则</h3>
+        <div id="principles"></div>
+    </div>
+
+    <div class="card">
+        <h3>答题历史（最近 10 条）</h3>
+        <div id="history" class="log"></div>
+    </div>
+
+    <div class="card">
+        <h3>原始数据</h3>
+        <pre id="rawData"></pre>
+    </div>
+
+    <script>
+        let autoRefresh = false;
+        let timer = null;
+
+        function checkNow() {
+            const data = JSON.parse(localStorage.getItem('pmbok7_learning_progress') || '{}');
+
+            // 统计
+            document.getElementById('stats').innerHTML = `
+                <div class="stat">
+                    <div class="stat-value">${data.principlesViewed?.length || 0}</div>
+                    <div class="stat-label">已学习原则数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${data.quizzesCompleted || 0}</div>
+                    <div class="stat-label">完成答题数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${data.quizzesCorrect || 0}</div>
+                    <div class="stat-label">正确次数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${(data.totalTimeSpent / 60).toFixed(0)}分钟</div>
+                    <div class="stat-label">学习时长</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">${data.streakDays || 0}天</div>
+                    <div class="stat-label">连续学习</div>
+                </div>
+            `;
+
+            // 原则
+            document.getElementById('principles').innerHTML = data.principlesViewed?.length > 0
+                ? data.principlesViewed.map(n => `<span style="display:inline-block;padding:5px 10px;background:#e0f2f1;border-radius:4px;margin:3px">原则${n}</span>`).join('')
+                : '<span style="color:#888">暂无</span>';
+
+            // 答题历史
+            const history = data.quizHistory || [];
+            document.getElementById('history').innerHTML = history.length > 0
+                ? `<pre class="log">${history.slice(-10).map((h, i) =>
+                    `${h.answeredAt.split('T')[1].substring(0,8)} - 原则${h.categoryId} - ${h.correct ? '✅' : '❌'}`
+                ).reverse().join('<br>')}</pre>`
+                : '<span style="color:#888">暂无答题记录</span>';
+
+            // 原始数据
+            document.getElementById('rawData').textContent = JSON.stringify(data, null, 2);
+        }
+
+        function toggleAutoRefresh() {
+            autoRefresh = !autoRefresh;
+            document.getElementById('autoStatus').textContent = autoRefresh ? '开' : '关';
+            if (autoRefresh) {
+                timer = setInterval(checkNow, 2000);
+            } else {
+                clearInterval(timer);
+            }
+        }
+
+        function copyData() {
+            const data = localStorage.getItem('pmbok7_learning_progress');
+            navigator.clipboard.writeText(data || '{}');
+            alert('数据已复制到剪贴板');
+        }
+
+        function clearData() {
+            if (confirm('确定要清空学习进度数据吗？')) {
+                localStorage.removeItem('pmbok7_learning_progress');
+                alert('已清空');
+                checkNow();
+            }
+        }
+
+        // 初始化
+        checkNow();
+    </script>
+</body>
+</html>
