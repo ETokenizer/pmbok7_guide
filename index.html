@@ -1158,13 +1158,27 @@
             </div>
         </div>
         <div style="display:flex;align-items:center;gap:10px">
-            <button id="premiumBtn" onclick="showPremiumModal()" style="padding:8px 16px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.3s">
+            <!-- Premium features navigation -->
+            <button onclick="openProgressCenterModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
+                📊 学习进度
+            </button>
+            <button onclick="openExamModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
+                📝 模拟考试
+            </button>
+            <button onclick="openWrongBookModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
+                📝 错题本
+            </button>
+            <button onclick="openAnalysisModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
+                🎯 薄弱点分析
+            </button>
+            <div style="width:1px;height:20px;background:rgba(255,255,255,0.3);margin:0 4px"></div>
+            <button id="premiumBtn" onclick="showPremiumModal()" style="padding:6px 12px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
                 👑 升级专业版
             </button>
-            <button id="licenseBtn" onclick="showLicenseModal()" style="display:none;padding:8px 12px;background:rgba(212,175,55,0.15);color:#D4AF37;border:1px solid #D4AF37;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s">
+            <button id="licenseBtn" onclick="showLicenseModal()" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.15);color:#D4AF37;border:1px solid #D4AF37;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s">
                 🔑 我的授权
             </button>
-            <span id="premiumStatus" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.2);border:1px solid #D4AF37;border-radius:6px;color:#FFD700;font-size:12px;font-weight:600">👑 专业版用户</span>
+            <span id="premiumStatus" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.2);border:1px solid #D4AF37;border-radius:6px;color:#FFD700;font-size:12px;font-weight:600">👑 专业版</span>
         </div>
     </header>
 
@@ -1501,32 +1515,24 @@
                     </div>
 
                     <div class="premium-pricing">
-                        <div class="pricing-option" data-type="monthly">
+                        <div class="pricing-option best-value" data-type="lifetime" style="max-width:200px;margin:0 auto">
+                            <div class="best-value-tag">💎 超值推荐</div>
                             <div class="pricing-price">
                                 <span class="price-currency">¥</span>
-                                <span class="price-value">9</span>
-                                <span class="price-period">/月</span>
-                            </div>
-                            <div class="pricing-desc">灵活订阅</div>
-                        </div>
-                        <div class="pricing-option best-value" data-type="lifetime">
-                            <div class="best-value-tag">💎 最超值</div>
-                            <div class="pricing-price">
-                                <span class="price-currency">¥</span>
-                                <span class="price-value">39</span>
+                                <span class="price-value">19.9</span>
                                 <span class="price-period">/终身</span>
                             </div>
-                            <div class="pricing-desc">一次付费，永久使用</div>
+                            <div class="pricing-desc" style="font-size:12px;color:#888">约一杯奶茶的价格</div>
                         </div>
                     </div>
 
-                    <button class="premium-buy-btn" onclick="selectPremium('lifetime')">
+                    <button class="premium-buy-btn" onclick="selectPremium('lifetime')" style="max-width:200px;margin:0 auto">
                         <span class="buy-icon">🛒</span>
-                        <span class="buy-text">立即解锁专业版 - ¥39</span>
+                        <span class="buy-text">立即解锁专业版 - ¥19.9</span>
                     </button>
 
-                    <p class="premium-guarantee">
-                        🔒 安全支付 · ⚡ 即时开通 · 💯 随时取消
+                    <p class="premium-guarantee" style="margin-top:15px;font-size:11px">
+                        🔒 安全支付 · ⚡ 即时开通 · 💯 永久有效 · 📧 邮箱发码
                     </p>
                 </div>
             </div>
@@ -2048,13 +2054,9 @@
 
         // 选择 Premium 套餐
         function selectPremium(type) {
-            selectedPremiumType = type;
+            // 现在只有一种套餐：终身版 19.9 元
             const btn = document.querySelector('.premium-buy-btn');
-            if (type === 'monthly') {
-                btn.innerHTML = '<span class="buy-icon">🛒</span><span class="buy-text">立即解锁专业版 - ¥9/月</span>';
-            } else {
-                btn.innerHTML = '<span class="buy-icon">🛒</span><span class="buy-text">立即解锁专业版 - ¥39 终身</span>';
-            }
+            btn.innerHTML = '<span class="buy-icon">🛒</span><span class="buy-text">立即解锁专业版 - ¥19.9（约一杯奶茶）</span>';
             showPaymentModal();
         }
 
@@ -2276,11 +2278,17 @@
                 container.innerHTML = `
                     <div style="padding:10px;background:linear-gradient(135deg, #f5f5f5, #e8e8e8);border-radius:8px;margin-bottom:10px">
                         <div style="font-size:13px;font-weight:600;color:var(--pmi-dark);margin-bottom:10px">📚 高级功能</div>
+                        <button onclick="openProgressCenterModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📊</span> 学习进度
+                        </button>
+                        <button onclick="openExamModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>📝</span> 模拟考试
+                        </button>
                         <button onclick="openWrongBookModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-bottom:8px;text-align:left;display:flex;align-items:center;gap:8px">
                             <span>📝</span> 错题本
                         </button>
-                        <button onclick="openProgressCenterModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;text-align:left;display:flex;align-items:center;gap:8px">
-                            <span>📊</span> 学习进度
+                        <button onclick="openAnalysisModal()" style="width:100%;padding:10px;background:var(--white);border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px;margin-top:8px;text-align:left;display:flex;align-items:center;gap:8px">
+                            <span>🎯</span> 薄弱点分析
                         </button>
                     </div>
                 `;
@@ -2291,7 +2299,8 @@
                         <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
                         <div class="ad-banner-title">广告 · Ad</div>
                         <div class="ad-banner-content">
-                            🎯 想要去除广告？<br>
+                            🎯 去除广告 + 解锁全部高级功能<br>
+                            <span style="font-size:11px;color:#888">仅需¥19.9（约一杯奶茶）</span><br>
                             <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
                                 👑 升级专业版
                             </button>
@@ -5326,7 +5335,8 @@
                         <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
                         <div class="ad-banner-title">广告 · Ad</div>
                         <div class="ad-banner-content">
-                            🎯 想要去除广告？<br>
+                            🎯 去除广告 + 解锁全部高级功能<br>
+                            <span style="font-size:11px;color:#888">仅需¥19.9（约一杯奶茶）</span><br>
                             <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
                                 👑 升级专业版
                             </button>
