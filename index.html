@@ -1160,16 +1160,16 @@
         <div style="display:flex;align-items:center;gap:10px">
             <!-- Premium features navigation -->
             <button onclick="openProgressCenterModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                📊 学习进度
+                <span style="font-size:10px">👑</span> 学习进度
             </button>
             <button onclick="openExamModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                📝 模拟考试
+                <span style="font-size:10px">👑</span> 模拟考试
             </button>
             <button onclick="openWrongBookModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                📝 错题本
+                <span style="font-size:10px">👑</span> 错题本
             </button>
             <button onclick="openAnalysisModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                🎯 薄弱点分析
+                <span style="font-size:10px">👑</span> 薄弱点分析
             </button>
             <div style="width:1px;height:20px;background:rgba(255,255,255,0.3);margin:0 4px"></div>
             <button id="premiumBtn" onclick="showPremiumModal()" style="padding:6px 12px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
@@ -1298,7 +1298,7 @@
     <div class="modal-overlay" id="wrongBookModalOverlay" style="display:none">
         <div class="modal-content" style="max-width:900px">
             <div class="modal-header" style="background:linear-gradient(135deg, #f59e0b, #d97706)">
-                <h3>📝 错题本 | Wrong Answers Book</h3>
+                <h3 id="wrongBookModalTitle">📝 错题本 | Wrong Answers Book</h3>
                 <button class="modal-close" onclick="closeWrongBookModal()">×</button>
             </div>
             <div class="modal-body" id="wrongBookModalBody">
@@ -1332,7 +1332,7 @@
     <div class="modal-overlay" id="progressCenterModalOverlay" style="display:none">
         <div class="modal-content" style="max-width:900px">
             <div class="modal-header" style="background:linear-gradient(135deg, #10b981, #059669)">
-                <h3>📊 学习进度 | Learning Progress</h3>
+                <h3 id="progressCenterModalTitle">📊 学习进度 | Learning Progress</h3>
                 <button class="modal-close" onclick="closeProgressCenterModal()">×</button>
             </div>
             <div class="modal-body" id="progressCenterModalBody">
@@ -1373,7 +1373,7 @@
         <div class="modal-content" style="max-width:900px;">
             <div class="modal-header" style="background:linear-gradient(135deg, #7c3aed, #6d28d9); display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h3>📊 薄弱点分析 | Weakness Analysis</h3>
+                    <h3 id="analysisModalTitle">📊 薄弱点分析 | Weakness Analysis</h3>
                     <p style="font-size: 12px; opacity: 0.9; margin-top: 4px;">AI 驱动的学习诊断与建议</p>
                 </div>
                 <button class="modal-close" onclick="closeAnalysisModal()" style="position: static; width: 30px; height: 30px;">×</button>
@@ -1389,7 +1389,7 @@
         <div class="modal-content" style="max-width:1200px; height: 90vh;">
             <div class="modal-header" style="background:linear-gradient(135deg, #dc2626, #b91c1c); display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                    <h3>📝 模拟考试 | Mock Exam</h3>
+                    <h3 id="examModalTitle">📝 模拟考试 | Mock Exam</h3>
                     <p style="font-size: 12px; opacity: 0.9; margin-top: 4px;">180 题 · 230 分钟 · PMP 全真模拟</p>
                 </div>
                 <div style="display: flex; align-items: center; gap: 20px;">
@@ -4692,10 +4692,112 @@
 
         // 打开错题本
         function openWrongBookModal() {
-            if (!checkPremiumFeature()) return;
-            renderWrongBookContent('all');
-            document.getElementById('wrongBookModalOverlay').style.display = 'block';
-            setTimeout(() => document.getElementById('wrongBookModalOverlay').classList.add('active'), 10);
+            if (isPremiumUser) {
+                // Premium 用户：直接打开完整功能
+                renderWrongBookContent('all');
+                document.getElementById('wrongBookModalOverlay').style.display = 'block';
+                setTimeout(() => document.getElementById('wrongBookModalOverlay').classList.add('active'), 10);
+            } else {
+                // 非 Premium 用户：显示体验版 + 升级提示
+                showWrongBookPreview();
+            }
+        }
+
+        // 显示错题本体验版（前 5 道题）
+        function showWrongBookPreview() {
+            const data = getWrongBookData();
+            const previewCount = 5;
+            const previewItems = data.wrongAnswers.slice(0, previewCount);
+            const totalWrong = data.wrongAnswers.length;
+            const hasMore = totalWrong > previewCount;
+
+            const overlay = document.getElementById('wrongBookModalOverlay');
+            const title = document.getElementById('wrongBookModalTitle');
+            const body = document.getElementById('wrongBookContent');
+
+            // 修改标题
+            title.innerHTML = '📝 错题本 · 体验版 <span style="font-size:12px;opacity:0.8">Preview</span>';
+
+            // 渲染体验版内容
+            body.innerHTML = `
+                <div style="background:linear-gradient(135deg, #fff8e1, #ffecb3);padding:20px;border-radius:12px;margin-bottom:20px;border:2px solid #ffd54f">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                        <span style="font-size:24px">🎁</span>
+                        <div>
+                            <div style="font-weight:600;color:#8B6914">免费体验错题本功能</div>
+                            <div style="font-size:12px;color:#666">升级专业版，解锁全部 ${totalWrong} 道错题</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                        <button onclick="showPremiumModal();closeWrongBookModal()" style="padding:10px 20px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+                            👑 立即解锁专业版 - ¥19.9
+                        </button>
+                        <button onclick="viewDemoPreview()" style="padding:10px 20px;background:#fff;color:#D4AF37;border:2px solid #D4AF37;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+                            👀 先看看效果
+                        </button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom:15px;display:flex;align-items:center;justify-content:space-between">
+                    <div style="font-size:13px;color:#666">
+                        🔓 免费预览：${previewItems.length}/${totalWrong} 道题
+                        ${hasMore ? `<span style="color:#999;margin-left:8px">（还有${totalWrong - previewCount}道需升级后查看）</span>` : ''}
+                    </div>
+                </div>
+
+                ${previewItems.length === 0 ? `
+                    <div style="text-align:center;padding:40px;color:#888">
+                        <p style="font-size:16px;margin-bottom:10px">📝 暂无错题</p>
+                        <p style="font-size:13px">开始答题后，做错的题目会自动记录在这里</p>
+                        <button onclick="switchView('principles');closeWrongBookModal()" style="margin-top:15px;padding:10px 20px;background:var(--pmi-blue);color:white;border:none;border-radius:8px;cursor:pointer">
+                            去答题
+                        </button>
+                    </div>
+                ` : `
+                    ${previewItems.map((item, index) => `
+                        <div class="wrong-item" style="opacity:${index >= previewCount ? 0.5:1};${index >= previewCount ? 'filter:blur(1px)': ''}">
+                            <div class="wrong-item-header">
+                                <span class="wrong-item-source">原则 ${item.principleNumber} · 自测题</span>
+                                <div style="display:flex;align-items:center;gap:8px">
+                                    ${item.mastered ? '<span class="mastered-badge">已掌握</span>' : `<span class="wrong-count-badge">做错${item.wrongCount}次</span>`}
+                                </div>
+                            </div>
+                            <div class="wrong-item-question">${item.question}</div>
+                            <div class="wrong-item-stats">
+                                <span>你的答案：${item.options[item.userAnswer]?.substring(0, 30)}...</span>
+                                <span style="color:#28a745">正确答案：${item.options[item.correctAnswer]?.substring(0, 30)}...</span>
+                            </div>
+                            ${index < previewCount ? `
+                                <div class="wrong-item-actions">
+                                    <button onclick="retryWrongItem('${item.id}')" class="wrong-item-btn retry">🔄 重做</button>
+                                    ${!item.mastered ? `<button onclick="markAsMastered('${item.id}')" class="wrong-item-btn mastered">✅ 已掌握</button>` : ''}
+                                </div>
+                            ` : `
+                                <div style="margin-top:10px;text-align:center;padding:10px;background:#f5f5f5;border-radius:8px;font-size:12px;color:#666">
+                                    🔒 升级后可用
+                                </div>
+                            `}
+                        </div>
+                    `).join('')}
+                `}
+
+                ${hasMore && previewItems.length > 0 ? `
+                    <div style="margin-top:20px;text-align:center;padding:20px;background:linear-gradient(135deg, #f8f9fa, #e9ecef);border-radius:12px">
+                        <p style="font-size:14px;color:#666;margin-bottom:15px">🔓 还有 ${totalWrong - previewCount} 道错题等待查看</p>
+                        <button onclick="showPremiumModal();closeWrongBookModal()" style="padding:12px 30px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(212,175,55,0.3)">
+                            👑 升级解锁全部错题 - 仅需¥19.9
+                        </button>
+                    </div>
+                ` : ''}
+            `;
+
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.classList.add('active'), 10);
+        }
+
+        // 查看演示效果
+        function viewDemoPreview() {
+            alert('🎯 错题本功能演示：\n\n1. 自动记录做错的题目\n2. 支持重做巩固\n3. 标记已掌握题目\n4. 按领域/难度分析薄弱点\n\n升级专业版仅需¥19.9（约一杯奶茶），即可解锁全部功能！');
         }
 
         // 关闭错题本
@@ -4895,10 +4997,88 @@
 
         // 打开学习进度中心
         function openProgressCenterModal() {
-            if (!checkPremiumFeature()) return;
-            renderProgressContent();
-            document.getElementById('progressCenterModalOverlay').style.display = 'block';
-            setTimeout(() => document.getElementById('progressCenterModalOverlay').classList.add('active'), 10);
+            if (isPremiumUser) {
+                // Premium 用户：直接打开完整功能
+                renderProgressContent();
+                document.getElementById('progressCenterModalOverlay').style.display = 'block';
+                setTimeout(() => document.getElementById('progressCenterModalOverlay').classList.add('active'), 10);
+            } else {
+                // 非 Premium 用户：显示体验版 + 升级提示
+                showProgressPreview();
+            }
+        }
+
+        // 显示学习进度体验版
+        function showProgressPreview() {
+            const data = getLearningProgressData();
+            const totalHours = (data.totalTimeSpent / 3600).toFixed(1);
+            const accuracy = data.quizzesCompleted > 0
+                ? Math.round((data.quizzesCorrect / data.quizzesCompleted) * 100)
+                : 0;
+
+            const overlay = document.getElementById('progressCenterModalOverlay');
+            const title = document.getElementById('progressCenterModalTitle');
+            const body = document.getElementById('progressCenterModalBody');
+
+            // 修改标题
+            title.innerHTML = '📊 学习进度 · 体验版 <span style="font-size:12px;opacity:0.8">Preview</span>';
+
+            // 渲染体验版内容
+            body.innerHTML = `
+                <div style="background:linear-gradient(135deg, #e8f5e9, #c8e6c9);padding:20px;border-radius:12px;margin-bottom:20px;border:2px solid #81c784">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                        <span style="font-size:24px">🎯</span>
+                        <div>
+                            <div style="font-weight:600;color:#2e7d32">追踪你的学习进度</div>
+                            <div style="font-size:12px;color:#666">升级专业版，解锁完整数据分析</div>
+                        </div>
+                    </div>
+                    <button onclick="showPremiumModal();closeProgressCenterModal()" style="padding:10px 20px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer">
+                        👑 立即解锁专业版 - ¥19.9
+                    </button>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:20px">
+                    <div style="background:#f8f9fa;padding:15px;border-radius:10px;text-align:center">
+                        <div style="font-size:24px;font-weight:700;color:var(--pmi-blue)">${data.streakDays}</div>
+                        <div style="font-size:12px;color:#888;margin-top:5px">🔥 连续学习天数</div>
+                    </div>
+                    <div style="background:#f8f9fa;padding:15px;border-radius:10px;text-align:center">
+                        <div style="font-size:24px;font-weight:700;color:#22c55e">${data.quizzesCompleted}</div>
+                        <div style="font-size:12px;color:#888;margin-top:5px">📝 完成测验数</div>
+                    </div>
+                    <div style="background:#f8f9fa;padding:15px;border-radius:10px;text-align:center">
+                        <div style="font-size:24px;font-weight:700;color:#f59e0b">${accuracy > 0 ? accuracy + '%' : '--'}</div>
+                        <div style="font-size:12px;color:#888;margin-top:5px">✅ 正确率</div>
+                    </div>
+                    <div style="background:#f8f9fa;padding:15px;border-radius:10px;text-align:center">
+                        <div style="font-size:24px;font-weight:700;color:#8b5cf6">${totalHours}h</div>
+                        <div style="font-size:12px;color:#888;margin-top:5px">⏱️ 学习时长</div>
+                    </div>
+                </div>
+
+                <div style="background:linear-gradient(135deg, #fff3e0, #ffe0b2);padding:20px;border-radius:12px;border:2px solid #ffb74d">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                        <span style="font-size:20px">📈</span>
+                        <div>
+                            <div style="font-weight:600;color:#e65100">解锁更多功能</div>
+                            <div style="font-size:12px;color:#666">完整的学习进度追踪，包括：</div>
+                        </div>
+                    </div>
+                    <ul style="font-size:13px;color:#555;space-y:8px;margin-left:20px">
+                        <li>✅ 每章学习进度详情</li>
+                        <li>✅ 答题趋势图表</li>
+                        <li>✅ 薄弱领域分析</li>
+                        <li>✅ 学习建议生成</li>
+                    </ul>
+                    <button onclick="showPremiumModal();closeProgressCenterModal()" style="margin-top:15px;padding:12px 24px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;width:100%">
+                        🔓 升级解锁全部功能 - 仅需¥19.9
+                    </button>
+                </div>
+            `;
+
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.classList.add('active'), 10);
         }
 
         // 关闭学习进度中心
@@ -5005,10 +5185,89 @@
 
         // 打开模拟考试
         function openExamModal() {
-            if (!checkPremiumFeature()) return;
-            document.getElementById('examModalOverlay').style.display = 'block';
-            setTimeout(() => document.getElementById('examModalOverlay').classList.add('active'), 10);
-            resetExamState();
+            if (isPremiumUser) {
+                // Premium 用户：直接打开完整功能
+                document.getElementById('examModalOverlay').style.display = 'block';
+                setTimeout(() => document.getElementById('examModalOverlay').classList.add('active'), 10);
+                resetExamState();
+            } else {
+                // 非 Premium 用户：显示体验版 + 升级提示
+                showExamPreview();
+            }
+        }
+
+        // 显示模拟考试体验版
+        function showExamPreview() {
+            const overlay = document.getElementById('examModalOverlay');
+            const title = document.getElementById('examModalTitle');
+            const body = document.getElementById('examModalBody');
+
+            // 修改标题
+            title.innerHTML = '📝 模拟考试 · 体验版 <span style="font-size:12px;opacity:0.8">Preview</span>';
+
+            // 渲染体验版内容
+            body.innerHTML = `
+                <div style="background:linear-gradient(135deg, #e3f2fd, #bbdefb);padding:25px;border-radius:12px;margin-bottom:20px;border:2px solid #64b5f6">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                        <span style="font-size:28px">🎓</span>
+                        <div>
+                            <div style="font-weight:600;color:#1565c0">全真模拟考试环境</div>
+                            <div style="font-size:12px;color:#666">180 道题目 · 230 分钟 · PMP 认证模拟</div>
+                        </div>
+                    </div>
+                    <button onclick="showPremiumModal();closeExamModal()" style="padding:12px 24px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+                        👑 立即解锁模拟考试 - ¥19.9
+                    </button>
+                </div>
+
+                <div style="background:#f8f9fa;padding:20px;border-radius:12px;margin-bottom:20px">
+                    <h4 style="margin-bottom:15px;color:var(--pmi-dark)">📋 模拟考试特色</h4>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:16px">⏱️</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">真实计时</div>
+                                <div style="font-size:11px;color:#888">230 分钟倒计时</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:16px">📊</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">即时评分</div>
+                                <div style="font-size:11px;color:#888">交卷后立即出分</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:16px">📝</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">180 道题目</div>
+                                <div style="font-size:11px;color:#888">覆盖全部考点</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                            <span style="font-size:16px">🔒</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">私密环境</div>
+                                <div style="font-size:11px;color:#888">无干扰答题体验</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:linear-gradient(135deg, #fff8e1, #ffecb3);padding:20px;border-radius:12px;border:2px solid #ffd54f">
+                    <div style="text-align:center">
+                        <div style="font-size:16px;font-weight:600;color:#8B6914;margin-bottom:8px">🎁 限时优惠</div>
+                        <div style="font-size:28px;font-weight:700;color:#D4AF37;margin:10px 0">¥19.9</div>
+                        <div style="font-size:12px;color:#888;margin-bottom:15px">约一杯奶茶的价格，永久解锁全部功能</div>
+                        <button onclick="showPremiumModal();closeExamModal()" style="padding:14px 40px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,0.4)">
+                            🚀 立即升级，开始模拟考试
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.classList.add('active'), 10);
         }
 
         // 关闭模拟考试
@@ -5352,10 +5611,87 @@
 
         // 打开薄弱点分析
         function openAnalysisModal() {
-            if (!checkPremiumFeature()) return;
-            document.getElementById('analysisModalOverlay').style.display = 'block';
-            setTimeout(() => document.getElementById('analysisModalOverlay').classList.add('active'), 10);
-            renderAnalysisContent();
+            if (isPremiumUser) {
+                // Premium 用户：直接打开完整功能
+                document.getElementById('analysisModalOverlay').style.display = 'block';
+                setTimeout(() => document.getElementById('analysisModalOverlay').classList.add('active'), 10);
+                renderAnalysisContent();
+            } else {
+                // 非 Premium 用户：显示体验版 + 升级提示
+                showAnalysisPreview();
+            }
+        }
+
+        // 显示薄弱点分析体验版
+        function showAnalysisPreview() {
+            const overlay = document.getElementById('analysisModalOverlay');
+            const title = document.getElementById('analysisModalTitle');
+            const body = document.getElementById('analysisModalBody');
+
+            // 修改标题
+            title.innerHTML = '🎯 薄弱点分析 · 体验版 <span style="font-size:12px;opacity:0.8">Preview</span>';
+
+            // 渲染体验版内容
+            body.innerHTML = `
+                <div style="background:linear-gradient(135deg, #f3e5f5, #e1bee7);padding:25px;border-radius:12px;margin-bottom:20px;border:2px solid #ba68c8">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                        <span style="font-size:28px">🤖</span>
+                        <div>
+                            <div style="font-weight:600;color:#6a1b9a">AI 智能薄弱点分析</div>
+                            <div style="font-size:12px;color:#666">精准定位弱点，高效提分</div>
+                        </div>
+                    </div>
+                    <button onclick="showPremiumModal();closeAnalysisModal()" style="padding:12px 24px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+                        👑 立即解锁分析功能 - ¥19.9
+                    </button>
+                </div>
+
+                <div style="background:#f8f9fa;padding:20px;border-radius:12px;margin-bottom:20px">
+                    <h4 style="margin-bottom:15px;color:var(--pmi-dark)">📊 分析内容包括</h4>
+                    <div style="space-y:12px">
+                        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:white;border-radius:8px">
+                            <span style="font-size:20px">📈</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">领域分析</div>
+                                <div style="font-size:11px;color:#888">识别 People/Process/Business Environment 各 domain 的强弱项</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:white;border-radius:8px">
+                            <span style="font-size:20px">🎯</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">难度分析</div>
+                                <div style="font-size:11px;color:#888">区分简单/中等/困难题目的掌握程度</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:white;border-radius:8px">
+                            <span style="font-size:20px">📅</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">时间趋势</div>
+                                <div style="font-size:11px;color:#888">追踪学习进度变化，发现提升轨迹</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:12px;align-items:flex-start;padding:12px;background:white;border-radius:8px">
+                            <span style="font-size:20px">💡</span>
+                            <div>
+                                <div style="font-weight:600;font-size:13px">智能建议</div>
+                                <div style="font-size:11px;color:#888">生成个性化学习计划和建议</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background:linear-gradient(135deg, #fff8e1, #ffecb3);padding:25px;border-radius:12px;border:2px solid #ffd54f;text-align:center">
+                    <div style="font-size:16px;font-weight:600;color:#8B6914;margin-bottom:8px">🎁 特别优惠</div>
+                    <div style="font-size:24px;font-weight:700;color:#D4AF37;margin:10px 0">¥19.9 = 一杯奶茶</div>
+                    <div style="font-size:12px;color:#888;margin-bottom:15px">永久解锁全部高级功能，包括错题本、模拟考试、学习进度、薄弱点分析</div>
+                    <button onclick="showPremiumModal();closeAnalysisModal()" style="padding:14px 40px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 4px 20px rgba(212,175,55,0.4)">
+                        🚀 立即升级，开启高效学习
+                    </button>
+                </div>
+            `;
+
+            overlay.style.display = 'block';
+            setTimeout(() => overlay.classList.add('active'), 10);
         }
 
         // 关闭薄弱点分析
