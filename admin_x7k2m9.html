@@ -492,7 +492,7 @@
 
                 if (!session) {
                     // 未登录，重定向到登录页
-                    window.location.href = 'admin-login.html';
+                    window.location.href = 'admin_login_x7k2m9.html';
                     return;
                 }
 
@@ -501,7 +501,7 @@
                 if (!adminEmails.includes(session.user.email)) {
                     await supabase.auth.signOut();
                     alert('该账号没有管理员权限');
-                    window.location.href = 'admin-login.html';
+                    window.location.href = 'admin_login_x7k2m9.html';
                     return;
                 }
 
@@ -866,7 +866,7 @@
 
             await supabaseAuth.auth.signOut();
             localStorage.removeItem('pm_admin_auth');
-            window.location.href = 'admin-login.html';
+            window.location.href = 'admin_login_x7k2m9.html';
         }
 
         // 显示管理员邮箱
