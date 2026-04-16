@@ -497,7 +497,7 @@
                 }
 
                 // 检查管理员权限
-                const adminEmails = ['lh_js@163.com', 'admin@pmlearning.cn'];
+                const adminEmails = ['lh_jsus@163.com', 'lh_js@163.com', 'admin@pmlearning.cn'];
                 if (!adminEmails.includes(session.user.email)) {
                     await supabase.auth.signOut();
                     alert('该账号没有管理员权限');
