@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习进度调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .result { background: #fff; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
+        button { padding: 10px 20px; margin: 5px; background: #005A9D; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #003366; }
+    </style>
+</head>
+<body>
+    <h1>📊 学习进度调试工具</h1>
+
+    <div style="margin: 20px 0;">
+        <button onclick="checkLearningProgress()">检查学习进度数据</button>
+        <button onclick="simulateLearning()">模拟学习行为</button>
+        <button onclick="clearLearningData()">清空学习数据</button>
+        <button onclick="checkPremium()">检查 Premium 状态</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        function checkLearningProgress() {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+
+            // 检查学习进度数据
+            const learningData = localStorage.getItem('pmbok7_learning_progress');
+            const div = document.createElement('div');
+            div.className = 'result ' + (learningData ? 'success' : 'pending');
+
+            if (learningData) {
+                const data = JSON.parse(learningData);
+                div.innerHTML = `
+                    <strong>✅ 学习进度数据</strong>
+                    <pre>${JSON.stringify({
+                        principlesViewed: data.principlesViewed,
+                        quizzesCompleted: data.quizzesCompleted,
+                        quizzesCorrect: data.quizzesCorrect,
+                        totalTimeSpent: data.totalTimeSpent + ' 秒 (' + (data.totalTimeSpent / 60).toFixed(1) + ' 分钟)',
+                        streakDays: data.streakDays,
+                        lastStudyAt: data.lastStudyAt,
+                        principles: data.principles,
+                        quizHistoryCount: data.quizHistory?.length || 0
+                    }, null, 2)}</pre>
+                `;
+            } else {
+                div.innerHTML = `<strong>⚠️ 暂无学习进度数据</strong>`;
+            }
+            results.appendChild(div);
+
+            // 检查 PrinciplesViewed
+            if (learningData) {
+                const data = JSON.parse(learningData);
+                const principlesDiv = document.createElement('div');
+                principlesDiv.className = 'result success';
+                principlesDiv.innerHTML = `
+                    <strong>📚 已学习的原则</strong>
+                    <pre>查看过的原则：[${data.principlesViewed?.join(', ') || '无'}]
+完成答题的原则：${Object.keys(data.principles || {}).map(k => `原则${k}(正确${data.principles[k].quizCorrect}/${data.principles[k].quizTotal})`).join(', ') || '无'}</pre>
+                `;
+                results.appendChild(principlesDiv);
+            }
+        }
+
+        function simulateLearning() {
+            // 模拟学习行为
+            const data = JSON.parse(localStorage.getItem('pmbok7_learning_progress') || '{}');
+
+            // 初始化默认值
+            if (!data.principlesViewed) data.principlesViewed = [];
+            if (!data.principles) data.principles = {};
+            if (!data.quizHistory) data.quizHistory = [];
+
+            // 模拟查看原则 1
+            const principleNum = Math.floor(Math.random() * 12) + 1;
+            if (!data.principlesViewed.includes(principleNum)) {
+                data.principlesViewed.push(principleNum);
+            }
+            data.totalTimeSpent = (data.totalTimeSpent || 0) + 120;
+
+            // 模拟答题
+            const isCorrect = Math.random() > 0.3;
+            data.quizzesCompleted = (data.quizzesCompleted || 0) + 1;
+            if (isCorrect) {
+                data.quizzesCorrect = (data.quizzesCorrect || 0) + 1;
+            }
+
+            // 更新原则统计
+            if (!data.principles[principleNum]) {
+                data.principles[principleNum] = { viewed: true, quizCorrect: 0, quizTotal: 0 };
+            }
+            data.principles[principleNum].quizTotal += 1;
+            if (isCorrect) {
+                data.principles[principleNum].quizCorrect += 1;
+            }
+
+            // 添加答题历史
+            data.quizHistory.push({
+                questionId: `principle_${principleNum}_quiz_${Date.now()}`,
+                category: 'principle',
+                categoryId: principleNum,
+                difficulty: 'medium',
+                correct: isCorrect,
+                answeredAt: new Date().toISOString()
+            });
+
+            // 保留最近 500 条
+            if (data.quizHistory.length > 500) {
+                data.quizHistory = data.quizHistory.slice(-500);
+            }
+
+            data.lastStudyAt = new Date().toISOString();
+
+            localStorage.setItem('pmbok7_learning_progress', JSON.stringify(data));
+
+            alert(`✅ 模拟学习完成：
+- 查看了原则 ${principleNum}
+- 答题 1 道（${isCorrect ? '正确' : '错误'}）
+- 总答题数：${data.quizzesCompleted}
+- 已学习原则：[${data.principlesViewed.join(', ')}]`);
+
+            checkLearningProgress();
+        }
+
+        function clearLearningData() {
+            if (confirm('确定要清空所有学习进度数据吗？')) {
+                localStorage.removeItem('pmbok7_learning_progress');
+                alert('✅ 已清空学习进度数据');
+                checkLearningProgress();
+            }
+        }
+
+        function checkPremium() {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = 'result';
+
+            const premium = localStorage.getItem('pmbok7_premium');
+            const premiumExpiry = localStorage.getItem('pmbok7_premium_expiry');
+            const licenseKey = localStorage.getItem('pmbok7_license_key');
+
+            div.innerHTML = `
+                <strong>👑 Premium 状态</strong>
+                <pre>pmbok7_premium: ${premium || 'null'}
+pmbok7_premium_expiry: ${premiumExpiry || 'null'}${premiumExpiry ? ' (' + new Date(parseInt(premiumExpiry)).toLocaleString() + ')' : ''}
+pmbok7_license_key: ${licenseKey || 'null'}</pre>
+            `;
+            results.appendChild(div);
+        }
+
+        // 页面加载时自动检查
+        window.onload = () => {
+            checkLearningProgress();
+            checkPremium();
+        };
+    </script>
+</body>
+</html>
