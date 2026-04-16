@@ -4390,6 +4390,19 @@
             const feedback = container.querySelector('.quiz-feedback');
             const options = container.querySelectorAll('.quiz-option');
 
+            // 获取当前原则编号
+            const principleNumber = container.dataset?.principleNumber || 1;
+
+            // 记录学习进度
+            trackLearning('quiz', {
+                principleNumber: principleNumber,
+                correct: selectedIndex === correctIndex,
+                questionId: `principle_${principleNumber}_quiz_${Date.now()}`,
+                category: 'principle',
+                categoryId: principleNumber,
+                difficulty: 'medium'
+            });
+
             // 禁用所有按钮
             options.forEach(opt => opt.disabled = true);
 
