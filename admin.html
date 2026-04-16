@@ -854,31 +854,41 @@
         async function logout() {
             if (!confirm('确定要退出登录吗？')) return;
 
-            const supabase = window.supabase.createClient(
-                'https://afuesynrviwicnjisuma.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0'
+            if (!window.supabase) {
+                alert('Supabase 未加载');
+                return;
+            }
+
+            const supabaseAuth = window.supabase.createClient(
+                SUPABASE_CONFIG.url,
+                SUPABASE_CONFIG.key
             );
 
-            await supabase.auth.signOut();
+            await supabaseAuth.auth.signOut();
             localStorage.removeItem('pm_admin_auth');
             window.location.href = 'admin-login.html';
         }
 
         // 显示管理员邮箱
         async function displayAdminEmail() {
-            const supabase = window.supabase.createClient(
-                'https://afuesynrviwicnjisuma.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFmdWVzeW5ydmV3aWNuamlzdW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ1MTY4NzMsImV4cCI6MjA2MDA5Mjg3M30.zEP7XV2H742uA7gY4d1d_3pYf5i5H6Y9s0J8k4L2mN0'
+            if (!window.supabase) {
+                console.log('Supabase 尚未加载，跳过邮箱显示');
+                return;
+            }
+
+            const supabaseAuth = window.supabase.createClient(
+                SUPABASE_CONFIG.url,
+                SUPABASE_CONFIG.key
             );
 
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabaseAuth.auth.getUser();
             if (user) {
                 document.getElementById('adminEmailDisplay').textContent = user.email;
             }
         }
 
-        // 页面加载时显示邮箱
-        displayAdminEmail();
+        // 页面加载时显示邮箱（等 Supabase 加载后）
+        setTimeout(displayAdminEmail, 1000);
     </script>
 </body>
 </html>
