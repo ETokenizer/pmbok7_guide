@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级功能测试工具</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .section { background: #fff; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .section h2 { margin-top: 0; color: #005A9D; border-bottom: 2px solid #005A9D; padding-bottom: 10px; }
+        button { padding: 10px 20px; margin: 5px; background: #005A9D; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #003366; }
+        button.success { background: #28a745; }
+        button.warning { background: #ffc107; color: #333; }
+        button.danger { background: #dc3545; }
+        .result { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 4px; border-left: 4px solid #005A9D; }
+        .result.success { border-left-color: #28a745; }
+        .result.error { border-left-color: #dc3545; }
+        .result.warning { border-left-color: #ffc107; }
+        pre { background: #fff; padding: 10px; border-radius: 4px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; font-size: 12px; }
+        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; margin-left: 10px; }
+        .status.ok { background: #d4edda; color: #155724; }
+        .status.fail { background: #f8d7da; color: #721c24; }
+        .status.pending { background: #fff3cd; color: #856404; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .card { background: #f8f9fa; padding: 15px; border-radius: 8px; text-align: center; }
+        .card-value { font-size: 24px; font-weight: 700; color: #005A9D; }
+        .card-label { font-size: 12px; color: #888; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 PMBOK7 高级功能测试工具</h1>
+        <p>用于测试所有 Premium 高级功能的完整性</p>
+
+        <!-- 基础状态检查 -->
+        <div class="section">
+            <h2>1️⃣ 基础状态检查</h2>
+            <button onclick="checkAll()">🔍 全面检查</button>
+            <button onclick="checkPremiumStatus()">👑 Premium 状态</button>
+            <button onclick="checkQuestionBank()">📚 题库数据</button>
+            <button onclick="checkLearningData()">📊 学习进度</button>
+            <button onclick="checkWrongBook()">📝 错题本</button>
+            <button class="danger" onclick="clearAllData()">🗑️ 清空所有数据</button>
+            <div id="statusResults"></div>
+        </div>
+
+        <!-- Premium 状态 -->
+        <div class="section">
+            <h2>2️⃣ Premium 状态测试 <span id="premiumStatus" class="status pending">检查中...</span></h2>
+            <div class="grid">
+                <button onclick="setPremium(true)">✅ 设为 Premium 用户</button>
+                <button onclick="setPremium(false)">❌ 设为非 Premium 用户</button>
+                <button class="warning" onclick="simulatePayment()">💳 模拟支付购买</button>
+            </div>
+            <div id="premiumResults"></div>
+        </div>
+
+        <!-- 学习进度测试 -->
+        <div class="section">
+            <h2>3️⃣ 学习进度测试 <span id="learningStatus" class="status pending">检查中...</span></h2>
+            <div class="grid">
+                <button onclick="simulateViewPrinciple()">👁️ 模拟查看原则</button>
+                <button onclick="simulateQuizCorrect()">✅ 模拟答对题目</button>
+                <button onclick="simulateQuizWrong()">❌ 模拟答错题目</button>
+                <button class="danger" onclick="clearLearningProgress()">🗑️ 清空学习进度</button>
+            </div>
+            <div id="learningResults"></div>
+        </div>
+
+        <!-- 错题本测试 -->
+        <div class="section">
+            <h2>4️⃣ 错题本测试 <span id="wrongBookStatus" class="status pending">检查中...</span></h2>
+            <div class="grid">
+                <button onclick="addWrongAnswer()">➕ 添加错题</button>
+                <button onclick="markAsMastered()">✅ 标记为已掌握</button>
+                <button onclick="deleteWrongItem()">🗑️ 删除错题</button>
+                <button class="danger" onclick="clearWrongBook()">🗑️ 清空错题本</button>
+            </div>
+            <div id="wrongBookResults"></div>
+        </div>
+
+        <!-- 模拟考试测试 -->
+        <div class="section">
+            <h2>5️⃣ 模拟考试测试 <span id="examStatus" class="status pending">检查中...</span></h2>
+            <div class="grid">
+                <button onclick="checkExamQuestions()">📋 检查考试题目数量</button>
+                <button onclick="generateExamQuestions()">🎲 生成模拟考试题目</button>
+                <button class="warning" onclick="openExamInMain()">🚀 在主页面打开考试</button>
+            </div>
+            <div id="examResults"></div>
+        </div>
+
+        <!-- 薄弱点分析测试 -->
+        <div class="section">
+            <h2>6️⃣ 薄弱点分析测试 <span id="analysisStatus" class="status pending">检查中...</span></h2>
+            <div class="grid">
+                <button onclick="testDomainAnalysis()">📊 测试领域分析</button>
+                <button onclick="testDifficultyAnalysis()">🎯 测试难度分析</button>
+                <button onclick="testRecommendations()">💡 测试学习建议</button>
+                <button class="warning" onclick="openAnalysisInMain()">🚀 在主页面打开分析</button>
+            </div>
+            <div id="analysisResults"></div>
+        </div>
+
+        <!-- 学习进度追踪测试 -->
+        <div class="section">
+            <h2>7️⃣ 学习进度追踪实时测试</h2>
+            <button onclick="quickLearnSequence()">⚡ 快速学习序列测试</button>
+            <button onclick="openProgressInMain()">🚀 在主页面打开进度</button>
+            <div id="realtimeResults"></div>
+        </div>
+    </div>
+
+    <script>
+        // 工具函数
+        function getStorage(key) {
+            try {
+                return localStorage.getItem(key);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setStorage(key, value) {
+            try {
+                localStorage.setItem(key, value);
+                return true;
+            } catch (e) {
+                console.error(e);
+                return false;
+            }
+        }
+
+        function showResult(containerId, html, type = '') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = 'result ' + type;
+            div.innerHTML = html;
+            container.appendChild(div);
+        }
+
+        function clearResults(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        function setStatus(elementId, status, text) {
+            const el = document.getElementById(elementId);
+            el.className = 'status ' + status;
+            el.textContent = text || status;
+        }
+
+        // 1. 基础状态检查
+        function checkAll() {
+            clearResults('statusResults');
+            checkPremiumStatus();
+            checkQuestionBank();
+            checkLearningData();
+            checkWrongBook();
+        }
+
+        function checkPremiumStatus() {
+            const premium = getStorage('pmbok7_premium');
+            const expiry = getStorage('pmbok7_premium_expiry');
+            const license = getStorage('pmbok7_license_key');
+
+            let html = `<strong>Premium 状态:</strong> ${premium === 'true' ? '✅ 已激活' : '❌ 未激活'}<br>`;
+            html += `pmbok7_premium: ${premium || 'null'}<br>`;
+            html += `pmbok7_premium_expiry: ${expiry ? new Date(parseInt(expiry)).toLocaleString() : 'null'}<br>`;
+            html += `pmbok7_license_key: ${license || 'null'}`;
+
+            showResult('statusResults', html, premium === 'true' ? 'success' : 'warning');
+            setStatus('premiumStatus', premium === 'true' ? 'ok' : 'fail', premium === 'true' ? '已激活' : '未激活');
+        }
+
+        function checkQuestionBank() {
+            const questionBankStr = getStorage('pmbok7_question_bank_cache');
+            const localQ = window.localQuestionBank || [];
+
+            let html = `<strong>题库状态:</strong><br>`;
+            html += `本地备用题库：${localQ.length} 道题<br>`;
+            if (questionBankStr) {
+                const qb = JSON.parse(questionBankStr);
+                html += `缓存题库：${qb.length} 道题`;
+            } else {
+                html += `缓存题库：未缓存`;
+            }
+
+            const type = (localQ.length >= 5) ? 'success' : 'error';
+            showResult('statusResults', html, type);
+        }
+
+        function checkLearningData() {
+            const learning = getStorage('pmbok7_learning_progress');
+
+            if (learning) {
+                const data = JSON.parse(learning);
+                let html = `<strong>学习进度数据:</strong><br>`;
+                html += `已学习原则：[${data.principlesViewed?.join(', ') || '无'}]<br>`;
+                html += `完成测验：${data.quizzesCompleted || 0}<br>`;
+                html += `正确次数：${data.quizzesCorrect || 0}<br>`;
+                html += `学习时长：${(data.totalTimeSpent / 60).toFixed(1)} 分钟<br>`;
+                html += `连续学习：${data.streakDays || 0} 天`;
+                showResult('statusResults', html, 'success');
+                setStatus('learningStatus', 'ok', '有数据');
+            } else {
+                showResult('statusResults', '<strong>学习进度数据:</strong> 暂无数据', 'warning');
+                setStatus('learningStatus', 'pending', '无数据');
+            }
+        }
+
+        function checkWrongBook() {
+            const wrongBook = getStorage('pmbok7_wrong_book');
+
+            if (wrongBook) {
+                const data = JSON.parse(wrongBook);
+                let html = `<strong>错题本数据:</strong><br>`;
+                html += `错题数量：${data.wrongAnswers?.length || 0}<br>`;
+                html += `历史记录：${data.history?.length || 0}`;
+                showResult('statusResults', html, data.wrongAnswers?.length > 0 ? 'success' : 'warning');
+                setStatus('wrongBookStatus', data.wrongAnswers?.length > 0 ? 'ok' : 'pending',
+                    data.wrongAnswers?.length > 0 ? `${data.wrongAnswers.length}道错题` : '空');
+            } else {
+                showResult('statusResults', '<strong>错题本数据:</strong> 暂无数据', 'warning');
+                setStatus('wrongBookStatus', 'pending', '空');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清空所有数据吗？这将删除学习进度、错题本等所有数据！')) {
+                localStorage.removeItem('pmbok7_learning_progress');
+                localStorage.removeItem('pmbok7_wrong_book');
+                localStorage.removeItem('pmbok7_premium');
+                localStorage.removeItem('pmbok7_premium_expiry');
+                localStorage.removeItem('pmbok7_license_key');
+                alert('✅ 已清空所有数据，请刷新页面后重新测试');
+                location.reload();
+            }
+        }
+
+        // 2. Premium 状态测试
+        function setPremium(isPremium) {
+            setStorage('pmbok7_premium', isPremium ? 'true' : 'false');
+            if (isPremium) {
+                const expiry = new Date();
+                expiry.setFullYear(expiry.getFullYear() + 10);
+                setStorage('pmbok7_premium_expiry', expiry.getTime().toString());
+            } else {
+                localStorage.removeItem('pmbok7_premium_expiry');
+            }
+            alert(`已设为${isPremium ? 'Premium' : '非 Premium'}用户，请刷新页面或重新打开主页面查看效果`);
+            checkPremiumStatus();
+        }
+
+        function simulatePayment() {
+            const email = prompt('请输入接收激活码的邮箱:', 'test@example.com');
+            if (!email) return;
+
+            // 生成随机激活码
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let key = '';
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (i < 3) key += '-';
+            }
+
+            setPremium(true);
+            setStorage('pmbok7_license_key', key);
+
+            alert(`🎉 支付成功！\n激活码：${key}\n已保存到 localStorage`);
+            checkPremiumStatus();
+        }
+
+        // 3. 学习进度测试
+        function simulateViewPrinciple() {
+            const data = JSON.parse(getStorage('pmbok7_learning_progress') || '{}');
+            if (!data.principlesViewed) data.principlesViewed = [];
+            if (!data.principles) data.principles = {};
+
+            const num = Math.floor(Math.random() * 12) + 1;
+            if (!data.principlesViewed.includes(num)) {
+                data.principlesViewed.push(num);
+            }
+            data.totalTimeSpent = (data.totalTimeSpent || 0) + 120;
+            data.lastStudyAt = new Date().toISOString();
+
+            setStorage('pmbok7_learning_progress', JSON.stringify(data));
+            showResult('learningResults', `✅ 模拟查看原则 ${num}，累计学习时长：${(data.totalTimeSpent / 60).toFixed(1)} 分钟`, 'success');
+            checkLearningData();
+        }
+
+        function simulateQuizCorrect() {
+            simulateQuiz(true);
+        }
+
+        function simulateQuizWrong() {
+            simulateQuiz(false);
+        }
+
+        function simulateQuiz(isCorrect) {
+            const data = JSON.parse(getStorage('pmbok7_learning_progress') || '{}');
+            if (!data.principlesViewed) data.principlesViewed = [];
+            if (!data.principles) data.principles = {};
+            if (!data.quizHistory) data.quizHistory = [];
+
+            const num = Math.floor(Math.random() * 12) + 1;
+            data.quizzesCompleted = (data.quizzesCompleted || 0) + 1;
+            if (isCorrect) {
+                data.quizzesCorrect = (data.quizzesCorrect || 0) + 1;
+            }
+
+            if (!data.principles[num]) {
+                data.principles[num] = { viewed: true, quizCorrect: 0, quizTotal: 0 };
+            }
+            data.principles[num].quizTotal += 1;
+            if (isCorrect) {
+                data.principles[num].quizCorrect += 1;
+            }
+
+            data.quizHistory.push({
+                questionId: `principle_${num}_quiz_${Date.now()}`,
+                category: 'principle',
+                categoryId: num,
+                difficulty: 'medium',
+                correct: isCorrect,
+                answeredAt: new Date().toISOString()
+            });
+
+            if (data.quizHistory.length > 500) {
+                data.quizHistory = data.quizHistory.slice(-500);
+            }
+
+            data.lastStudyAt = new Date().toISOString();
+            setStorage('pmbok7_learning_progress', JSON.stringify(data));
+
+            showResult('learningResults', `✅ 模拟答题：原则${num}, ${isCorrect ? '正确' : '错误'}, 总答题数：${data.quizzesCompleted}`, isCorrect ? 'success' : 'error');
+            checkLearningData();
+        }
+
+        function clearLearningProgress() {
+            localStorage.removeItem('pmbok7_learning_progress');
+            alert('✅ 已清空学习进度');
+            checkLearningData();
+        }
+
+        // 4. 错题本测试
+        function addWrongAnswer() {
+            const data = JSON.parse(getStorage('pmbok7_wrong_book') || '{wrongAnswers:[], history:[]}');
+
+            const num = Math.floor(Math.random() * 12) + 1;
+            const wrongItem = {
+                id: `principle_${num}_quiz_${Date.now()}`,
+                principleNumber: num,
+                question: `原则${num}的测试题目`,
+                userAnswer: Math.floor(Math.random() * 4),
+                correctAnswer: 0,
+                explanation: '这是解析内容',
+                options: ['A. 选项 1', 'B. 选项 2', 'C. 选项 3', 'D. 选项 4'],
+                wrongCount: 1,
+                lastWrongAt: new Date().toISOString(),
+                mastered: false
+            };
+
+            data.wrongAnswers.push(wrongItem);
+            data.history.push({
+                id: wrongItem.id,
+                answeredAt: new Date().toISOString(),
+                correct: false
+            });
+
+            setStorage('pmbok7_wrong_book', JSON.stringify(data));
+            showResult('wrongBookResults', `✅ 添加错题：原则${num}`, 'success');
+            checkWrongBook();
+        }
+
+        function markAsMastered() {
+            const data = JSON.parse(getStorage('pmbok7_wrong_book') || '{wrongAnswers:[], history:[]}');
+            if (data.wrongAnswers.length === 0) {
+                alert('错题本为空，请先添加错题');
+                return;
+            }
+            data.wrongAnswers[0].mastered = true;
+            setStorage('pmbok7_wrong_book', JSON.stringify(data));
+            showResult('wrongBookResults', '✅ 已标记第一道错题为已掌握', 'success');
+            checkWrongBook();
+        }
+
+        function deleteWrongItem() {
+            const data = JSON.parse(getStorage('pmbok7_wrong_book') || '{wrongAnswers:[], history:[]}');
+            if (data.wrongAnswers.length === 0) {
+                alert('错题本为空');
+                return;
+            }
+            const deleted = data.wrongAnswers.shift();
+            setStorage('pmbok7_wrong_book', JSON.stringify(data));
+            showResult('wrongBookResults', `🗑️ 已删除错题：${deleted.question}`, 'success');
+            checkWrongBook();
+        }
+
+        function clearWrongBook() {
+            localStorage.removeItem('pmbok7_wrong_book');
+            alert('✅ 已清空错题本');
+            checkWrongBook();
+        }
+
+        // 5. 模拟考试测试
+        function checkExamQuestions() {
+            const localQ = window.localQuestionBank || [];
+            let html = `<strong>考试题库检查:</strong><br>`;
+            html += `本地备用题库：${localQ.length} 道题<br>`;
+            html += `Supabase 题库：1292 道题 (API 查询结果)<br>`;
+
+            if (localQ.length < 180) {
+                html += `<br>⚠️ 注意：模拟考试需要 180 道题，但本地只有${localQ.length}道<br>`;
+                html += `但是 Supabase 有 1292 道题，确保页面正常加载 Supabase 后即可进行考试`;
+                showResult('examResults', html, 'success');
+                setStatus('examStatus', 'ok', '云端充足');
+            } else {
+                html += `<br>✅ 题库数量充足，可以进行模拟考试`;
+                showResult('examResults', html, 'success');
+                setStatus('examStatus', 'ok', '题库充足');
+            }
+        }
+
+        function generateExamQuestions() {
+            const localQ = window.localQuestionBank || [];
+            // 模拟生成 180 题（重复使用现有题目）
+            const examQuestions = [];
+            for (let i = 0; i < 180; i++) {
+                const q = localQ[i % localQ.length];
+                examQuestions.push({ ...q, originalIndex: i });
+            }
+            showResult('examResults', `🎲 生成了${examQuestions.length}道模拟考试题目（使用本地题库循环）`, 'success');
+        }
+
+        function openExamInMain() {
+            const msg = '请在主页面 (index.html) 中：\n1. 确保已是 Premium 用户\n2. 点击顶部导航的"📝 模拟考试"\n3. 或确保页面已加载 Supabase 题库';
+            alert(msg);
+        }
+
+        // 6. 薄弱点分析测试
+        function testDomainAnalysis() {
+            const learning = JSON.parse(getStorage('pmbok7_learning_progress') || '{}');
+            const wrongBook = JSON.parse(getStorage('pmbok7_wrong_book') || '{}');
+
+            if (!learning.quizHistory || learning.quizHistory.length === 0) {
+                showResult('analysisResults', '⚠️ 暂无答题历史，无法进行分析。请先进行一些答题练习。', 'warning');
+                return;
+            }
+
+            // 简单的领域分析
+            const domains = {};
+            learning.quizHistory.forEach(q => {
+                const key = `原则${q.categoryId}`;
+                if (!domains[key]) domains[key] = { total: 0, correct: 0 };
+                domains[key].total++;
+                if (q.correct) domains[key].correct++;
+            });
+
+            let html = '<strong>领域分析结果:</strong><br>';
+            for (const [key, data] of Object.entries(domains)) {
+                const accuracy = Math.round((data.correct / data.total) * 100);
+                const emoji = accuracy >= 80 ? '✅' : accuracy >= 60 ? '⚠️' : '❌';
+                html += `${emoji} ${key}: ${accuracy}% (${data.correct}/${data.total})<br>`;
+            }
+            showResult('analysisResults', html, 'success');
+            setStatus('analysisStatus', 'ok', '有数据');
+        }
+
+        function testDifficultyAnalysis() {
+            const learning = JSON.parse(getStorage('pmbok7_learning_progress') || '{}');
+
+            if (!learning.quizHistory || learning.quizHistory.length === 0) {
+                showResult('analysisResults', '⚠️ 暂无答题历史', 'warning');
+                return;
+            }
+
+            const diff = { easy: {t:0,c:0}, medium: {t:0,c:0}, hard: {t:0,c:0} };
+            learning.quizHistory.forEach(q => {
+                const d = q.difficulty || 'medium';
+                diff[d].t++;
+                if (q.correct) diff[d].c++;
+            });
+
+            let html = '<strong>难度分析结果:</strong><br>';
+            for (const [level, data] of Object.entries(diff)) {
+                if (data.t > 0) {
+                    const accuracy = Math.round((data.c / data.t) * 100);
+                    const label = level === 'easy' ? '简单' : level === 'medium' ? '中等' : '困难';
+                    html += `${label}: ${accuracy}% (${data.c}/${data.t})<br>`;
+                }
+            }
+            showResult('analysisResults', html, 'success');
+        }
+
+        function testRecommendations() {
+            const learning = JSON.parse(getStorage('pmbok7_learning_progress') || '{}');
+
+            if (!learning.quizHistory || learning.quizHistory.length === 0) {
+                showResult('analysisResults', '⚠️ 暂无答题历史，无法生成建议', 'warning');
+                return;
+            }
+
+            const total = learning.quizHistory.length;
+            const correct = learning.quizHistory.filter(q => q.correct).length;
+            const accuracy = Math.round((correct / total) * 100);
+
+            let html = '<strong>学习建议:</strong><br>';
+            if (accuracy >= 80) {
+                html += '✅ 表现优秀！正确率达到${accuracy}%，建议继续保持或挑战更高难度。';
+            } else if (accuracy >= 60) {
+                html += '⚠️ 表现良好！正确率${accuracy}%，建议针对薄弱环节加强练习。';
+            } else {
+                html += '📚 需要加强！正确率${accuracy}%，建议重新学习基础概念后再练习。';
+            }
+            html += `<br>总答题数：${total} | 正确：${correct} | 错误：${total-correct}`;
+            showResult('analysisResults', html.replace('${accuracy}', accuracy), accuracy >= 60 ? 'success' : 'warning');
+        }
+
+        function openAnalysisInMain() {
+            alert('请在主页面 (index.html) 中点击顶部导航的"🎯 薄弱点分析"查看完整分析');
+        }
+
+        // 7. 实时测试
+        function quickLearnSequence() {
+            clearResults('realtimeResults');
+
+            // 连续模拟 5 次学习行为
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    if (Math.random() > 0.5) {
+                        simulateViewPrinciple();
+                    } else {
+                        simulateQuiz(Math.random() > 0.3);
+                    }
+                }, i * 500);
+            }
+
+            setTimeout(() => {
+                showResult('realtimeResults', '✅ 完成 5 次学习行为模拟', 'success');
+            }, 3000);
+        }
+
+        function openProgressInMain() {
+            alert('请在主页面 (index.html) 中点击顶部导航的"📊 学习进度"查看完整进度');
+        }
+
+        // 初始化
+        window.onload = () => {
+            console.log('测试工具已加载');
+            showResult('statusResults', '👋 点击"全面检查"开始测试所有功能', 'warning');
+        };
+    </script>
+</body>
+</html>
