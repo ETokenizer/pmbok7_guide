@@ -227,10 +227,12 @@
             color: var(--white);
         }
         .view-tab:hover:not(.active) { background: #e8e8e8; }
+        /* 学习内容列表 - 限制最大高度，让高级功能区块能显示 */
         .content-list {
             flex: 1;
             overflow-y: auto;
             min-height: 0;
+            max-height: 400px;
         }
         .content-item {
             padding: 14px 18px;
@@ -1361,10 +1363,10 @@
 
     <div class="main-container">
         <aside class="sidebar">
-            <!-- 上部：学习内容 -->
+            <!-- 上部：基础学习 -->
             <div class="sidebar-section">
                 <div class="sidebar-section-header">
-                    📚 学习内容
+                    📖 基础学习
                 </div>
                 <div class="view-tabs">
                     <button class="view-tab active" onclick="switchView('principles')">
