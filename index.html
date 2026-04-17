@@ -1429,8 +1429,8 @@
                     </div>
                 </div>
 
-                <!-- 下部：高级功能 -->
-                <div class="sidebar-section premium-section" id="premiumSection">
+                <!-- 下部：高级功能（仅 Premium 用户显示） -->
+                <div class="sidebar-section premium-section" id="premiumSection" style="display:none">
                     <div class="sidebar-section-header" onclick="toggleSection('premium')">
                         <span class="header-text">👑 高级功能</span>
                         <span class="toggle-icon" id="premiumToggle">▼</span>
@@ -1492,8 +1492,8 @@
                         左侧导航切换查看原则和绩效域的详细内容
                     </p>
 
-                    <!-- 高级功能卡片 -->
-                    <div class="premium-features-home">
+                    <!-- 高级功能卡片（仅 Premium 用户显示） -->
+                    <div class="premium-features-home" id="premiumFeaturesHome" style="display:none">
                         <div class="premium-feature-card" onclick="openProgressCenterModal()">
                             <div class="card-icon">📊</div>
                             <div class="card-badge">👑 高级</div>
@@ -2347,15 +2347,25 @@
             const nonPremiumMenu = document.getElementById('nonPremiumMenu');
             const premiumMenu = document.getElementById('premiumMenu');
             const accountText = document.getElementById('accountMenuText');
+            const premiumSection = document.getElementById('premiumSection');
+            const premiumFeaturesHome = document.getElementById('premiumFeaturesHome');
 
             if (isPremiumUser) {
                 nonPremiumMenu.style.display = 'none';
                 premiumMenu.style.display = 'block';
                 accountText.textContent = '专业版';
+                // 显示左侧高级功能区块
+                if (premiumSection) premiumSection.style.display = 'flex';
+                // 显示首页高级功能卡片
+                if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'grid';
             } else {
                 nonPremiumMenu.style.display = 'block';
                 premiumMenu.style.display = 'none';
                 accountText.textContent = '账户';
+                // 隐藏左侧高级功能区块
+                if (premiumSection) premiumSection.style.display = 'none';
+                // 隐藏首页高级功能卡片
+                if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'none';
             }
         }
 
@@ -2604,20 +2614,8 @@
             if (!container) return;
 
             if (checkPremiumStatus()) {
-                // Premium 用户显示简洁的会员状态
-                container.innerHTML = `
-                    <div style="padding:15px;background:linear-gradient(135deg, #FFF8E7, #FFE8A3);border-radius:8px;margin-bottom:10px;border:2px solid #D4AF37">
-                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                            <span style="font-size:16px">👑</span>
-                            <div style="font-size:13px;font-weight:600;color:#8B6914">专业版用户</div>
-                        </div>
-                        <div style="font-size:11px;color:#666;line-height:1.5">
-                            ✨ 已解锁全部高级功能<br>
-                            📊 学习进度 · 📝 模拟考试<br>
-                            📝 错题本 · 🎯 薄弱点分析
-                        </div>
-                    </div>
-                `;
+                // Premium 用户不显示任何内容
+                container.innerHTML = '';
             } else {
                 // 非 Premium 用户显示广告
                 container.innerHTML = `
