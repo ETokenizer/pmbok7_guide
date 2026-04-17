@@ -858,6 +858,31 @@
         }
         .ad-close:hover { opacity: 1; }
 
+        /* 广告占位符样式 */
+        .ad-placeholder {
+            background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .ad-label {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .ad-content {
+            padding: 15px;
+            background: #fff;
+            border: 2px dashed #ddd;
+            border-radius: 6px;
+            color: #666;
+            font-size: 12px;
+        }
+
         .template-section {
             background: #fff;
             border: 1px solid #ddd;
@@ -2608,9 +2633,30 @@
             // 可以在这里动态插入广告到各个位置
         }
 
-        // 侧边栏广告位 - 已禁用，不显示任何内容
+        // 侧边栏广告位 - 仅非 Premium 用户显示
         function renderSidebarAd() {
-            // 不再显示任何广告或会员状态提示
+            const container = document.getElementById('sidebarAdContainer');
+            if (!container) return;
+
+            if (checkPremiumStatus()) {
+                // Premium 用户不显示任何内容
+                container.innerHTML = '';
+                return;
+            }
+
+            // 非 Premium 用户显示广告位占位符
+            // TODO: 接入 Google AdSense 或其他广告联盟时，替换为实际广告代码
+            container.innerHTML = `
+                <div class="ad-placeholder">
+                    <div class="ad-label">广告 · Ad</div>
+                    <div class="ad-content">
+                        📢 广告位招租
+                        <span style="font-size:11px;color:#888;display:block;margin-top:6px">
+                            联系邮箱：support@pmlearning.cn
+                        </span>
+                    </div>
+                </div>
+            `;
         }
 
         // =====================================================
