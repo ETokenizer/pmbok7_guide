@@ -113,8 +113,10 @@
             margin: 8px 0;
         }
 
-        /* 侧边栏分节样式 */
+        /* 侧边栏分节样式 - 统一风格 */
         .sidebar-section {
+            display: flex;
+            flex-direction: column;
             flex-shrink: 0;
         }
         .sidebar-section-header {
@@ -123,10 +125,38 @@
             padding: 12px 18px;
             font-weight: 600;
             font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.2s;
         }
+        .sidebar-section-header:hover {
+            background: var(--pmi-dark);
+        }
+        .sidebar-section-header .header-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-section-header .toggle-icon {
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+        .sidebar-section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+        .sidebar-section-content {
+            overflow-y: auto;
+            flex: 1;
+        }
+        /* 高级功能区块 - 统一蓝色主题 */
         .premium-section .sidebar-section-header {
-            background: linear-gradient(135deg, #D4AF37, #B8941F);
-            color: #333;
+            background: var(--pmi-blue);
+        }
+        .premium-section .sidebar-section-header:hover {
+            background: var(--pmi-dark);
         }
 
         /* 高级功能导航列表 */
@@ -139,16 +169,16 @@
             align-items: center;
             gap: 12px;
             padding: 14px 18px;
-            background: #FFF8E7;
+            background: #f5f9fc;
             border: none;
-            border-bottom: 1px solid #FFE8A3;
+            border-bottom: 1px solid #e0e8f0;
             cursor: pointer;
             transition: all 0.2s;
             text-align: left;
             width: 100%;
         }
         .premium-nav-item:hover {
-            background: #FFF3CD;
+            background: #e8f4fc;
         }
         .premium-nav-icon {
             font-size: 20px;
@@ -161,7 +191,7 @@
         .premium-nav-title {
             font-weight: 600;
             font-size: 13px;
-            color: #8B6914;
+            color: var(--pmi-dark);
         }
         .premium-nav-subtitle {
             font-size: 11px;
@@ -185,6 +215,13 @@
             display: flex;
             flex-direction: column;
             height: calc(100vh - 100px);
+        }
+        /* 侧边栏主体内容 - 可滚动 */
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
         .sidebar-header {
             background: var(--pmi-blue);
@@ -227,12 +264,11 @@
             color: var(--white);
         }
         .view-tab:hover:not(.active) { background: #e8e8e8; }
-        /* 学习内容列表 - 限制最大高度，让高级功能区块能显示 */
+        /* 学习内容列表 - 动态高度 */
         .content-list {
             flex: 1;
             overflow-y: auto;
             min-height: 0;
-            max-height: 400px;
         }
         .content-item {
             padding: 14px 18px;
@@ -1363,66 +1399,74 @@
 
     <div class="main-container">
         <aside class="sidebar">
-            <!-- 上部：基础学习 -->
-            <div class="sidebar-section">
-                <div class="sidebar-section-header">
-                    📖 基础学习
+            <div class="sidebar-content">
+                <!-- 上部：基础学习 -->
+                <div class="sidebar-section" id="learningSection">
+                    <div class="sidebar-section-header" onclick="toggleSection('learning')">
+                        <span class="header-text">📖 基础学习</span>
+                        <span class="toggle-icon" id="learningToggle">▼</span>
+                    </div>
+                    <div class="sidebar-section-content" id="learningContent">
+                        <div class="view-tabs">
+                            <button class="view-tab active" onclick="switchView('principles')">
+                                📌 12 项原则
+                                <span class="tab-en">12 Principles</span>
+                            </button>
+                            <button class="view-tab" onclick="switchView('domains')">
+                                🌐 8 个绩效域
+                                <span class="tab-en">8 Performance Domains</span>
+                            </button>
+                            <button class="view-tab" onclick="switchView('processes')">
+                                🔄 40 个流程
+                                <span class="tab-en">40 Processes</span>
+                            </button>
+                            <button class="view-tab" onclick="switchView('agile')">
+                                🔄 敏捷/混合
+                                <span class="tab-en">Agile/Hybrid</span>
+                            </button>
+                        </div>
+                        <div class="content-list" id="contentList"></div>
+                    </div>
                 </div>
-                <div class="view-tabs">
-                    <button class="view-tab active" onclick="switchView('principles')">
-                        📌 12 项原则
-                        <span class="tab-en">12 Principles</span>
-                    </button>
-                    <button class="view-tab" onclick="switchView('domains')">
-                        🌐 8 个绩效域
-                        <span class="tab-en">8 Performance Domains</span>
-                    </button>
-                    <button class="view-tab" onclick="switchView('processes')">
-                        🔄 40 个流程
-                        <span class="tab-en">40 Processes</span>
-                    </button>
-                    <button class="view-tab" onclick="switchView('agile')">
-                        🔄 敏捷/混合
-                        <span class="tab-en">Agile/Hybrid</span>
-                    </button>
-                </div>
-                <div class="content-list" id="contentList"></div>
-            </div>
 
-            <!-- 下部：高级功能 -->
-            <div class="sidebar-section premium-section">
-                <div class="sidebar-section-header">
-                    👑 高级功能
-                </div>
-                <div class="premium-nav-list">
-                    <button class="premium-nav-item" onclick="openProgressCenterModal()">
-                        <span class="premium-nav-icon">📊</span>
-                        <span class="premium-nav-text">
-                            <span class="premium-nav-title">学习进度</span>
-                            <span class="premium-nav-subtitle">追踪学习数据</span>
-                        </span>
-                    </button>
-                    <button class="premium-nav-item" onclick="openExamModal()">
-                        <span class="premium-nav-icon">📝</span>
-                        <span class="premium-nav-text">
-                            <span class="premium-nav-title">模拟考试</span>
-                            <span class="premium-nav-subtitle">180 题全真模拟</span>
-                        </span>
-                    </button>
-                    <button class="premium-nav-item" onclick="openWrongBookModal()">
-                        <span class="premium-nav-icon">📝</span>
-                        <span class="premium-nav-text">
-                            <span class="premium-nav-title">错题本</span>
-                            <span class="premium-nav-subtitle">智能记录错题</span>
-                        </span>
-                    </button>
-                    <button class="premium-nav-item" onclick="openAnalysisModal()">
-                        <span class="premium-nav-icon">🎯</span>
-                        <span class="premium-nav-text">
-                            <span class="premium-nav-title">薄弱点分析</span>
-                            <span class="premium-nav-subtitle">AI 精准分析</span>
-                        </span>
-                    </button>
+                <!-- 下部：高级功能 -->
+                <div class="sidebar-section premium-section" id="premiumSection">
+                    <div class="sidebar-section-header" onclick="toggleSection('premium')">
+                        <span class="header-text">👑 高级功能</span>
+                        <span class="toggle-icon" id="premiumToggle">▼</span>
+                    </div>
+                    <div class="sidebar-section-content" id="premiumContent">
+                        <div class="premium-nav-list">
+                            <button class="premium-nav-item" onclick="openProgressCenterModal()">
+                                <span class="premium-nav-icon">📊</span>
+                                <span class="premium-nav-text">
+                                    <span class="premium-nav-title">学习进度</span>
+                                    <span class="premium-nav-subtitle">追踪学习数据</span>
+                                </span>
+                            </button>
+                            <button class="premium-nav-item" onclick="openExamModal()">
+                                <span class="premium-nav-icon">📝</span>
+                                <span class="premium-nav-text">
+                                    <span class="premium-nav-title">模拟考试</span>
+                                    <span class="premium-nav-subtitle">180 题全真模拟</span>
+                                </span>
+                            </button>
+                            <button class="premium-nav-item" onclick="openWrongBookModal()">
+                                <span class="premium-nav-icon">📝</span>
+                                <span class="premium-nav-text">
+                                    <span class="premium-nav-title">错题本</span>
+                                    <span class="premium-nav-subtitle">智能记录错题</span>
+                                </span>
+                            </button>
+                            <button class="premium-nav-item" onclick="openAnalysisModal()">
+                                <span class="premium-nav-icon">🎯</span>
+                                <span class="premium-nav-text">
+                                    <span class="premium-nav-title">薄弱点分析</span>
+                                    <span class="premium-nav-subtitle">AI 精准分析</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1975,6 +2019,10 @@
             '监控': true,
             '收尾': true
         };
+        // 侧边栏区块折叠状态
+        let learningSectionExpanded = true;
+        let premiumSectionExpanded = true;
+
 
         // =====================================================
         // Premium / 广告相关状态
@@ -4195,6 +4243,39 @@
         function toggleFocusArea(fa) {
             expandedFocusAreas[fa] = !expandedFocusAreas[fa];
             renderContentList();
+        }
+
+        // 切换侧边栏区块展开/折叠
+        function toggleSection(section) {
+            if (section === 'learning') {
+                learningSectionExpanded = !learningSectionExpanded;
+                const content = document.getElementById('learningContent');
+                const toggle = document.getElementById('learningToggle');
+                const header = toggle.closest('.sidebar-section-header');
+                if (learningSectionExpanded) {
+                    content.style.display = 'block';
+                    toggle.textContent = '▼';
+                    header.classList.remove('collapsed');
+                } else {
+                    content.style.display = 'none';
+                    toggle.textContent = '▶';
+                    header.classList.add('collapsed');
+                }
+            } else if (section === 'premium') {
+                premiumSectionExpanded = !premiumSectionExpanded;
+                const content = document.getElementById('premiumContent');
+                const toggle = document.getElementById('premiumToggle');
+                const header = toggle.closest('.sidebar-section-header');
+                if (premiumSectionExpanded) {
+                    content.style.display = 'block';
+                    toggle.textContent = '▼';
+                    header.classList.remove('collapsed');
+                } else {
+                    content.style.display = 'none';
+                    toggle.textContent = '▶';
+                    header.classList.add('collapsed');
+                }
+            }
         }
 
         // 渲染内容列表
