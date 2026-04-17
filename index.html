@@ -2608,30 +2608,9 @@
             // 可以在这里动态插入广告到各个位置
         }
 
-        // 在侧边栏底部添加广告位
+        // 侧边栏广告位 - 已禁用，不显示任何内容
         function renderSidebarAd() {
-            const container = document.getElementById('sidebarAdContainer');
-            if (!container) return;
-
-            if (checkPremiumStatus()) {
-                // Premium 用户不显示任何内容
-                container.innerHTML = '';
-            } else {
-                // 非 Premium 用户显示广告
-                container.innerHTML = `
-                    <div class="ad-banner">
-                        <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
-                        <div class="ad-banner-title">广告 · Ad</div>
-                        <div class="ad-banner-content">
-                            🎯 去除广告 + 解锁全部高级功能<br>
-                            <span style="font-size:11px;color:#888">仅需¥19.9（约一杯奶茶）</span><br>
-                            <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
-                                👑 升级专业版
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
+            // 不再显示任何广告或会员状态提示
         }
 
         // =====================================================
