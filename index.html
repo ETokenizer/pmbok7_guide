@@ -38,6 +38,80 @@
         }
         .logo h1 { font-size: 20px; }
         .logo-sub { font-size: 11px; opacity: 0.85; margin-top: 3px; }
+
+        /* 账户菜单样式 */
+        .account-menu { position: relative; }
+        .account-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--white);
+            font-size: 13px;
+        }
+        .account-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+        .account-icon { font-size: 16px; }
+        .account-arrow { font-size: 10px; opacity: 0.8; }
+        .account-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            min-width: 220px;
+            padding: 8px;
+            display: none;
+            z-index: 1000;
+            margin-top: 8px;
+        }
+        .account-dropdown.show { display: block; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            color: #333;
+        }
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+        .item-icon { font-size: 16px; }
+        .item-text { flex: 1; }
+        .item-badge {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .item-tag {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .item-tag.premium {
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #333;
+        }
+        .dropdown-divider {
+            height: 1px;
+            background: #eee;
+            margin: 8px 0;
+        }
         .main-container {
             max-width: 1600px;
             margin: 0 auto;
@@ -288,6 +362,51 @@
         .welcome-icon { font-size: 80px; margin-bottom: 20px; }
         .welcome-title { font-size: 26px; color: var(--pmi-dark); margin-bottom: 15px; }
         .welcome-desc { font-size: 15px; color: #666; line-height: 2; max-width: 700px; margin: 0 auto; }
+
+        /* 高级功能卡片 - 首页 */
+        .premium-features-home {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px auto;
+            max-width: 900px;
+        }
+        .premium-feature-card {
+            background: linear-gradient(135deg, #FFF8E7, #FFE8A3);
+            border: 2px solid #D4AF37;
+            border-radius: 12px;
+            padding: 20px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .premium-feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(212,175,55,0.3);
+        }
+        .card-icon { font-size: 36px; margin-bottom: 8px; }
+        .card-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #D4AF37, #FFD700);
+            color: #333;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .card-title {
+            font-weight: 600;
+            color: #8B6914;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+        }
 
         .welcome-features {
             display: flex;
@@ -1157,28 +1276,67 @@
                 <div class="logo-sub">项目管理知识体系指南 (第 7 版) | A Guide to the Project Management Body of Knowledge (7th Ed.)</div>
             </div>
         </div>
-        <div style="display:flex;align-items:center;gap:10px">
-            <!-- Premium features navigation -->
-            <button onclick="openProgressCenterModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                <span style="font-size:10px">👑</span> 学习进度
+        <!-- 账户菜单 -->
+        <div class="account-menu">
+            <button class="account-btn" onclick="toggleAccountDropdown()">
+                <span class="account-icon">👤</span>
+                <span class="account-text" id="accountMenuText">账户</span>
+                <span class="account-arrow">▼</span>
             </button>
-            <button onclick="openExamModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                <span style="font-size:10px">👑</span> 模拟考试
-            </button>
-            <button onclick="openWrongBookModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                <span style="font-size:10px">👑</span> 错题本
-            </button>
-            <button onclick="openAnalysisModal()" style="padding:6px 12px;background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                <span style="font-size:10px">👑</span> 薄弱点分析
-            </button>
-            <div style="width:1px;height:20px;background:rgba(255,255,255,0.3);margin:0 4px"></div>
-            <button id="premiumBtn" onclick="showPremiumModal()" style="padding:6px 12px;background:linear-gradient(135deg, #D4AF37, #FFD700);color:#333;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;transition:all 0.3s">
-                👑 升级专业版
-            </button>
-            <button id="licenseBtn" onclick="showLicenseModal()" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.15);color:#D4AF37;border:1px solid #D4AF37;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.3s">
-                🔑 我的授权
-            </button>
-            <span id="premiumStatus" style="display:none;padding:6px 12px;background:rgba(212,175,55,0.2);border:1px solid #D4AF37;border-radius:6px;color:#FFD700;font-size:12px;font-weight:600">👑 专业版</span>
+            <div class="account-dropdown" id="accountDropdown">
+                <!-- 非 Premium 用户显示 -->
+                <div id="nonPremiumMenu">
+                    <div class="dropdown-item" onclick="showPremiumModal()">
+                        <span class="item-icon">👑</span>
+                        <span class="item-text">升级专业版</span>
+                        <span class="item-badge">¥19.9</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openProgressCenterModal()">
+                        <span class="item-icon">📊</span>
+                        <span class="item-text">学习进度</span>
+                        <span class="item-tag premium">高级</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openExamModal()">
+                        <span class="item-icon">📝</span>
+                        <span class="item-text">模拟考试</span>
+                        <span class="item-tag premium">高级</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openWrongBookModal()">
+                        <span class="item-icon">📝</span>
+                        <span class="item-text">错题本</span>
+                        <span class="item-tag premium">高级</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openAnalysisModal()">
+                        <span class="item-icon">🎯</span>
+                        <span class="item-text">薄弱点分析</span>
+                        <span class="item-tag premium">高级</span>
+                    </div>
+                </div>
+                <!-- Premium 用户显示 -->
+                <div id="premiumMenu" style="display:none">
+                    <div class="dropdown-item" onclick="openProgressCenterModal()">
+                        <span class="item-icon">📊</span>
+                        <span class="item-text">学习进度</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openExamModal()">
+                        <span class="item-icon">📝</span>
+                        <span class="item-text">模拟考试</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openWrongBookModal()">
+                        <span class="item-icon">📝</span>
+                        <span class="item-text">错题本</span>
+                    </div>
+                    <div class="dropdown-item" onclick="openAnalysisModal()">
+                        <span class="item-icon">🎯</span>
+                        <span class="item-text">薄弱点分析</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-item" onclick="showLicenseModal()">
+                        <span class="item-icon">🔑</span>
+                        <span class="item-text">我的授权</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -1228,6 +1386,35 @@
                         <strong>8 个绩效域</strong> 是项目绩效的关键领域<br><br>
                         左侧导航切换查看原则和绩效域的详细内容
                     </p>
+
+                    <!-- 高级功能卡片 -->
+                    <div class="premium-features-home">
+                        <div class="premium-feature-card" onclick="openProgressCenterModal()">
+                            <div class="card-icon">📊</div>
+                            <div class="card-badge">👑 高级</div>
+                            <div class="card-title">学习进度</div>
+                            <div class="card-desc">追踪学习数据，掌握进度</div>
+                        </div>
+                        <div class="premium-feature-card" onclick="openExamModal()">
+                            <div class="card-icon">📝</div>
+                            <div class="card-badge">👑 高级</div>
+                            <div class="card-title">模拟考试</div>
+                            <div class="card-desc">180 题全真模拟，计时答题</div>
+                        </div>
+                        <div class="premium-feature-card" onclick="openWrongBookModal()">
+                            <div class="card-icon">📝</div>
+                            <div class="card-badge">👑 高级</div>
+                            <div class="card-title">错题本</div>
+                            <div class="card-desc">智能记录，针对性复习</div>
+                        </div>
+                        <div class="premium-feature-card" onclick="openAnalysisModal()">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-badge">👑 高级</div>
+                            <div class="card-title">薄弱点分析</div>
+                            <div class="card-desc">AI 分析，精准提分</div>
+                        </div>
+                    </div>
+
                     <div class="welcome-features">
                         <div class="feature-item">
                             <div class="feature-icon">📌</div>
@@ -2037,6 +2224,40 @@
             }
             return isPremiumUser;
         }
+
+        // 切换账户下拉菜单
+        function toggleAccountDropdown() {
+            const dropdown = document.getElementById('accountDropdown');
+            dropdown.classList.toggle('show');
+            // 更新菜单显示
+            updateAccountMenu();
+        }
+
+        // 更新账户菜单显示
+        function updateAccountMenu() {
+            const nonPremiumMenu = document.getElementById('nonPremiumMenu');
+            const premiumMenu = document.getElementById('premiumMenu');
+            const accountText = document.getElementById('accountMenuText');
+
+            if (isPremiumUser) {
+                nonPremiumMenu.style.display = 'none';
+                premiumMenu.style.display = 'block';
+                accountText.textContent = '专业版';
+            } else {
+                nonPremiumMenu.style.display = 'block';
+                premiumMenu.style.display = 'none';
+                accountText.textContent = '账户';
+            }
+        }
+
+        // 点击外部关闭下拉菜单
+        document.addEventListener('click', function(e) {
+            const accountMenu = document.querySelector('.account-menu');
+            const dropdown = document.getElementById('accountDropdown');
+            if (!accountMenu.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
 
         // 显示 Premium 升级弹窗
         function showPremiumModal() {
@@ -6516,6 +6737,7 @@
             checkPremiumStatus();
             updatePremiumUI();
             updateLicenseUI();
+            updateAccountMenu(); // 更新账户菜单
             renderSidebarAd();
         }, 200);
 
@@ -6535,19 +6757,8 @@
 
         // 更新 Premium UI 状态
         function updatePremiumUI() {
-            const premiumBtn = document.getElementById('premiumBtn');
-            const premiumStatus = document.getElementById('premiumStatus');
-            const licenseBtn = document.getElementById('licenseBtn');
-
-            if (isPremiumUser) {
-                if (premiumBtn) premiumBtn.style.display = 'none';
-                if (premiumStatus) premiumStatus.style.display = 'inline-block';
-                if (licenseBtn) licenseBtn.style.display = 'inline-block';
-            } else {
-                if (premiumBtn) premiumBtn.style.display = 'flex';
-                if (premiumStatus) premiumStatus.style.display = 'none';
-                if (licenseBtn) licenseBtn.style.display = 'none';
-            }
+            // 现在只更新账户菜单，在 updateAccountMenu 中处理
+            updateAccountMenu();
         }
     </script>
 
