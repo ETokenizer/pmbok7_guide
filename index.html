@@ -112,6 +112,62 @@
             background: #eee;
             margin: 8px 0;
         }
+
+        /* 侧边栏分节样式 */
+        .sidebar-section {
+            flex-shrink: 0;
+        }
+        .sidebar-section-header {
+            background: var(--pmi-blue);
+            color: var(--white);
+            padding: 12px 18px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .premium-section .sidebar-section-header {
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            color: #333;
+        }
+
+        /* 高级功能导航列表 */
+        .premium-nav-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .premium-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #FFF8E7;
+            border: none;
+            border-bottom: 1px solid #FFE8A3;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            width: 100%;
+        }
+        .premium-nav-item:hover {
+            background: #FFF3CD;
+        }
+        .premium-nav-icon {
+            font-size: 20px;
+        }
+        .premium-nav-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .premium-nav-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: #8B6914;
+        }
+        .premium-nav-subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+
         .main-container {
             max-width: 1600px;
             margin: 0 auto;
@@ -1291,46 +1347,9 @@
                         <span class="item-text">升级专业版</span>
                         <span class="item-badge">¥19.9</span>
                     </div>
-                    <div class="dropdown-item" onclick="openProgressCenterModal()">
-                        <span class="item-icon">📊</span>
-                        <span class="item-text">学习进度</span>
-                        <span class="item-tag premium">高级</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openExamModal()">
-                        <span class="item-icon">📝</span>
-                        <span class="item-text">模拟考试</span>
-                        <span class="item-tag premium">高级</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openWrongBookModal()">
-                        <span class="item-icon">📝</span>
-                        <span class="item-text">错题本</span>
-                        <span class="item-tag premium">高级</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openAnalysisModal()">
-                        <span class="item-icon">🎯</span>
-                        <span class="item-text">薄弱点分析</span>
-                        <span class="item-tag premium">高级</span>
-                    </div>
                 </div>
                 <!-- Premium 用户显示 -->
                 <div id="premiumMenu" style="display:none">
-                    <div class="dropdown-item" onclick="openProgressCenterModal()">
-                        <span class="item-icon">📊</span>
-                        <span class="item-text">学习进度</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openExamModal()">
-                        <span class="item-icon">📝</span>
-                        <span class="item-text">模拟考试</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openWrongBookModal()">
-                        <span class="item-icon">📝</span>
-                        <span class="item-text">错题本</span>
-                    </div>
-                    <div class="dropdown-item" onclick="openAnalysisModal()">
-                        <span class="item-icon">🎯</span>
-                        <span class="item-text">薄弱点分析</span>
-                    </div>
-                    <div class="dropdown-divider"></div>
                     <div class="dropdown-item" onclick="showLicenseModal()">
                         <span class="item-icon">🔑</span>
                         <span class="item-text">我的授权</span>
@@ -1342,31 +1361,71 @@
 
     <div class="main-container">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                📘 PMBOK 第 7 版 - 12 原则 & 8 绩效域
-                <br><span style="font-size:11px;opacity:0.85;font-weight:normal">12 Principles & 8 Performance Domains</span>
+            <!-- 上部：学习内容 -->
+            <div class="sidebar-section">
+                <div class="sidebar-section-header">
+                    📚 学习内容
+                </div>
+                <div class="view-tabs">
+                    <button class="view-tab active" onclick="switchView('principles')">
+                        📌 12 项原则
+                        <span class="tab-en">12 Principles</span>
+                    </button>
+                    <button class="view-tab" onclick="switchView('domains')">
+                        🌐 8 个绩效域
+                        <span class="tab-en">8 Performance Domains</span>
+                    </button>
+                    <button class="view-tab" onclick="switchView('processes')">
+                        🔄 40 个流程
+                        <span class="tab-en">40 Processes</span>
+                    </button>
+                    <button class="view-tab" onclick="switchView('agile')">
+                        🔄 敏捷/混合
+                        <span class="tab-en">Agile/Hybrid</span>
+                    </button>
+                </div>
+                <div class="content-list" id="contentList"></div>
             </div>
-            <div class="view-tabs">
-                <button class="view-tab active" onclick="switchView('principles')">
-                    📌 12 项原则
-                    <span class="tab-en">12 Principles</span>
-                </button>
-                <button class="view-tab" onclick="switchView('domains')">
-                    🌐 8 个绩效域
-                    <span class="tab-en">8 Performance Domains</span>
-                </button>
-                <button class="view-tab" onclick="switchView('processes')">
-                    🔄 40 个流程
-                    <span class="tab-en">40 Processes</span>
-                </button>
-                <button class="view-tab" onclick="switchView('agile')">
-                    🔄 敏捷/混合
-                    <span class="tab-en">Agile/Hybrid</span>
-                </button>
+
+            <!-- 下部：高级功能 -->
+            <div class="sidebar-section premium-section">
+                <div class="sidebar-section-header">
+                    👑 高级功能
+                </div>
+                <div class="premium-nav-list">
+                    <button class="premium-nav-item" onclick="openProgressCenterModal()">
+                        <span class="premium-nav-icon">📊</span>
+                        <span class="premium-nav-text">
+                            <span class="premium-nav-title">学习进度</span>
+                            <span class="premium-nav-subtitle">追踪学习数据</span>
+                        </span>
+                    </button>
+                    <button class="premium-nav-item" onclick="openExamModal()">
+                        <span class="premium-nav-icon">📝</span>
+                        <span class="premium-nav-text">
+                            <span class="premium-nav-title">模拟考试</span>
+                            <span class="premium-nav-subtitle">180 题全真模拟</span>
+                        </span>
+                    </button>
+                    <button class="premium-nav-item" onclick="openWrongBookModal()">
+                        <span class="premium-nav-icon">📝</span>
+                        <span class="premium-nav-text">
+                            <span class="premium-nav-title">错题本</span>
+                            <span class="premium-nav-subtitle">智能记录错题</span>
+                        </span>
+                    </button>
+                    <button class="premium-nav-item" onclick="openAnalysisModal()">
+                        <span class="premium-nav-icon">🎯</span>
+                        <span class="premium-nav-text">
+                            <span class="premium-nav-title">薄弱点分析</span>
+                            <span class="premium-nav-subtitle">AI 精准分析</span>
+                        </span>
+                    </button>
+                </div>
             </div>
-            <div class="content-list" id="contentList"></div>
-            <!-- 侧边栏广告位 -->
-            <div id="sidebarAdContainer" style="padding:15px"></div>
+
+            <!-- 底部：广告位/会员状态 -->
+            <div id="sidebarAdContainer"></div>
         </aside>
 
         <main class="content-area">
