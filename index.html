@@ -5933,44 +5933,6 @@
             resetExamState();
         }
 
-        // 在侧边栏添加考试入口（Premium 用户）
-        function renderSidebarAd() {
-            const container = document.getElementById('sidebarAdContainer');
-            if (!container) return;
-
-            if (checkPremiumStatus()) {
-                // Premium 用户显示简洁的会员状态
-                container.innerHTML = `
-                    <div style="padding:15px;background:linear-gradient(135deg, #FFF8E7, #FFE8A3);border-radius:8px;margin-bottom:10px;border:2px solid #D4AF37">
-                        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                            <span style="font-size:16px">👑</span>
-                            <div style="font-size:13px;font-weight:600;color:#8B6914">专业版用户</div>
-                        </div>
-                        <div style="font-size:11px;color:#666;line-height:1.5">
-                            ✨ 已解锁全部高级功能<br>
-                            📊 学习进度 · 📝 模拟考试<br>
-                            📝 错题本 · 🎯 薄弱点分析
-                        </div>
-                    </div>
-                `;
-            } else {
-                // 非 Premium 用户显示广告
-                container.innerHTML = `
-                    <div class="ad-banner">
-                        <button class="ad-close" onclick="this.parentElement.style.display='none'">×</button>
-                        <div class="ad-banner-title">广告 · Ad</div>
-                        <div class="ad-banner-content">
-                            🎯 去除广告 + 解锁全部高级功能<br>
-                            <span style="font-size:11px;color:#888">仅需¥19.9（约一杯奶茶）</span><br>
-                            <button onclick="showPremiumModal()" style="margin-top:8px;padding:8px 16px;background:var(--pmi-blue);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">
-                                👑 升级专业版
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
         // =====================================================
         // 薄弱点分析功能
         // =====================================================
