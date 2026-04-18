@@ -4855,6 +4855,7 @@
             const container = btn.closest('.quiz-container');
             const feedback = container.querySelector('.quiz-feedback');
             const options = container.querySelectorAll('.quiz-option');
+            const q = currentQuizQuestions[currentQuizIndex];
 
             // 获取当前原则编号
             const principleNumber = container.dataset?.principleNumber || 1;
@@ -4868,6 +4869,21 @@
                 categoryId: principleNumber,
                 difficulty: 'medium'
             });
+
+            // 如果答错了，记录到错题本
+            if (selectedIndex !== correctIndex && q) {
+                recordWrongAnswer({
+                    id: `principle_${principleNumber}_quiz_${Date.now()}`,
+                    question: q.question,
+                    options: q.options,
+                    correct: q.correct,
+                    explanation: q.explanation,
+                    userAnswer: selectedIndex,
+                    principleNumber: principleNumber,
+                    category: 'principle',
+                    difficulty: 'medium'
+                });
+            }
 
             // 禁用所有按钮
             options.forEach(opt => opt.disabled = true);
