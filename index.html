@@ -2877,6 +2877,44 @@
             }
         }
 
+        // 测试函数：模拟过去 N 天的学习记录（仅用于测试）
+        async function simulatePastStudyDays(days) {
+            if (!isUserLoggedIn()) {
+                console.warn('❌ 请先登录');
+                return;
+            }
+
+            try {
+                const inserted = [];
+                for (let i = days; i >= 1; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+                    const { data, error } = await supabaseClient
+                        .from('study_streak')
+                        .upsert({
+                            user_id: currentUser.id,
+                            study_date: dateStr,
+                            study_duration: Math.floor(Math.random() * 3600) + 600,
+                            questions_completed: Math.floor(Math.random() * 10) + 1
+                        }, {
+                            onConflict: 'user_id,study_date'
+                        });
+
+                    if (!error) {
+                        inserted.push(dateStr);
+                        console.log(`✅ 模拟学习记录：${dateStr}`);
+                    }
+                }
+                console.log(`✅ 模拟完成！共 ${inserted.length} 天`);
+                return inserted;
+            } catch (error) {
+                console.error('模拟失败:', error);
+                return [];
+            }
+        }
+
         // 同步答题历史到云端
         async function syncQuizHistoryToCloud(quiz) {
             if (!isUserLoggedIn()) return;
