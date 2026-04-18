@@ -7237,39 +7237,83 @@
         function generateRecommendations(domainAnalysis, difficultyAnalysis) {
             const recommendations = [];
 
-            // 找出最弱的 3 个领域
-            const weakDomains = domainAnalysis.filter(d => d.level === 'weak').slice(0, 3);
+            // 找出已学习但正确率<60% 的领域（真正需要加强的）
+            const weakDomains = domainAnalysis
+                .filter(d => d.total > 0 && d.accuracy < 60)
+                .sort((a, b) => a.accuracy - b.accuracy)
+                .slice(0, 3);
+
             weakDomains.forEach(domain => {
                 recommendations.push({
                     type: 'weakness',
                     priority: 'high',
                     title: `重点强化：${domain.name}`,
-                    desc: `该领域正确率仅${domain.accuracy}%，建议优先复习相关知识点，完成至少 10 道相关练习题。`,
+                    desc: `该领域正确率仅${domain.accuracy}%（答题${domain.total}道），建议优先复习相关知识点，完成至少 10 道相关练习题。`,
                     action: 'review'
                 });
             });
 
+            // 找出已学习但正确率 60-80% 的领域（需要巩固）
+            const intermediateDomains = domainAnalysis
+                .filter(d => d.total > 0 && d.accuracy >= 60 && d.accuracy < 80)
+                .sort((a, b) => a.accuracy - b.accuracy)
+                .slice(0, 2);
+
+            intermediateDomains.forEach(domain => {
+                recommendations.push({
+                    type: 'consolidate',
+                    priority: 'medium',
+                    title: `巩固提升：${domain.name}`,
+                    desc: `该领域正确率${domain.accuracy}%（答题${domain.total}道），已达到及格水平，建议继续练习提升至 80% 以上。`,
+                    action: 'practice'
+                });
+            });
+
             // 难度建议
-            if (difficultyAnalysis.hard.accuracy < 50 && difficultyAnalysis.hard.total > 5) {
+            const hardTotal = difficultyAnalysis.hard?.total || 0;
+            const hardAccuracy = difficultyAnalysis.hard?.accuracy || 0;
+            if (hardTotal > 5 && hardAccuracy < 60) {
                 recommendations.push({
                     type: 'difficulty',
                     priority: 'medium',
                     title: '挑战高难度题目',
-                    desc: '高难度题目正确率偏低，建议先从中等难度开始，逐步提升后再挑战难题。',
+                    desc: `高难度题目正确率${hardAccuracy}%，建议先从中等难度开始，逐步提升后再挑战难题。`,
                     action: 'practice'
                 });
             }
 
             // 鼓励
-            const strongDomains = domainAnalysis.filter(d => d.level === 'strong');
-            if (strongDomains.length >= 5) {
+            const strongDomains = domainAnalysis.filter(d => d.total > 0 && d.accuracy >= 80);
+            if (strongDomains.length >= 3) {
                 recommendations.push({
                     type: 'encouragement',
                     priority: 'low',
                     title: '表现优秀！',
-                    desc: `已有${strongDomains.length}个领域达到熟练水平，继续保持！建议将精力转向薄弱环节。`,
+                    desc: `已有${strongDomains.length}个领域达到熟练水平（正确率≥80%），继续保持！建议将精力转向薄弱环节。`,
                     action: 'continue'
                 });
+            }
+
+            // 如果没有任何建议，提示用户开始学习
+            if (recommendations.length === 0) {
+                const hasAnyData = domainAnalysis.some(d => d.total > 0);
+                if (!hasAnyData) {
+                    recommendations.push({
+                        type: 'start',
+                        priority: 'low',
+                        title: '开始你的学习之旅',
+                        desc: '还没有答题记录哦～从 12 项原则开始，每项完成 5-10 道练习题，系统将为你生成个性化分析建议。',
+                        action: 'start'
+                    });
+                } else {
+                    recommendations.push({
+                        type: 'continue',
+                        priority: 'low',
+                        title: '继续加油！',
+                        desc: '已学习领域表现良好！继续保持学习节奏，完成更多练习题以获取更精准的分析建议。',
+                        action: 'continue'
+                    });
+                }
             }
 
             return recommendations;
