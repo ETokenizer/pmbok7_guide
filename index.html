@@ -6237,39 +6237,49 @@
 
         // 按领域分析
         function analyzeByDomain(learningData, wrongBookData) {
+            // 12 项原则 + 8 个绩效域
             const domains = [
-                { id: 1, name: '原则 1-价值', key: 'principle_1' },
-                { id: 2, name: '原则 2-团队', key: 'principle_2' },
-                { id: 3, name: '原则 3-环境', key: 'principle_3' },
-                { id: 4, name: '原则 4-规划', key: 'principle_4' },
-                { id: 5, name: '原则 5-风险', key: 'principle_5' },
-                { id: 6, name: '原则 6-适应', key: 'principle_6' },
-                { id: 7, name: '原则 7-干系人', key: 'principle_7' },
-                { id: 8, name: '原则 8-协作', key: 'principle_8' },
-                { id: 9, name: '原则 9-整合', key: 'principle_9' },
-                { id: 10, name: '原则 10-质量', key: 'principle_10' },
-                { id: 11, name: '原则 11-复杂', key: 'principle_11' },
-                { id: 12, name: '原则 12-定制', key: 'principle_12' },
-                { id: 13, name: '人员绩效域', key: 'domain_1' },
-                { id: 14, name: '团队绩效域', key: 'domain_2' },
-                { id: 15, name: '开发方法绩效域', key: 'domain_3' },
-                { id: 16, name: '规划绩效域', key: 'domain_4' },
-                { id: 17, name: '项目工作绩效域', key: 'domain_5' },
-                { id: 18, name: '交付绩效域', key: 'domain_6' },
-                { id: 19, name: '测量绩效域', key: 'domain_7' }
+                { id: 1, name: '原则 1·价值交付', key: 'principle_1' },
+                { id: 2, name: '原则 2·干系人', key: 'principle_2' },
+                { id: 3, name: '原则 3·团队', key: 'principle_3' },
+                { id: 4, name: '原则 4·价值', key: 'principle_4' },
+                { id: 5, name: '原则 5·系统思维', key: 'principle_5' },
+                { id: 6, name: '原则 6·领导力', key: 'principle_6' },
+                { id: 7, name: '原则 7·裁剪', key: 'principle_7' },
+                { id: 8, name: '原则 8·质量', key: 'principle_8' },
+                { id: 9, name: '原则 9·复杂性', key: 'principle_9' },
+                { id: 10, name: '原则 10·适应性', key: 'principle_10' },
+                { id: 11, name: '原则 11·变革', key: 'principle_11' },
+                { id: 12, name: '原则 12·韧性', key: 'principle_12' },
+                { id: 13, name: '绩效域·干系人', key: 'domain_1' },
+                { id: 14, name: '绩效域·团队', key: 'domain_2' },
+                { id: 15, name: '绩效域·开发方法', key: 'domain_3' },
+                { id: 16, name: '绩效域·规划', key: 'domain_4' },
+                { id: 17, name: '绩效域·项目工作', key: 'domain_5' },
+                { id: 18, name: '绩效域·交付', key: 'domain_6' },
+                { id: 19, name: '绩效域·测量', key: 'domain_7' },
+                { id: 20, name: '绩效域·不确定性', key: 'domain_8' }
             ];
 
+            const history = learningData.quizHistory || [];
+
             const analysis = domains.map(domain => {
-                const history = learningData.quizHistory || [];
-                const domainQuestions = history.filter(q => {
-                    if (q.category === 'principle' && domain.key.startsWith('principle')) {
-                        return q.categoryId === domain.id;
-                    }
-                    if (q.category === 'domain' && domain.key.startsWith('domain')) {
-                        return q.categoryId === (domain.id - 12);
-                    }
-                    return false;
-                });
+                let domainQuestions = [];
+
+                // 根据 category 和 categoryId 筛选题目
+                if (domain.key.startsWith('principle')) {
+                    // 原则类：categoryId 直接对应原则编号 (1-12)
+                    const principleId = parseInt(domain.key.split('_')[1]);
+                    domainQuestions = history.filter(q =>
+                        q.category === 'principle' && q.categoryId === principleId
+                    );
+                } else if (domain.key.startsWith('domain')) {
+                    // 绩效域类：categoryId 对应绩效域编号 (1-8)
+                    const domainId = parseInt(domain.key.split('_')[1]);
+                    domainQuestions = history.filter(q =>
+                        q.category === 'domain' && q.categoryId === domainId
+                    );
+                }
 
                 const total = domainQuestions.length;
                 const correct = domainQuestions.filter(q => q.correct).length;
@@ -6284,7 +6294,13 @@
                 };
             });
 
-            return analysis.sort((a, b) => a.accuracy - b.accuracy);
+            // 按答题数排序，有答题的排在前面，然后按正确率排序
+            return analysis.sort((a, b) => {
+                if (a.total === 0 && b.total === 0) return 0;
+                if (a.total === 0) return 1;
+                if (b.total === 0) return -1;
+                return a.accuracy - b.accuracy;
+            });
         }
 
         // 按难度分析
