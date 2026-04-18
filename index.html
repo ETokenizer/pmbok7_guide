@@ -3226,6 +3226,14 @@
             modal.style.display = 'block';
             setTimeout(() => modal.classList.add('active'), 10);
             startPaymentTimer();
+
+            // 如果用户已登录，自动填充邮箱
+            if (isUserLoggedIn() && currentUser?.email) {
+                const emailInput = document.getElementById('userEmailInput');
+                if (emailInput) {
+                    emailInput.value = currentUser.email;
+                }
+            }
         }
 
         // 关闭支付弹窗
