@@ -7043,8 +7043,14 @@
             const learningData = getLearningProgressData();
             const wrongBookData = getWrongBookData();
 
+            // 调试输出
+            console.log('学习数据:', learningData);
+            console.log('答题历史:', learningData.quizHistory);
+            console.log('错题本:', wrongBookData);
+
             // 按领域分析
             const domainAnalysis = analyzeByDomain(learningData, wrongBookData);
+            console.log('领域分析结果:', domainAnalysis);
             // 按难度分析
             const difficultyAnalysis = analyzeByDifficulty(learningData, wrongBookData);
             // 时间趋势
@@ -7135,6 +7141,12 @@
 
             const history = learningData.quizHistory || [];
 
+            // 调试输出：查看第一条数据
+            if (history.length > 0) {
+                console.log('答题历史样本:', history[0]);
+                console.log('总答题数:', history.length);
+            }
+
             const analysis = domains.map(domain => {
                 let domainQuestions = [];
 
@@ -7142,15 +7154,17 @@
                 if (domain.key.startsWith('principle')) {
                     // 原则类：categoryId 直接对应原则编号 (1-12)
                     const principleId = parseInt(domain.key.split('_')[1]);
-                    domainQuestions = history.filter(q =>
-                        q.category === 'principle' && q.categoryId === principleId
-                    );
+                    domainQuestions = history.filter(q => {
+                        const qCategoryId = parseInt(q.categoryId);
+                        return q.category === 'principle' && qCategoryId === principleId;
+                    });
                 } else if (domain.key.startsWith('domain')) {
                     // 绩效域类：categoryId 对应绩效域编号 (1-8)
                     const domainId = parseInt(domain.key.split('_')[1]);
-                    domainQuestions = history.filter(q =>
-                        q.category === 'domain' && q.categoryId === domainId
-                    );
+                    domainQuestions = history.filter(q => {
+                        const qCategoryId = parseInt(q.categoryId);
+                        return q.category === 'domain' && qCategoryId === domainId;
+                    });
                 }
 
                 const total = domainQuestions.length;
@@ -7281,14 +7295,26 @@
 
         // 渲染薄弱点
         function renderWeaknesses(analysis) {
-            const weakDomains = analysis.filter(d => d.level === 'weak');
+            // 只显示答题数>0 且正确率<60% 的领域（未答题的领域不算薄弱）
+            const weakDomains = analysis.filter(d => d.total > 0 && d.accuracy < 60);
 
             if (weakDomains.length === 0) {
+                // 检查是否有答题数据
+                const hasAnyData = analysis.some(d => d.total > 0);
+                if (!hasAnyData) {
+                    return `
+                        <div style="padding: 20px; background: #fef3c7; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 32px; margin-bottom: 10px;">📚</div>
+                            <div style="color: #d97706; font-weight: 600;">暂无答题数据</div>
+                            <div style="color: #888; font-size: 13px; margin-top: 5px;">请先完成一些练习题，系统将为您分析薄弱领域</div>
+                        </div>
+                    `;
+                }
                 return `
                     <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; text-align: center;">
                         <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
                         <div style="color: #059669; font-weight: 600;">暂无明显薄弱环节</div>
-                        <div style="color: #888; font-size: 13px; margin-top: 5px;">所有领域正确率均达到 60% 以上</div>
+                        <div style="color: #888; font-size: 13px; margin-top: 5px;">所有已答题领域正确率均达到 60% 以上</div>
                     </div>
                 `;
             }
