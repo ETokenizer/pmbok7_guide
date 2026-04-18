@@ -2704,7 +2704,8 @@
                     // 有有效 License，设置为 Premium 用户
                     isPremiumUser = true;
                     licenseKey = validLicense.license_key;
-                    licenseActivatedAt = validLicense.activated_at || new Date().toISOString();
+                    // 优先使用云端 activated_at，如果没有则使用 localStorage 中的值
+                    licenseActivatedAt = validLicense.activated_at || localStorage.getItem('pmbok7_license_activated_at') || new Date().toISOString();
 
                     if (validLicense.expires_at) {
                         premiumExpiry = new Date(validLicense.expires_at).getTime().toString();
@@ -2721,7 +2722,11 @@
                     localStorage.setItem('pmbok7_license_key', licenseKey);
                     localStorage.setItem('pmbok7_license_activated_at', licenseActivatedAt);
 
-                    console.log('✅ 检测到有效 License，Premium 状态已恢复');
+                    console.log('✅ 检测到有效 License，Premium 状态已恢复', {
+                        licenseKey: licenseKey,
+                        activatedAt: licenseActivatedAt,
+                        cloud_activated_at: validLicense.activated_at
+                    });
                 } else {
                     // 没有有效 License
                     isPremiumUser = false;
