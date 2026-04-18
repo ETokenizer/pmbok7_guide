@@ -372,20 +372,23 @@
             flex-shrink: 0;
         }
         .detail-header-btn {
-            background: rgba(255,255,255,0.2);
-            color: var(--white);
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 14px;
-            border-radius: 6px;
+            background: linear-gradient(135deg, #D4AF37, #B8941F);
+            color: #333;
+            border: 2px solid #FFD700;
+            padding: 10px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             transition: all 0.2s;
             white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(212,175,55,0.3);
         }
         .detail-header-btn:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            border-color: #FFF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212,175,55,0.5);
         }
         .detail-number {
             display: inline-block;
@@ -3232,13 +3235,80 @@
         }
 
         // 本地备用题库（Supabase 不可用时使用）
-        // 仅存储 5 道测试题用于演示 fallback 机制
+        // 每个原则 5 道题，供普通用户试用
         window.localQuestionBank = [
-            { id: 'TEST_Q1', category: 'principle', categoryId: 1, question: '项目管理的首要原则是？', options: ['A. 按时交付', 'B. 关注价值交付', 'C. 控制成本', 'D. 完成任务'], correct: 1, explanation: 'PMBOK7 强调价值交付是首要原则。', difficulty: 'easy' },
-            { id: 'TEST_Q2', category: 'domain', categoryId: 2, question: '团队绩效域关注的是？', options: ['A. 个人绩效', 'B. 团队协作和高绩效', 'C. 考勤管理', 'D. 工资发放'], correct: 1, explanation: '团队绩效域关注打造高绩效协作团队。', difficulty: 'medium' },
-            { id: 'TEST_Q3', category: 'process', categoryId: 3, question: '识别风险属于____过程组？', options: ['A. 启动', 'B. 规划', 'C. 执行', 'D. 监控'], correct: 1, explanation: '识别风险属于规划过程组。', difficulty: 'easy' },
-            { id: 'TEST_Q4', category: 'agile', categoryId: 0, question: 'Scrum 中负责产品待办列表优先级的是？', options: ['A. Scrum Master', 'B. 产品经理', 'C. 产品负责人', 'D. 开发团队'], correct: 2, explanation: '产品负责人 (PO) 负责产品待办列表和优先级排序。', difficulty: 'medium' },
-            { id: 'TEST_Q5', category: 'ethics', categoryId: 0, question: '收到供应商贵重礼品，应该？', options: ['A. 接受', 'B. 拒绝或报告', 'C. 转送他人', 'D. 藏起来'], correct: 1, explanation: '应避免利益冲突，拒绝或报告贵重礼品。', difficulty: 'medium' }
+            // 原则 1 - 价值交付
+            { id: 'P1_Q1', category: 'principle', categoryId: 1, question: '项目管理的首要原则是？', options: ['A. 按时交付', 'B. 关注价值交付', 'C. 控制成本', 'D. 完成任务'], correct: 1, explanation: 'PMBOK7 强调价值交付是首要原则。', difficulty: 'easy' },
+            { id: 'P1_Q2', category: 'principle', categoryId: 1, question: '价值交付关注的是？', options: ['A. 产出', 'B. 成果', 'C. 任务数量', 'D. 文档完整性'], correct: 1, explanation: '价值交付关注成果（outcome）而非产出（output）。', difficulty: 'medium' },
+            { id: 'P1_Q3', category: 'principle', categoryId: 1, question: '如何衡量项目成功？', options: ['A. 按时完工', 'B. 不超预算', 'C. 实现预期价值', 'D. 完成所有任务'], correct: 2, explanation: '项目成功的核心是是否实现预期价值。', difficulty: 'easy' },
+            { id: 'P1_Q4', category: 'principle', categoryId: 1, question: '价值交付应该是？', options: ['A. 一次性的', 'B. 持续和迭代的', 'C. 仅在项目结束时', 'D. 仅在项目开始时'], correct: 1, explanation: '价值交付贯穿整个项目生命周期。', difficulty: 'easy' },
+            { id: 'P1_Q5', category: 'principle', categoryId: 1, question: '价值交付系统包括？', options: ['A. 仅最终交付物', 'B. 定义、创造、评估价值的活动', 'C. 仅财务报告', 'D. 仅客户反馈'], correct: 1, explanation: '价值交付包括完整的价值管理体系。', difficulty: 'medium' },
+            // 原则 2 - 干系人
+            { id: 'P2_Q1', category: 'principle', categoryId: 2, question: '有效的干系人参与应该？', options: ['A. 仅与高层沟通', 'B. 主动且持续', 'C. 仅在需要时', 'D. 通过邮件即可'], correct: 1, explanation: '有效的干系人参与需要主动持续的沟通。', difficulty: 'easy' },
+            { id: 'P2_Q2', category: 'principle', categoryId: 2, question: '识别干系人应该何时进行？', options: ['A. 项目启动时', 'B. 项目规划时', 'C. 贯穿整个生命周期', 'D. 项目收尾时'], correct: 2, explanation: '干系人识别应贯穿整个项目生命周期。', difficulty: 'medium' },
+            { id: 'P2_Q3', category: 'principle', categoryId: 2, question: '干系人分析的目的是？', options: ['A. 分配任务', 'B. 了解期望和影响力', 'C. 减少沟通', 'D. 控制行为'], correct: 1, explanation: '干系人分析旨在了解他们的期望和影响力。', difficulty: 'easy' },
+            { id: 'P2_Q4', category: 'principle', categoryId: 2, question: '以下哪种不是干系人参与策略？', options: ['A. 定期沟通', 'B. 忽视负面干系人', 'C. 管理期望', 'D. 建立信任'], correct: 1, explanation: '不应忽视负面干系人，而应积极管理。', difficulty: 'easy' },
+            { id: 'P2_Q5', category: 'principle', categoryId: 2, question: '干系人满意度应该？', options: ['A. 项目结束时测量', 'B. 定期测量和跟进', 'C. 不需要测量', 'D. 仅由项目经理评估'], correct: 1, explanation: '干系人满意度应定期测量和跟进。', difficulty: 'medium' },
+            // 原则 3 - 团队
+            { id: 'P3_Q1', category: 'principle', categoryId: 3, question: '团队绩效域的核心目标是？', options: ['A. 完成所有任务', 'B. 建立高绩效团队', 'C. 减少人员流动', 'D. 控制人力成本'], correct: 1, explanation: '团队绩效域核心是建立高绩效团队。', difficulty: 'easy' },
+            { id: 'P3_Q2', category: 'principle', categoryId: 3, question: '高绩效团队的特征不包括？', options: ['A. 清晰的目标', 'B. 良好的沟通', 'C. 互相指责', 'D. 相互信任'], correct: 2, explanation: '互相指责会破坏团队氛围。', difficulty: 'easy' },
+            { id: 'P3_Q3', category: 'principle', categoryId: 3, question: '团队建设活动应该？', options: ['A. 仅在新项目开始时', 'B. 持续进行', 'C. 仅在出问题时', 'D. 不需要'], correct: 1, explanation: '团队建设应该持续进行。', difficulty: 'medium' },
+            { id: 'P3_Q4', category: 'principle', categoryId: 3, question: '团队规范应该由谁制定？', options: ['A. 项目经理单独', 'B. 高层管理层', 'C. 团队共同制定', 'D. 人力资源部门'], correct: 2, explanation: '团队规范应由团队共同制定。', difficulty: 'medium' },
+            { id: 'P3_Q5', category: 'principle', categoryId: 3, question: '冲突在团队中？', options: ['A. 应该完全避免', 'B. 是有害的', 'C. 可以是建设性的', 'D. 只与管理层有关'], correct: 2, explanation: '适度的冲突可以是建设性的。', difficulty: 'medium' },
+            // 原则 4 - 价值
+            { id: 'P4_Q1', category: 'principle', categoryId: 4, question: '项目应该聚焦于？', options: ['A. 过程', 'B. 文档', 'C. 价值', 'D. 会议'], correct: 2, explanation: '项目应聚焦于价值创造。', difficulty: 'easy' },
+            { id: 'P4_Q2', category: 'principle', categoryId: 4, question: '价值包括哪些方面？', options: ['A. 仅财务收益', 'B. 仅客户满意度', 'C. 多方面包括财务、社会、环境等', 'D. 仅股东回报'], correct: 2, explanation: '价值是多方面的综合考量。', difficulty: 'medium' },
+            { id: 'P4_Q3', category: 'principle', categoryId: 4, question: '如何确保价值交付？', options: ['A. 仅在项目结束时评估', 'B. 持续监控和调整', 'C. 仅关注范围', 'D. 仅关注成本'], correct: 1, explanation: '价值交付需要持续监控和调整。', difficulty: 'easy' },
+            { id: 'P4_Q4', category: 'principle', categoryId: 4, question: '价值交付与质量管理的关系是？', options: ['A. 无关', 'B. 质量是价值的基础', 'C. 价值比质量重要', 'D. 质量就是价值'], correct: 1, explanation: '质量是价值的基础。', difficulty: 'medium' },
+            { id: 'P4_Q5', category: 'principle', categoryId: 4, question: '价值最大化需要考虑？', options: ['A. 仅短期利益', 'B. 仅长期利益', 'C. 短期和长期利益的平衡', 'D. 不考虑利益'], correct: 2, explanation: '需要平衡短期和长期利益。', difficulty: 'easy' },
+            // 原则 5 - 系统思维
+            { id: 'P5_Q1', category: 'principle', categoryId: 5, question: '系统思维强调？', options: ['A. 关注局部', 'B. 关注整体', 'C. 关注细节', 'D. 关注个人'], correct: 1, explanation: '系统思维强调整体性。', difficulty: 'easy' },
+            { id: 'P5_Q2', category: 'principle', categoryId: 5, question: '系统思维不包括？', options: ['A. 整体观', 'B. 相互关联', 'C. 线性思维', 'D. 动态分析'], correct: 2, explanation: '系统思维反对简单的线性思维。', difficulty: 'medium' },
+            { id: 'P5_Q3', category: 'principle', categoryId: 5, question: '项目作为系统与什么相互作用？', options: ['A. 仅与内部团队', 'B. 仅与管理层', 'C. 与组织环境和外部环境', 'D. 与客户'], correct: 2, explanation: '项目与组织内外环境都有相互作用。', difficulty: 'easy' },
+            { id: 'P5_Q4', category: 'principle', categoryId: 5, question: '系统思维有助于？', options: ['A. 增加文档', 'B. 识别复杂关系', 'C. 减少沟通', 'D. 简化问题'], correct: 1, explanation: '系统思维帮助识别复杂关系。', difficulty: 'medium' },
+            { id: 'P5_Q5', category: 'principle', categoryId: 5, question: '应用系统思维可以？', options: ['A. 忽略细节', 'B. 更好地预测风险', 'C. 减少计划', 'D. 避免变更'], correct: 1, explanation: '系统思维有助于预测和应对风险。', difficulty: 'easy' },
+            // 原则 6 - 领导力
+            { id: 'P6_Q1', category: 'principle', categoryId: 6, question: '领导力在项目中表现为？', options: ['A. 仅项目经理的职责', 'B. 仅高层的职责', 'C. 多层次、多角色', 'D. 仅团队的职责'], correct: 2, explanation: '领导力是多层次、多角色的。', difficulty: 'easy' },
+            { id: 'P6_Q2', category: 'principle', categoryId: 6, question: '有效的领导应该？', options: ['A. 只下达命令', 'B. 激励和赋能团队', 'C. 只关注结果', 'D. 避免与团队交流'], correct: 1, explanation: '有效领导通过激励和赋能团队来实现目标。', difficulty: 'easy' },
+            { id: 'P6_Q3', category: 'principle', categoryId: 6, question: '领导力与管理的关系是？', options: ['A. 完全相同', 'B. 完全不同', 'C. 互补但有区别', 'D. 领导比管理重要'], correct: 2, explanation: '领导力与管理互补但有区别。', difficulty: 'medium' },
+            { id: 'P6_Q4', category: 'principle', categoryId: 6, question: '情境领导强调？', options: ['A. 固定风格', 'B. 根据情境调整风格', 'C. 只有一种正确方式', 'D. 不需要调整'], correct: 1, explanation: '情境领导强调根据不同情况调整风格。', difficulty: 'medium' },
+            { id: 'P6_Q5', category: 'principle', categoryId: 6, question: '服务型领导的核心是？', options: ['A. 控制团队', 'B. 服务和支持团队', 'C. 只关注自己', 'D. 避免决策'], correct: 1, explanation: '服务型领导以服务和支持团队为核心。', difficulty: 'easy' },
+            // 原则 7 - 裁剪
+            { id: 'P7_Q1', category: 'principle', categoryId: 7, question: '裁剪的意思是？', options: ['A. 减少工作内容', 'B. 根据项目特点调整方法', 'C. 删除不必要的文档', 'D. 减少团队成员'], correct: 1, explanation: '裁剪是根据项目情况调整方法。', difficulty: 'easy' },
+            { id: 'P7_Q2', category: 'principle', categoryId: 7, question: '裁剪应该考虑什么？', options: ['A. 仅项目规模', 'B. 仅项目预算', 'C. 项目特点、风险、干系人等', 'D. 仅时间限制'], correct: 2, explanation: '裁剪需要综合考虑多方面因素。', difficulty: 'medium' },
+            { id: 'P7_Q3', category: 'principle', categoryId: 7, question: '谁负责裁剪决策？', options: ['A. 仅项目经理', 'B. 仅高层', 'C. 项目团队和相关干系人', 'D. 外部顾问'], correct: 2, explanation: '裁剪决策应由团队和干系人共同制定。', difficulty: 'medium' },
+            { id: 'P7_Q4', category: 'principle', categoryId: 7, question: '裁剪的结果应该？', options: ['A. 一成不变', 'B. 可以随项目进展调整', 'C. 仅适用于大型项目', 'D. 仅适用于小型项目'], correct: 1, explanation: '裁剪结果应灵活可调整。', difficulty: 'easy' },
+            { id: 'P7_Q5', category: 'principle', categoryId: 7, question: '不适当的裁剪可能导致？', options: ['A. 项目成功', 'B. 效率低下或风险增加', 'C. 没有影响', 'D. 成本降低'], correct: 1, explanation: '不适当的裁剪可能导致效率低下或风险增加。', difficulty: 'medium' },
+            // 原则 8 - 质量
+            { id: 'P8_Q1', category: 'principle', categoryId: 8, question: '质量在项目中应该？', options: ['A. 最后检查', 'B. 内置到过程中', 'C. 仅关注最终产品', 'D. 仅由 QA 负责'], correct: 1, explanation: '质量应该内置到项目过程中。', difficulty: 'easy' },
+            { id: 'P8_Q2', category: 'principle', categoryId: 8, question: '质量保证的目的是？', options: ['A. 发现缺陷', 'B. 预防缺陷', 'C. 修复缺陷', 'D. 记录缺陷'], correct: 1, explanation: '质量保证侧重于预防缺陷。', difficulty: 'medium' },
+            { id: 'P8_Q3', category: 'principle', categoryId: 8, question: '质量控制的主要活动是？', options: ['A. 制定质量政策', 'B. 检查和测试', 'C. 过程改进', 'D. 培训员工'], correct: 1, explanation: '质量控制主要通过检查和测试来识别缺陷。', difficulty: 'easy' },
+            { id: 'P8_Q4', category: 'principle', categoryId: 8, question: '持续改进的理念是？', options: ['A. 一次做好就行', 'B. 永远可以做得更好', 'C. 改进太麻烦', 'D. 只在大项目中应用'], correct: 1, explanation: '持续改进相信永远可以做得更好。', difficulty: 'easy' },
+            { id: 'P8_Q5', category: 'principle', categoryId: 8, question: '质量成本包括？', options: ['A. 仅检验成本', 'B. 预防成本和失败成本', 'C. 仅失败成本', 'D. 仅培训成本'], correct: 1, explanation: '质量成本包括预防、评估和失败成本。', difficulty: 'medium' },
+            // 原则 9 - 复杂性
+            { id: 'P9_Q1', category: 'principle', categoryId: 9, question: '复杂性包括哪些类型？', options: ['A. 仅技术复杂性', 'B. 人类行为、系统交互、环境不确定性', 'C. 仅管理复杂性', 'D. 仅沟通复杂性'], correct: 1, explanation: '项目复杂性包括多个方面。', difficulty: 'medium' },
+            { id: 'P9_Q2', category: 'principle', categoryId: 9, question: '应对复杂性的方法包括？', options: ['A. 忽视它', 'B. 迭代和增量方法', 'C. 只制定详细计划', 'D. 避免变更'], correct: 1, explanation: '迭代和增量是应对复杂性的有效方式。', difficulty: 'easy' },
+            { id: 'P9_Q3', category: 'principle', categoryId: 9, question: '复杂项目更适合？', options: ['A. 严格的预测性方法', 'B. 灵活敏捷的方法', 'C. 不考虑方法', 'D. 只使用传统方法'], correct: 1, explanation: '复杂项目更适合灵活敏捷的方法。', difficulty: 'easy' },
+            { id: 'P9_Q4', category: 'principle', categoryId: 9, question: 'VUCA 代表什么？', options: ['A. 稳定、确定、简单、明确', 'B. 易变、不确定、复杂、模糊', 'C. 快速、高效、优质、低价', 'D. 计划、执行、检查、行动'], correct: 1, explanation: 'VUCA 代表易变、不确定、复杂、模糊。', difficulty: 'medium' },
+            { id: 'P9_Q5', category: 'principle', categoryId: 9, question: '应对不确定性的策略是？', options: ['A. 做详细计划', 'B. 保持灵活性和韧性', 'C. 避免风险', 'D. 增加文档'], correct: 1, explanation: '保持灵活性和韧性是关键策略。', difficulty: 'easy' },
+            // 原则 10 - 适应性
+            { id: 'P10_Q1', category: 'principle', categoryId: 10, question: '适应性的意思是？', options: ['A. 频繁变更', 'B. 根据情况调整方法', 'C. 没有计划', 'D. 只使用一种方法'], correct: 1, explanation: '适应性是根据情况调整方法。', difficulty: 'easy' },
+            { id: 'P10_Q2', category: 'principle', categoryId: 10, question: '适应性方法包括？', options: ['A. 仅敏捷', 'B. 仅预测性', 'C. 敏捷、迭代、增量等', 'D. 仅混合方法'], correct: 2, explanation: '适应性方法包括多种方法。', difficulty: 'medium' },
+            { id: 'P10_Q3', category: 'principle', categoryId: 10, question: '选择适应性方法应考虑？', options: ['A. 仅团队喜好', 'B. 仅客户要求', 'C. 项目特点、风险、创新程度等', 'D. 仅管理层决定'], correct: 2, explanation: '应考虑多方面因素。', difficulty: 'medium' },
+            { id: 'P10_Q4', category: 'principle', categoryId: 10, question: '敏捷方法适合？', options: ['A. 需求明确的项目', 'B. 需求多变的项目', 'C. 所有项目', 'D. 仅软件项目'], correct: 1, explanation: '敏捷适合需求多变的项目。', difficulty: 'easy' },
+            { id: 'P10_Q5', category: 'principle', categoryId: 10, question: '混合方法是？', options: ['A. 随意组合', 'B. 预测性和适应性方法的结合', 'C. 不使用任何方法', 'D. 仅指敏捷 + 瀑布'], correct: 1, explanation: '混合方法是有意识结合两种方法。', difficulty: 'medium' },
+            // 原则 11 - 变革管理
+            { id: 'P11_Q1', category: 'principle', categoryId: 11, question: '变革管理的目标是？', options: ['A. 阻止变革', 'B. 帮助干系人接受和采用变革', 'C. 仅记录变革', 'D. 强制推行变革'], correct: 1, explanation: '变革管理帮助干系人接受和采用变革。', difficulty: 'easy' },
+            { id: 'P11_Q2', category: 'principle', categoryId: 11, question: '变革阻力主要来自？', options: ['A. 技术原因', 'B. 人类的习惯和恐惧', 'C. 预算不足', 'D. 时间不够'], correct: 1, explanation: '变革阻力主要来自人类的习惯和恐惧。', difficulty: 'medium' },
+            { id: 'P11_Q3', category: 'principle', categoryId: 11, question: '有效的变革沟通应该？', options: ['A. 单向传达', 'B. 双向互动', 'C. 仅通过邮件', 'D. 仅在会议中'], correct: 1, explanation: '有效的变革沟通是双向的。', difficulty: 'easy' },
+            { id: 'P11_Q4', category: 'principle', categoryId: 11, question: '变革倡导者的作用是？', options: ['A. 阻止变革', 'B. 支持和推广变革', 'C. 观察变革', 'D. 批评变革'], correct: 1, explanation: '变革倡导者积极支持和推广变革。', difficulty: 'easy' },
+            { id: 'P11_Q5', category: 'principle', categoryId: 11, question: '变革成功的标志是？', options: ['A. 变革完成', 'B. 新方式被持续采用', 'C. 没有反对声音', 'D. 文档完成'], correct: 1, explanation: '变革成功是新方式被持续采用。', difficulty: 'medium' },
+            // 原则 12 - 韧性
+            { id: 'P12_Q1', category: 'principle', categoryId: 12, question: '韧性（resilience）指的是？', options: ['A. 避免所有风险', 'B. 从挫折中恢复的能力', 'C. 不发生变更', 'D. 按计划执行'], correct: 1, explanation: '韧性是从挫折中恢复并继续前进的能力。', difficulty: 'easy' },
+            { id: 'P12_Q2', category: 'principle', categoryId: 12, question: '提升韧性的方法包括？', options: ['A. 只关注正面消息', 'B. 建立支持网络和应对机制', 'C. 避免讨论问题', 'D. 增加工作量'], correct: 1, explanation: '建立支持网络和应对机制是关键。', difficulty: 'medium' },
+            { id: 'P12_Q3', category: 'principle', categoryId: 12, question: '无责备文化的目的是？', options: ['A. 不追究任何责任', 'B. 鼓励学习和改进', 'C. 忽略问题', 'D. 奖励所有行为'], correct: 1, explanation: '无责备文化鼓励从错误中学习。', difficulty: 'medium' },
+            { id: 'P12_Q4', category: 'principle', categoryId: 12, question: '韧性团队的特点是？', options: ['A. 从不遇到问题', 'B. 能够快速适应和恢复', 'C. 避免所有风险', 'D. 只依赖领导'], correct: 1, explanation: '韧性团队能快速适应和恢复。', difficulty: 'easy' },
+            { id: 'P12_Q5', category: 'principle', categoryId: 12, question: '心理安全意味着？', options: ['A. 没有工作压力', 'B. 可以自由表达意见而不担心被惩罚', 'C. 只说好听的话', 'D. 避免冲突'], correct: 1, explanation: '心理安全指可以自由表达而不担心被惩罚。', difficulty: 'medium' }
         ];
 
         // 初始化 questionBank 为空数组，等待 Supabase 加载
@@ -4711,9 +4781,19 @@
 
             // 从题库中抽取题目
             let questions = [];
+
+            // 优先从 Supabase 题库筛选
             if (window.supabaseClient && questionBank.length > 0) {
-                // 从全局题库中筛选
                 questions = questionBank.filter(q => {
+                    if (category && q.category !== category) return false;
+                    if (categoryId !== null && q.categoryId !== categoryId) return false;
+                    return true;
+                });
+            }
+
+            // 如果 Supabase 题库为空，使用本地题库（试用）
+            if (questions.length === 0 && window.localQuestionBank) {
+                questions = window.localQuestionBank.filter(q => {
                     if (category && q.category !== category) return false;
                     if (categoryId !== null && q.categoryId !== categoryId) return false;
                     return true;
