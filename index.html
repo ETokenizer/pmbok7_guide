@@ -2848,6 +2848,35 @@
             }
         }
 
+        // 同步连续学习天数到云端
+        async function syncStudyStreakToCloud(streakDays) {
+            if (!isUserLoggedIn()) return;
+
+            try {
+                isSyncing = true;
+                const today = new Date().toDateString();
+
+                // 使用 upsert 语法，如果今天已存在则更新
+                const { data, error } = await supabaseClient
+                    .from('study_streak')
+                    .upsert({
+                        user_id: currentUser.id,
+                        study_date: today,
+                        study_duration: 0, // 可以后续累加学习时长
+                        questions_completed: 0 // 可以后续累加答题数
+                    }, {
+                        onConflict: 'user_id,study_date'
+                    });
+
+                if (error) throw error;
+                console.log('✅ 连续学习天数已同步:', streakDays);
+            } catch (error) {
+                console.warn('同步连续学习天数失败:', error);
+            } finally {
+                isSyncing = false;
+            }
+        }
+
         // 同步答题历史到云端
         async function syncQuizHistoryToCloud(quiz) {
             if (!isUserLoggedIn()) return;
@@ -2934,10 +2963,21 @@
 
                 if (quizError) throw quizError;
 
+                // 加载连续学习天数
+                const { data: streakData, error: streakError } = await supabaseClient
+                    .from('study_streak')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('study_date', { ascending: false })
+                    .limit(365);
+
+                if (streakError) throw streakError;
+
                 return {
                     progress: progressData || [],
                     wrongAnswers: wrongData || [],
-                    quizHistory: quizData || []
+                    quizHistory: quizData || [],
+                    studyStreak: streakData || []
                 };
             } catch (error) {
                 console.warn('从云端加载数据失败:', error);
@@ -3000,6 +3040,28 @@
             // 限制历史记录数量
             if (localData.quizHistory.length > 500) {
                 localData.quizHistory = localData.quizHistory.slice(-500);
+            }
+
+            // 合并连续学习天数
+            if (cloudData.studyStreak && cloudData.studyStreak.length > 0) {
+                // 计算云端的连续学习天数
+                const cloudStreakDays = cloudData.studyStreak.length;
+
+                // 取本地和云端的最大值（避免重复计算）
+                if (cloudStreakDays > localData.streakDays) {
+                    localData.streakDays = cloudStreakDays;
+                }
+
+                // 合并学习历史
+                const localDates = new Set(localData.streakHistory.map(h => h.date));
+                for (const s of cloudData.studyStreak) {
+                    if (!localDates.has(s.study_date)) {
+                        localData.streakHistory.push({
+                            date: new Date(s.study_date).toDateString(),
+                            studied: true
+                        });
+                    }
+                }
             }
 
             // 保存合并后的数据
@@ -6328,12 +6390,15 @@
 
             // 更新连续学习天数
             const lastDate = data.lastStudyAt ? new Date(data.lastStudyAt).toDateString() : null;
+            let streakUpdated = false;
             if (lastDate !== today) {
                 const yesterday = new Date(now.getTime() - 86400000).toDateString();
                 if (lastDate === yesterday) {
                     data.streakDays += 1;
+                    streakUpdated = true;
                 } else if (lastDate !== today) {
                     data.streakDays = 1;
+                    streakUpdated = true;
                 }
                 data.streakHistory.push({ date: today, studied: true });
             }
@@ -6341,8 +6406,15 @@
             saveLearningProgressData(data);
 
             // 同步到云端（如果已登录）
-            if (isUserLoggedIn() && action === 'quiz') {
-                syncQuizToCloud(data.quizHistory[data.quizHistory.length - 1], details);
+            if (isUserLoggedIn()) {
+                // 同步答题记录
+                if (action === 'quiz') {
+                    syncQuizToCloud(data.quizHistory[data.quizHistory.length - 1], details);
+                }
+                // 同步连续学习天数（仅在变化时或每天首次同步）
+                if (streakUpdated) {
+                    syncStudyStreakToCloud(data.streakDays);
+                }
             }
         }
 
