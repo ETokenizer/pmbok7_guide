@@ -2181,6 +2181,21 @@
                     throw updateError;
                 }
 
+                // 如果用户已登录，同时在 user_licenses 表中创建记录（用于云同步）
+                if (currentUser) {
+                    await supabaseClient
+                        .from('user_licenses')
+                        .upsert({
+                            user_id: currentUser.id,
+                            license_key: key,
+                            device_id: deviceId,
+                            is_active: true,
+                            activated_at: new Date().toISOString(),
+                            expires_at: license.expires_at,
+                            product_type: license.expires_at ? 'monthly' : 'lifetime'
+                        }, { onConflict: 'user_id,license_key' });
+                }
+
                 // 更新本地状态
                 finalizeActivation(key, deviceId, btn, errorDiv);
 
@@ -2729,6 +2744,22 @@
                         cloud_activated_at: validLicense.activated_at,
                         source_table: validLicense.key ? 'licenses' : 'user_licenses'
                     });
+
+                    // 如果 License 来自 licenses 表（邮箱匹配），且 user_licenses 中没有记录，自动创建
+                    if (validLicense.key && (!userLicenses || userLicenses.length === 0)) {
+                        console.log('📝 自动创建 user_licenses 记录...');
+                        await supabaseClient
+                            .from('user_licenses')
+                            .upsert({
+                                user_id: currentUser.id,
+                                license_key: validLicense.key,
+                                device_id: validLicense.device_id,
+                                is_active: true,
+                                activated_at: validLicense.activated_at || new Date().toISOString(),
+                                expires_at: validLicense.expires_at,
+                                product_type: validLicense.expires_at ? 'monthly' : 'lifetime'
+                            }, { onConflict: 'user_id,license_key' });
+                    }
                 } else {
                     // 没有有效 License
                     isPremiumUser = false;
