@@ -5393,7 +5393,7 @@
         // 获取学习进度数据
         function getLearningProgressData() {
             const data = localStorage.getItem('pmbok7_learning_progress');
-            return data ? JSON.parse(data) : {
+            const defaultData = {
                 principlesViewed: [],
                 quizzesCompleted: 0,
                 quizzesCorrect: 0,
@@ -5402,7 +5402,23 @@
                 streakDays: 0,
                 streakHistory: [],
                 principles: {},
-                quizHistory: []  // 新增：答题历史记录
+                quizHistory: []  // 答题历史记录
+            };
+
+            if (!data) {
+                return defaultData;
+            }
+
+            const parsed = JSON.parse(data);
+            // 合并数据，确保新字段存在
+            return {
+                ...defaultData,
+                ...parsed,
+                // 确保数组字段存在
+                principlesViewed: parsed.principlesViewed || [],
+                streakHistory: parsed.streakHistory || [],
+                quizHistory: parsed.quizHistory || [],
+                principles: parsed.principles || {}
             };
         }
 
