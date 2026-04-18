@@ -2665,18 +2665,33 @@
             if (!currentUser) return;
 
             try {
-                // 查询用户的 License 记录
-                const { data: licenses, error } = await supabaseClient
+                // 1. 先检查 user_licenses 表（用户关联的 License）
+                const { data: userLicenses, error: userLicError } = await supabaseClient
                     .from('user_licenses')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .eq('is_active', true);
 
-                if (error) throw error;
+                if (userLicError) {
+                    console.warn('查询 user_licenses 失败:', userLicError);
+                }
+
+                // 2. 再检查 licenses 表（邮箱关联的 License）
+                const { data: emailLicenses, error: emailLicError } = await supabaseClient
+                    .from('licenses')
+                    .select('*')
+                    .eq('email', currentUser.email)
+                    .eq('is_active', true);
+
+                if (emailLicError) {
+                    console.warn('查询 licenses 失败:', emailLicError);
+                }
 
                 // 查找未过期的 License
                 const now = new Date();
-                const validLicense = licenses?.find(lic => {
+                const allLicenses = [...(userLicenses || []), ...(emailLicenses || [])];
+
+                const validLicense = allLicenses.find(lic => {
                     if (!lic.expires_at) return true; // 无过期时间，永久有效
                     return new Date(lic.expires_at) > now;
                 });
