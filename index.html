@@ -2703,7 +2703,8 @@
                 if (validLicense) {
                     // 有有效 License，设置为 Premium 用户
                     isPremiumUser = true;
-                    licenseKey = validLicense.license_key;
+                    // 兼容 licenses 表 (key) 和 user_licenses 表 (license_key)
+                    licenseKey = validLicense.key || validLicense.license_key;
                     // 优先使用云端 activated_at，如果没有则使用 localStorage 中的值
                     licenseActivatedAt = validLicense.activated_at || localStorage.getItem('pmbok7_license_activated_at') || new Date().toISOString();
 
@@ -2725,7 +2726,8 @@
                     console.log('✅ 检测到有效 License，Premium 状态已恢复', {
                         licenseKey: licenseKey,
                         activatedAt: licenseActivatedAt,
-                        cloud_activated_at: validLicense.activated_at
+                        cloud_activated_at: validLicense.activated_at,
+                        source_table: validLicense.key ? 'licenses' : 'user_licenses'
                     });
                 } else {
                     // 没有有效 License
