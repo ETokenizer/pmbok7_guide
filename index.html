@@ -1408,6 +1408,11 @@
             <div class="account-dropdown" id="accountDropdown">
                 <!-- 非 Premium 用户显示 -->
                 <div id="nonPremiumMenu">
+                    <div class="dropdown-item" onclick="showAuthModal()">
+                        <span class="item-icon">🔐</span>
+                        <span class="item-text">登录/注册</span>
+                    </div>
+                    <div class="dropdown-divider"></div>
                     <div class="dropdown-item" onclick="showPremiumModal()">
                         <span class="item-icon">👑</span>
                         <span class="item-text">升级专业版</span>
@@ -2034,7 +2039,14 @@
         // 页面加载时初始化 Supabase
         loadSupabase();
 
-        // 当前视图状态
+        // =====================================================
+        // 云端同步相关状态
+        // =====================================================
+        let currentUser = null;  // 当前登录用户
+        let isSyncing = false;  // 是否正在同步
+        let hasLocalDataToMigrate = false;  // 是否有本地数据需要迁移
+
+        // 检查是否为 Premium 用户 (从 localStorage 读取)
         let currentView = 'principles';
         let selectedPrinciple = null;
         let selectedDomain = null;
@@ -2349,6 +2361,735 @@
             input.value = formatted;
         }
 
+        // =====================================================
+        // 云端同步功能模块
+        // =====================================================
+
+        // 检查用户是否已登录
+        function isUserLoggedIn() {
+            return currentUser !== null;
+        }
+
+        // 显示登录/注册弹窗
+        function showAuthModal() {
+            const modal = document.getElementById('authModalOverlay');
+            if (modal) {
+                modal.style.display = 'block';
+                setTimeout(() => modal.classList.add('active'), 10);
+            } else {
+                // 如果弹窗不存在，创建它
+                createAuthModal();
+            }
+            updateAuthUI();
+        }
+
+        // 关闭登录/注册弹窗
+        function closeAuthModal() {
+            const modal = document.getElementById('authModalOverlay');
+            if (modal) {
+                modal.classList.remove('active');
+                setTimeout(() => modal.style.display = 'none', 300);
+            }
+        }
+
+        // 创建登录/注册弹窗 HTML
+        function createAuthModal() {
+            const modalHtml = `
+                <div id="authModalOverlay" class="modal-overlay" style="display:none">
+                    <div class="modal-container" style="max-width:420px">
+                        <div class="modal-header">
+                            <h3 id="authModalTitle">🔐 用户登录</h3>
+                            <button class="modal-close" onclick="closeAuthModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- 登录表单 -->
+                            <div id="authLoginForm">
+                                <div class="auth-input-group">
+                                    <label>邮箱</label>
+                                    <input type="email" id="authEmail" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                </div>
+                                <div class="auth-input-group">
+                                    <label>密码</label>
+                                    <input type="password" id="authPassword" placeholder="至少 6 位密码" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                </div>
+                                <div id="authError" style="display:none;color:#dc3545;font-size:13px;margin:10px 0"></div>
+                                <button onclick="handleSignIn()" class="auth-action-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--pmi-blue),var(--pmi-light));color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">
+                                    登录
+                                </button>
+                                <div class="auth-divider" style="text-align:center;margin:20px 0;color:#888;font-size:13px">
+                                    还没有账户？<a href="#" onclick="toggleAuthMode('signup')" style="color:var(--pmi-blue);text-decoration:none">立即注册</a>
+                                </div>
+                            </div>
+
+                            <!-- 注册表单（默认隐藏） -->
+                            <div id="authSignupForm" style="display:none">
+                                <div class="auth-input-group">
+                                    <label>邮箱</label>
+                                    <input type="email" id="authSignupEmail" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                </div>
+                                <div class="auth-input-group">
+                                    <label>密码</label>
+                                    <input type="password" id="authSignupPassword" placeholder="至少 6 位密码" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                </div>
+                                <div class="auth-input-group">
+                                    <label>确认密码</label>
+                                    <input type="password" id="authSignupConfirm" placeholder="再次输入密码" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:14px">
+                                </div>
+                                <div id="authSignupError" style="display:none;color:#dc3545;font-size:13px;margin:10px 0"></div>
+                                <button onclick="handleSignUp()" class="auth-action-btn" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--pmi-blue),var(--pmi-light));color:white;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer">
+                                    注册账户
+                                </button>
+                                <div class="auth-divider" style="text-align:center;margin:20px 0;color:#888;font-size:13px">
+                                    已有账户？<a href="#" onclick="toggleAuthMode('signin')" style="color:var(--pmi-blue);text-decoration:none">返回登录</a>
+                                </div>
+                            </div>
+
+                            <div id="authMessage" style="display:none;padding:12px;border-radius:8px;font-size:13px;margin-top:15px"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .auth-input-group { margin-bottom: 15px; }
+                .auth-input-group label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; }
+                .auth-action-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // 切换登录/注册模式
+        function toggleAuthMode(mode) {
+            const loginForm = document.getElementById('authLoginForm');
+            const signupForm = document.getElementById('authSignupForm');
+            const title = document.getElementById('authModalTitle');
+
+            if (mode === 'signup') {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                title.textContent = '🎉 创建新账户';
+            } else {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                title.textContent = '🔐 用户登录';
+            }
+
+            // 清除错误信息
+            document.getElementById('authError').style.display = 'none';
+            document.getElementById('authSignupError').style.display = 'none';
+        }
+
+        // 更新认证 UI 状态
+        function updateAuthUI() {
+            const loginForm = document.getElementById('authLoginForm');
+            const signupForm = document.getElementById('authSignupForm');
+            if (loginForm) loginForm.style.display = 'block';
+            if (signupForm) signupForm.style.display = 'none';
+        }
+
+        // 处理用户登录
+        async function handleSignIn() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const errorDiv = document.getElementById('authError');
+
+            if (!email || !password) {
+                errorDiv.textContent = '请输入邮箱和密码';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (typeof supabase === 'undefined' || !supabaseClient) {
+                errorDiv.textContent = 'Supabase 未配置，无法登录';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const btn = document.querySelector('#authLoginForm .auth-action-btn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '⏳ 登录中...';
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                // 登录成功
+                currentUser = data.user;
+                console.log('✅ 用户登录成功:', currentUser.email);
+
+                // 保存到 session
+                localStorage.setItem('pmbok7_user_id', currentUser.id);
+                localStorage.setItem('pmbok7_user_email', currentUser.email);
+
+                // 检查是否有本地数据需要迁移
+                checkLocalDataMigration();
+
+                // 关闭弹窗
+                closeAuthModal();
+
+                // 更新 UI
+                updateAccountMenu();
+                showMessage('✅ 登录成功！欢迎回来', 'success');
+
+            } catch (error) {
+                console.error('登录失败:', error);
+                errorDiv.textContent = '❌ ' + (error.message || '登录失败，请检查邮箱和密码');
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 处理用户注册
+        async function handleSignUp() {
+            const email = document.getElementById('authSignupEmail').value.trim();
+            const password = document.getElementById('authSignupPassword').value;
+            const confirm = document.getElementById('authSignupConfirm').value;
+            const errorDiv = document.getElementById('authSignupError');
+
+            if (!email || !password) {
+                errorDiv.textContent = '请输入邮箱和密码';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = '密码长度至少 6 位';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirm) {
+                errorDiv.textContent = '两次输入的密码不一致';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (typeof supabase === 'undefined' || !supabaseClient) {
+                errorDiv.textContent = 'Supabase 未配置，无法注册';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            const btn = document.querySelector('#authSignupForm .auth-action-btn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '⏳ 注册中...';
+            btn.disabled = true;
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                // 注册成功
+                currentUser = data.user;
+                console.log('✅ 用户注册成功:', currentUser.email);
+
+                // 保存到 session
+                localStorage.setItem('pmbok7_user_id', currentUser.id);
+                localStorage.setItem('pmbok7_user_email', currentUser.email);
+
+                // 关闭弹窗
+                closeAuthModal();
+
+                // 更新 UI
+                updateAccountMenu();
+                showMessage('✅ 账户创建成功！请检查邮箱验证', 'success');
+
+            } catch (error) {
+                console.error('注册失败:', error);
+                errorDiv.textContent = '❌ ' + (error.message || '注册失败，请稍后重试');
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 处理用户登出
+        async function handleSignOut() {
+            if (!confirm('确定要退出登录吗？')) return;
+
+            if (typeof supabase !== 'undefined' && supabaseClient) {
+                await supabaseClient.auth.signOut();
+            }
+
+            // 清除本地状态
+            currentUser = null;
+            localStorage.removeItem('pmbok7_user_id');
+            localStorage.removeItem('pmbok7_user_email');
+
+            // 更新 UI
+            updateAccountMenu();
+            showMessage('已退出登录', 'info');
+        }
+
+        // 检查本地数据迁移
+        function checkLocalDataMigration() {
+            const localProgress = localStorage.getItem('pmbok7_learning_progress');
+            const localWrongBook = localStorage.getItem('pmbok7_wrong_book');
+
+            hasLocalDataToMigrate = !!(localProgress || localWrongBook);
+
+            if (hasLocalDataToMigrate && isPremiumUser) {
+                // Premium 用户且有本地数据，提示迁移
+                setTimeout(() => {
+                    showMigrateDataDialog();
+                }, 1000);
+            }
+        }
+
+        // 显示数据迁移对话框
+        function showMigrateDataDialog() {
+            const overlay = document.getElementById('migrateDataOverlay');
+            if (overlay) {
+                overlay.style.display = 'block';
+                setTimeout(() => overlay.classList.add('active'), 10);
+                return;
+            }
+
+            const modalHtml = `
+                <div id="migrateDataOverlay" class="modal-overlay" style="display:none">
+                    <div class="modal-container" style="max-width:450px">
+                        <div class="modal-header">
+                            <h3>📦 发现本地数据</h3>
+                            <button class="modal-close" onclick="closeMigrateDataDialog()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);padding:20px;border-radius:12px;margin-bottom:20px">
+                                <div style="display:flex;align-items:center;gap:12px;margin-bottom:15px">
+                                    <span style="font-size:24px">🎉</span>
+                                    <div>
+                                        <div style="font-weight:600;color:#2e7d32">欢迎回来！</div>
+                                        <div style="font-size:12px;color:#666">检测到您有本地学习数据</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p style="font-size:14px;color:#555;margin-bottom:15px">
+                                我们发现您的浏览器中保存有之前的学习进度数据。是否要将这些数据同步到云端？
+                            </p>
+
+                            <ul style="font-size:13px;color:#666;margin-bottom:20px;margin-left:20px">
+                                <li>✅ 已学习原则：<span id="migratePrincipleCount">0</span> 个</li>
+                                <li>✅ 完成答题：<span id="migrateQuizCount">0</span> 道</li>
+                                <li>✅ 错题本：<span id="migrateWrongCount">0</span> 道</li>
+                            </ul>
+
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                                <button onclick="startDataMigration()" style="padding:12px;background:linear-gradient(135deg,var(--pmi-blue),var(--pmi-light));color:white;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">
+                                    🚀 开始迁移
+                                </button>
+                                <button onclick="skipDataMigration();closeMigrateDataDialog()" style="padding:12px;background:#f5f5f5;color:#666;border:1px solid #ddd;border-radius:8px;font-size:14px;cursor:pointer">
+                                    ⏭️ 稍后再说
+                                </button>
+                            </div>
+
+                            <div id="migrateProgress" style="display:none;margin-top:20px">
+                                <div style="background:#f0f0f0;height:8px;border-radius:4px;overflow:hidden">
+                                    <div id="migrateProgressBar" style="width:0;height:100%;background:linear-gradient(135deg,var(--pmi-blue),var(--pmi-light));transition:width 0.3s"></div>
+                                </div>
+                                <p id="migrateStatus" style="font-size:13px;color:#666;margin-top:10px;text-align:center">正在同步数据...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // 更新统计数据
+            const data = getLearningProgressData();
+            const wrongData = getWrongBookData();
+            document.getElementById('migratePrincipleCount').textContent = data.principlesViewed?.length || 0;
+            document.getElementById('migrateQuizCount').textContent = data.quizzesCompleted || 0;
+            document.getElementById('migrateWrongCount').textContent = wrongData.wrongAnswers?.length || 0;
+        }
+
+        // 关闭迁移对话框
+        function closeMigrateDataDialog() {
+            const overlay = document.getElementById('migrateDataOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+                setTimeout(() => overlay.style.display = 'none', 300);
+            }
+        }
+
+        // 跳过数据迁移
+        function skipDataMigration() {
+            hasLocalDataToMigrate = false;
+        }
+
+        // 开始数据迁移
+        async function startDataMigration() {
+            const progressDiv = document.getElementById('migrateProgress');
+            const progressBar = document.getElementById('migrateProgressBar');
+            const statusText = document.getElementById('migrateStatus');
+
+            progressDiv.style.display = 'block';
+
+            try {
+                // 迁移学习进度
+                statusText.textContent = '正在同步学习进度...';
+                progressBar.style.width = '30%';
+                await migrateLearningProgress();
+
+                // 迁移错题本
+                statusText.textContent = '正在同步错题本...';
+                progressBar.style.width = '60%';
+                await migrateWrongBook();
+
+                // 迁移答题历史
+                statusText.textContent = '正在同步答题历史...';
+                progressBar.style.width = '90%';
+                await migrateQuizHistory();
+
+                // 完成
+                progressBar.style.width = '100%';
+                statusText.textContent = '✅ 迁移完成！';
+
+                setTimeout(() => {
+                    closeMigrateDataDialog();
+                    showMessage('✅ 数据迁移成功！您的学习进度已同步到云端', 'success');
+                }, 1500);
+
+            } catch (error) {
+                console.error('迁移失败:', error);
+                statusText.textContent = '❌ 迁移失败：' + error.message;
+                progressBar.style.background = '#dc3545';
+            }
+        }
+
+        // 迁移学习进度
+        async function migrateLearningProgress() {
+            const data = getLearningProgressData();
+
+            for (const principleId of (data.principlesViewed || [])) {
+                await syncLearningProgressToCloud(principleId, true, 1);
+            }
+        }
+
+        // 迁移错题本
+        async function migrateWrongBook() {
+            const data = getWrongBookData();
+
+            for (const wrongItem of (data.wrongAnswers || [])) {
+                await syncWrongAnswerToCloud(wrongItem);
+            }
+        }
+
+        // 迁移答题历史
+        async function migrateQuizHistory() {
+            const data = getLearningProgressData();
+
+            for (const quiz of (data.quizHistory || [])) {
+                await syncQuizHistoryToCloud(quiz);
+            }
+        }
+
+        // 同步学习进度到云端
+        async function syncLearningProgressToCloud(principleId, isViewed = true, viewCount = 1) {
+            if (!isUserLoggedIn()) return;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('learning_progress')
+                    .upsert({
+                        user_id: currentUser.id,
+                        principle_id: principleId,
+                        is_viewed: isViewed,
+                        view_count: viewCount,
+                        last_viewed_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'user_id,principle_id'
+                    });
+
+                if (error) throw error;
+                console.log('✅ 学习进度已同步:', principleId);
+            } catch (error) {
+                console.warn('同步学习进度失败:', error);
+            }
+        }
+
+        // 同步答题历史到云端
+        async function syncQuizHistoryToCloud(quiz) {
+            if (!isUserLoggedIn()) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('quiz_history')
+                    .insert({
+                        user_id: currentUser.id,
+                        question_id: quiz.questionId || `principle_${quiz.categoryId}_quiz`,
+                        category: quiz.category || 'principle',
+                        category_id: quiz.categoryId || 1,
+                        difficulty: quiz.difficulty || 'medium',
+                        is_correct: quiz.correct,
+                        user_answer: 0,
+                        correct_answer: 0
+                    });
+
+                if (error) throw error;
+                console.log('✅ 答题记录已同步');
+            } catch (error) {
+                console.warn('同步答题记录失败:', error);
+            }
+        }
+
+        // 同步错题到云端
+        async function syncWrongAnswerToCloud(wrongItem) {
+            if (!isUserLoggedIn()) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('wrong_answers')
+                    .upsert({
+                        user_id: currentUser.id,
+                        question_id: wrongItem.id || `wrong_${Date.now()}`,
+                        question_text: wrongItem.question || '',
+                        options: wrongItem.options ? JSON.stringify(wrongItem.options) : '[]',
+                        correct_answer: wrongItem.correct,
+                        user_answer: wrongItem.userAnswer,
+                        explanation: wrongItem.explanation || '',
+                        category: wrongItem.category || 'principle',
+                        category_id: wrongItem.principleNumber || 1,
+                        wrong_count: wrongItem.wrongCount || 1,
+                        last_wrong_at: wrongItem.lastWrongAt || new Date().toISOString()
+                    }, {
+                        onConflict: 'user_id,question_id'
+                    });
+
+                if (error) throw error;
+                console.log('✅ 错题已同步');
+            } catch (error) {
+                console.warn('同步错题失败:', error);
+            }
+        }
+
+        // 从云端加载用户数据
+        async function loadLearningDataFromCloud() {
+            if (!isUserLoggedIn()) return null;
+
+            try {
+                // 加载学习进度
+                const { data: progressData, error: progressError } = await supabaseClient
+                    .from('learning_progress')
+                    .select('*')
+                    .eq('user_id', currentUser.id);
+
+                if (progressError) throw progressError;
+
+                // 加载错题本
+                const { data: wrongData, error: wrongError } = await supabaseClient
+                    .from('wrong_answers')
+                    .select('*')
+                    .eq('user_id', currentUser.id);
+
+                if (wrongError) throw wrongError;
+
+                // 加载答题历史
+                const { data: quizData, error: quizError } = await supabaseClient
+                    .from('quiz_history')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('answered_at', { ascending: false })
+                    .limit(500);
+
+                if (quizError) throw quizError;
+
+                return {
+                    progress: progressData || [],
+                    wrongAnswers: wrongData || [],
+                    quizHistory: quizData || []
+                };
+            } catch (error) {
+                console.warn('从云端加载数据失败:', error);
+                return null;
+            }
+        }
+
+        // 合并云端和本地数据
+        function mergeCloudWithLocalData(cloudData) {
+            if (!cloudData) return;
+
+            const localData = getLearningProgressData();
+            const localWrongData = getWrongBookData();
+
+            // 合并学习进度
+            const cloudPrinciples = new Set();
+            for (const p of cloudData.progress) {
+                if (p.is_viewed) {
+                    cloudPrinciples.add(p.principle_id);
+                    if (!localData.principlesViewed.includes(p.principle_id)) {
+                        localData.principlesViewed.push(p.principle_id);
+                    }
+                }
+            }
+
+            // 合并错题本
+            const localWrongIds = new Set(localWrongData.wrongAnswers.map(w => w.id));
+            for (const w of cloudData.wrongAnswers) {
+                if (!localWrongIds.has(w.question_id)) {
+                    localWrongData.wrongAnswers.push({
+                        id: w.question_id,
+                        question: w.question_text,
+                        options: w.options ? JSON.parse(w.options) : [],
+                        correct: w.correct_answer,
+                        explanation: w.explanation,
+                        userAnswer: w.user_answer,
+                        principleNumber: w.category_id,
+                        wrongCount: w.wrong_count,
+                        lastWrongAt: w.last_wrong_at,
+                        mastered: w.is_mastered
+                    });
+                }
+            }
+
+            // 合并答题历史（保留最近的 500 条）
+            const localQuizIds = new Set(localData.quizHistory.map(q => q.questionId));
+            for (const q of cloudData.quizHistory) {
+                if (!localQuizIds.has(q.question_id)) {
+                    localData.quizHistory.push({
+                        questionId: q.question_id,
+                        category: q.category,
+                        categoryId: q.category_id,
+                        difficulty: q.difficulty,
+                        correct: q.is_correct,
+                        answeredAt: q.answered_at
+                    });
+                }
+            }
+
+            // 限制历史记录数量
+            if (localData.quizHistory.length > 500) {
+                localData.quizHistory = localData.quizHistory.slice(-500);
+            }
+
+            // 保存合并后的数据
+            saveLearningProgressData(localData);
+            saveWrongBookData(localWrongData);
+
+            console.log('✅ 数据合并完成');
+        }
+
+        // 检查并恢复用户会话
+        async function checkAuthSession() {
+            if (typeof supabase === 'undefined' || !supabaseClient) {
+                // 从 localStorage 恢复
+                const userId = localStorage.getItem('pmbok7_user_id');
+                const userEmail = localStorage.getItem('pmbok7_user_email');
+                if (userId && userEmail) {
+                    currentUser = { id: userId, email: userEmail };
+                    console.log('✅ 从本地恢复用户会话:', userEmail);
+                    updateAccountMenu();
+                }
+                return;
+            }
+
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                if (session && session.user) {
+                    currentUser = session.user;
+                    console.log('✅ Supabase 会话恢复:', currentUser.email);
+
+                    // 更新 localStorage
+                    localStorage.setItem('pmbok7_user_id', currentUser.id);
+                    localStorage.setItem('pmbok7_user_email', currentUser.email);
+
+                    // 从云端加载数据
+                    loadAndMergeCloudData();
+                } else {
+                    // 检查 localStorage 中是否有保存的用户信息
+                    const userId = localStorage.getItem('pmbok7_user_id');
+                    const userEmail = localStorage.getItem('pmbok7_user_email');
+                    if (userId && userEmail) {
+                        currentUser = { id: userId, email: userEmail };
+                        console.log('✅ 从本地恢复用户会话:', userEmail);
+                    }
+                }
+            } catch (error) {
+                console.warn('检查会话失败:', error);
+                // 从 localStorage 恢复
+                const userId = localStorage.getItem('pmbok7_user_id');
+                const userEmail = localStorage.getItem('pmbok7_user_email');
+                if (userId && userEmail) {
+                    currentUser = { id: userId, email: userEmail };
+                }
+            } finally {
+                updateAccountMenu();
+            }
+        }
+
+        // 从云端加载并合并数据
+        async function loadAndMergeCloudData() {
+            if (!isUserLoggedIn()) return;
+
+            isSyncing = true;
+            try {
+                const cloudData = await loadLearningDataFromCloud();
+                if (cloudData) {
+                    mergeCloudWithLocalData(cloudData);
+                    // 重新渲染相关 UI
+                    if (currentView === 'progress') {
+                        renderProgressContent();
+                    }
+                    if (document.getElementById('wrongBookModalOverlay')?.classList.contains('active')) {
+                        renderWrongBookContent('all');
+                    }
+                }
+            } catch (error) {
+                console.warn('加载云端数据失败:', error);
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        // 显示消息提示
+        function showMessage(message, type = 'info') {
+            const colors = {
+                success: { bg: '#d4edda', border: '#c3e6cb', text: '#155724' },
+                error: { bg: '#f8d7da', border: '#f5c6cb', text: '#721c24' },
+                info: { bg: '#d1ecf1', border: '#bee5eb', text: '#0c5460' }
+            };
+            const style = colors[type] || colors.info;
+
+            const msgDiv = document.createElement('div');
+            msgDiv.style.cssText = `
+                position: fixed;
+                top: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+                padding: 12px 24px;
+                background: ${style.bg};
+                border: 1px solid ${style.border};
+                border-radius: 8px;
+                color: ${style.text};
+                font-size: 14px;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            msgDiv.textContent = message;
+            document.body.appendChild(msgDiv);
+
+            setTimeout(() => {
+                msgDiv.style.transition = 'opacity 0.3s';
+                msgDiv.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(msgDiv), 300);
+            }, 3000);
+        }
+
         // 检查 Premium 状态是否过期
         function checkPremiumStatus() {
             if (premiumExpiry) {
@@ -2377,22 +3118,67 @@
             const accountText = document.getElementById('accountMenuText');
             const premiumSection = document.getElementById('premiumSection');
             const premiumFeaturesHome = document.getElementById('premiumFeaturesHome');
+            const dropdown = document.getElementById('accountDropdown');
 
-            if (isPremiumUser) {
+            // 检查是否已登录
+            const isLoggedIn = isUserLoggedIn();
+
+            if (isLoggedIn) {
+                // 已登录用户 - 显示用户菜单
+                nonPremiumMenu.style.display = 'none';
+                premiumMenu.style.display = 'block';
+                accountText.textContent = currentUser?.email?.split('@')[0] || '用户';
+
+                // 更新 premiumMenu 内容为用户菜单
+                premiumMenu.innerHTML = `
+                    <div style="padding:8px 12px;border-bottom:1px solid #eee;margin-bottom:8px">
+                        <div style="font-size:12px;color:#888">已登录</div>
+                        <div style="font-weight:600;font-size:13px;color:var(--pmi-blue)">${currentUser?.email || ''}</div>
+                    </div>
+                    ${isPremiumUser ? `
+                    <div class="dropdown-item" onclick="showLicenseModal()">
+                        <span class="item-icon">🔑</span>
+                        <span class="item-text">我的授权</span>
+                    </div>
+                    ` : ''}
+                    <div class="dropdown-item" onclick="handleSignOut()">
+                        <span class="item-icon">🚪</span>
+                        <span class="item-text">退出登录</span>
+                    </div>
+                `;
+
+                // 已登录且是 Premium 用户，显示高级功能
+                if (isPremiumUser) {
+                    if (premiumSection) premiumSection.style.display = 'flex';
+                    if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'grid';
+                } else {
+                    // 已登录但不是 Premium，隐藏高级功能
+                    if (premiumSection) premiumSection.style.display = 'none';
+                    if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'none';
+                }
+
+            } else if (isPremiumUser) {
+                // 未登录但是 Premium（本地激活）
                 nonPremiumMenu.style.display = 'none';
                 premiumMenu.style.display = 'block';
                 accountText.textContent = '专业版';
-                // 显示左侧高级功能区块
                 if (premiumSection) premiumSection.style.display = 'flex';
-                // 显示首页高级功能卡片
                 if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'grid';
+
+                // 恢复 premiumMenu 原始内容
+                premiumMenu.innerHTML = `
+                    <div class="dropdown-item" onclick="showLicenseModal()">
+                        <span class="item-icon">🔑</span>
+                        <span class="item-text">我的授权</span>
+                    </div>
+                `;
+
             } else {
+                // 未登录且非 Premium
                 nonPremiumMenu.style.display = 'block';
                 premiumMenu.style.display = 'none';
                 accountText.textContent = '账户';
-                // 隐藏左侧高级功能区块
                 if (premiumSection) premiumSection.style.display = 'none';
-                // 隐藏首页高级功能卡片
                 if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'none';
             }
         }
@@ -5179,6 +5965,11 @@
 
             saveWrongBookData(data);
             console.log('✅ 错题已记录');
+
+            // 同步到云端（如果已登录）
+            if (isUserLoggedIn()) {
+                syncWrongAnswerToCloud(wrongItem);
+            }
         }
 
         // 打开错题本
@@ -5500,6 +6291,39 @@
             }
 
             saveLearningProgressData(data);
+
+            // 同步到云端（如果已登录）
+            if (isUserLoggedIn() && action === 'quiz') {
+                syncQuizToCloud(data.quizHistory[data.quizHistory.length - 1], details);
+            }
+        }
+
+        // 同步答题记录到云端
+        async function syncQuizToCloud(quiz, details) {
+            if (!isUserLoggedIn() || isSyncing) return;
+
+            try {
+                isSyncing = true;
+                // 使用存储过程同时记录答题历史和错题本
+                const { data, error } = await supabaseClient.rpc('sync_quiz_history', {
+                    p_question_id: quiz.questionId,
+                    p_category: quiz.category,
+                    p_category_id: quiz.categoryId,
+                    p_difficulty: quiz.difficulty,
+                    p_is_correct: quiz.correct,
+                    p_user_answer: details.userAnswer || 0,
+                    p_correct_answer: details.correctIndex || 0
+                });
+
+                if (error && !error.message.includes('No RPC')) {
+                    console.warn('存储过程调用失败，使用直接插入:', error);
+                    await syncQuizHistoryToCloud(quiz);
+                }
+            } catch (error) {
+                console.warn('同步答题记录失败:', error);
+            } finally {
+                isSyncing = false;
+            }
         }
 
         // 打开学习进度中心
@@ -6986,6 +7810,9 @@
         // 初始化
         renderContentList();
         renderOverview();
+
+        // 检查用户认证会话
+        checkAuthSession();
 
         // 初始化 Premium 状态和广告
         setTimeout(() => {
