@@ -2245,19 +2245,23 @@
             const activated = document.getElementById('licenseActivated');
             const input = document.getElementById('licenseKeyInput');
 
-            if (licenseKey) {
+            // 从 localStorage 读取 licenseKey（如果全局变量为空）
+            const currentLicenseKey = licenseKey || localStorage.getItem('pmbok7_license_key');
+            const currentLicenseActivatedAt = licenseActivatedAt || localStorage.getItem('pmbok7_license_activated_at');
+
+            if (currentLicenseKey) {
                 // 已激活
                 if (notActivated) notActivated.style.display = 'none';
                 if (activated) activated.style.display = 'block';
                 document.getElementById('activatedLicenseKey').textContent =
-                    licenseKey.substring(0, 4) + '****' + licenseKey.substring(12);
+                    currentLicenseKey.substring(0, 4) + '****' + currentLicenseKey.substring(12);
                 document.getElementById('activatedDevice').textContent =
                     licenseDeviceId ? '已绑定设备' : '当前设备';
 
                 // 显示激活时间
                 const activatedTimeEl = document.getElementById('activatedTime');
-                if (activatedTimeEl && licenseActivatedAt) {
-                    const date = new Date(licenseActivatedAt);
+                if (activatedTimeEl && currentLicenseActivatedAt) {
+                    const date = new Date(currentLicenseActivatedAt);
                     activatedTimeEl.textContent = date.toLocaleDateString('zh-CN');
                 }
             } else {
@@ -2700,6 +2704,7 @@
                     // 有有效 License，设置为 Premium 用户
                     isPremiumUser = true;
                     licenseKey = validLicense.license_key;
+                    licenseActivatedAt = validLicense.activated_at || new Date().toISOString();
 
                     if (validLicense.expires_at) {
                         premiumExpiry = new Date(validLicense.expires_at).getTime().toString();
@@ -2714,6 +2719,7 @@
 
                     localStorage.setItem('pmbok7_premium', 'true');
                     localStorage.setItem('pmbok7_license_key', licenseKey);
+                    localStorage.setItem('pmbok7_license_activated_at', licenseActivatedAt);
 
                     console.log('✅ 检测到有效 License，Premium 状态已恢复');
                 } else {
