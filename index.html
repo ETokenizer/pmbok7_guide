@@ -3391,18 +3391,26 @@
             isPremiumUser = true;
             premiumExpiry = expiryDate.getTime().toString();
 
-            // 如果传入了 licenseKey，保存到本地
+            // 如果传入了 licenseKey，保存到本地并更新全局变量
             if (licenseKey) {
                 localStorage.setItem('pmbok7_license_key', licenseKey);
+                window.licenseKey = licenseKey; // 更新全局变量
             }
 
             localStorage.setItem('pmbok7_premium', 'true');
             localStorage.setItem('pmbok7_premium_expiry', premiumExpiry);
 
             closePremiumModal();
+            closePaymentModal();
             renderAds(); // 重新渲染广告（Premium 用户不显示）
             updateLicenseUI(); // 更新 License UI
             updatePremiumUI(); // 更新 Premium 状态 UI
+            updateAccountMenu(); // 更新账户菜单显示
+
+            // 延迟一下显示激活弹窗，让用户看到激活码
+            setTimeout(() => {
+                showLicenseModal();
+            }, 500);
         }
 
         // 支付倒计时
