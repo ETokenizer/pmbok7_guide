@@ -2529,6 +2529,9 @@
                 localStorage.setItem('pmbok7_user_id', currentUser.id);
                 localStorage.setItem('pmbok7_user_email', currentUser.email);
 
+                // 从云端检查用户的 License 状态
+                await checkUserLicenseStatus();
+
                 // 检查是否有本地数据需要迁移
                 checkLocalDataMigration();
 
@@ -2626,40 +2629,86 @@
                 await supabaseClient.auth.signOut();
             }
 
-            // 清除本地状态
+            // 清除本地状态（包括 Premium 状态）
+            // License 在云端与用户账户绑定，退出登录时清除本地状态
+            // 重新登录后会从云端恢复 Premium 状态
             currentUser = null;
+            isPremiumUser = false;
+            premiumExpiry = null;
+            licenseKey = null;
+            licenseDeviceId = null;
+            licenseActivatedAt = null;
+
             localStorage.removeItem('pmbok7_user_id');
             localStorage.removeItem('pmbok7_user_email');
+            localStorage.removeItem('pmbok7_premium');
+            localStorage.removeItem('pmbok7_premium_expiry');
+            localStorage.removeItem('pmbok7_license_key');
+            localStorage.removeItem('pmbok7_license_device_id');
+            localStorage.removeItem('pmbok7_license_activated_at');
 
-            // 询问是否同时清除 License 状态
-            const clearLicense = confirm('是否同时清除专业版状态？\n\n点击"确定"清除专业版权益（下次登录需重新激活）\n点击"取消"保留专业版权益（仅退出登录）');
-
-            if (clearLicense) {
-                // 清除 License 和 Premium 状态
-                isPremiumUser = false;
-                premiumExpiry = null;
-                licenseKey = null;
-                licenseDeviceId = null;
-                licenseActivatedAt = null;
-
-                localStorage.removeItem('pmbok7_premium');
-                localStorage.removeItem('pmbok7_premium_expiry');
-                localStorage.removeItem('pmbok7_license_key');
-                localStorage.removeItem('pmbok7_license_device_id');
-                localStorage.removeItem('pmbok7_license_activated_at');
-
-                // 隐藏高级功能区域
-                const premiumSection = document.getElementById('premiumSection');
-                const premiumFeaturesHome = document.getElementById('premiumFeaturesHome');
-                if (premiumSection) premiumSection.style.display = 'none';
-                if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'none';
-            }
+            // 隐藏高级功能区域
+            const premiumSection = document.getElementById('premiumSection');
+            const premiumFeaturesHome = document.getElementById('premiumFeaturesHome');
+            if (premiumSection) premiumSection.style.display = 'none';
+            if (premiumFeaturesHome) premiumFeaturesHome.style.display = 'none';
 
             // 更新 UI
             updateAccountMenu();
             updateLicenseUI();
             updatePremiumUI();
             showMessage('已退出登录', 'info');
+        }
+
+        // 检查用户 License 状态（从云端）
+        async function checkUserLicenseStatus() {
+            if (!currentUser) return;
+
+            try {
+                // 查询用户的 License 记录
+                const { data: licenses, error } = await supabaseClient
+                    .from('user_licenses')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .eq('is_active', true);
+
+                if (error) throw error;
+
+                // 查找未过期的 License
+                const now = new Date();
+                const validLicense = licenses?.find(lic => {
+                    if (!lic.expires_at) return true; // 无过期时间，永久有效
+                    return new Date(lic.expires_at) > now;
+                });
+
+                if (validLicense) {
+                    // 有有效 License，设置为 Premium 用户
+                    isPremiumUser = true;
+                    licenseKey = validLicense.license_key;
+
+                    if (validLicense.expires_at) {
+                        premiumExpiry = new Date(validLicense.expires_at).getTime().toString();
+                        localStorage.setItem('pmbok7_premium_expiry', premiumExpiry);
+                    } else {
+                        // 永久有效，设为 10 年后
+                        const expiryDate = new Date();
+                        expiryDate.setFullYear(expiryDate.getFullYear() + 10);
+                        premiumExpiry = expiryDate.getTime().toString();
+                        localStorage.setItem('pmbok7_premium_expiry', premiumExpiry);
+                    }
+
+                    localStorage.setItem('pmbok7_premium', 'true');
+                    localStorage.setItem('pmbok7_license_key', licenseKey);
+
+                    console.log('✅ 检测到有效 License，Premium 状态已恢复');
+                } else {
+                    // 没有有效 License
+                    isPremiumUser = false;
+                    console.log('ℹ️ 未检测到有效 License');
+                }
+            } catch (error) {
+                console.warn('检查 License 状态失败:', error);
+            }
         }
 
         // 检查本地数据迁移
