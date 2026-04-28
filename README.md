@@ -1,10 +1,8 @@
-# PMBOK Guide Edition 8 - 项目管理指南 (第 8 版)
-
-> PMBOK 第 8 版 2026 新版 | 6 大原则 & 7 大绩效域
+# PMBOK Guide Edition 7 - 项目管理指南 (第 7 版)
 
 ## 项目简介
 
-PMBOK Wizard Edition 8 是一个交互式 Web 应用，帮助项目管理专业人士学习和参考 PMI PMBOK 指南第 8 版（2025/2026）中定义的**6 项项目管理原则**和**7 个绩效域**。
+PMBOK Wizard Edition 7 是一个交互式 Web 应用，帮助项目管理专业人士学习和参考 PMI PMBOK 指南第 7 版
 
 ## 第 8 版重大变化（vs 第 7 版）
 
